@@ -1,10 +1,10 @@
 {
-  "name": "@spark-apps/UnityMCP",
+  "name": "@spark-apps/unity-mcp",
   "version": "1.0.0",
   "description": "Real-time Unity Editor control via MCP - select, transform, align objects, automate testing, and manage scenes with AI. Direct IPC integration for game developers.",
   "type": "module",
   "bin": {
-    "UnityMCP": "dist/index.js"
+    "unity-mcp": "dist/index.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/muammar-yacoob/UnityMCP.git"
+    "url": "git+https://github.com/muammar-yacoob/unity-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/muammar-yacoob/UnityMCP/issues"
+    "url": "https://github.com/muammar-yacoob/unity-mcp/issues"
   },
-  "homepage": "https://github.com/muammar-yacoob/UnityMCP#readme",
+  "homepage": "https://github.com/muammar-yacoob/unity-mcp#readme",
   "keywords": [
     "unity",
     "game-development",

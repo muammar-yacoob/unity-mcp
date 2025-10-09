@@ -87,5 +87,5 @@ jobs:
         if: steps.semantic-release.outputs.new_release_published == 'true'
         run: |
           cd dist-package
-          tar -czf ../UnityMCP-${{ steps.semantic-release.outputs.new_release_version }}.tar.gz *
+          tar -czf ../unity-mcp-${{ steps.semantic-release.outputs.new_release_version }}.tar.gz *
           cd .. 

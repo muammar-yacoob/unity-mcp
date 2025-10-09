@@ -30,7 +30,7 @@
       {
         "assets": [
           {
-            "path": "UnityMCP-${nextRelease.version}.tar.gz",
+            "path": "unity-mcp-${nextRelease.version}.tar.gz",
             "label": "Unity MCP Distribution"
           }
         ]
