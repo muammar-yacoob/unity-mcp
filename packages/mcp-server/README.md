@@ -1,10 +1,10 @@
 [//]: # (Constants)
-[license-link]: https://github.com/muammar-yacoob/unity-mcp/blob/main/LICENSE
-[stars-link]: https://github.com/muammar-yacoob/unity-mcp/stargazers
-[issues-link]: https://github.com/muammar-yacoob/unity-mcp/issues
+[license-link]: https://github.com/muammar-yacoob/UnityMCP/blob/main/LICENSE
+[stars-link]: https://github.com/muammar-yacoob/UnityMCP/stargazers
+[issues-link]: https://github.com/muammar-yacoob/UnityMCP/issues
 [discord-link]: https://discord.gg/1424501956759523442
-[npm-link]: https://www.npmjs.com/package/@spark-apps/unity-mcp
-[mcp-link]: https://smithery.ai/server/@muammar-yacoob/unity-mcp
+[npm-link]: https://www.npmjs.com/package/@spark-apps/UnityMCP
+[mcp-link]: https://smithery.ai/server/@muammar-yacoob/UnityMCP
 [sponsor-link]: https://github.com/sponsors/muammar-yacoob
 
 # Unity MCP
@@ -14,15 +14,15 @@
 **🎮 Control Unity Editor • ⚡ Real-time automation • 🚀 AI-powered workflows**
 
 
-[![npm](https://img.shields.io/npm/v/@spark-apps/unity-mcp?style=flat-square&logo=npm&logoColor=white&color=crimson)][npm-link]
+[![npm](https://img.shields.io/npm/v/@spark-apps/UnityMCP?style=flat-square&logo=npm&logoColor=white&color=crimson)][npm-link]
 [![MCP Server](https://badge.mcpx.dev?type=server&color=blue&labelColor=gray)][mcp-link]
 [![MIT](https://img.shields.io/badge/License-MIT-blueviolet?style=flat-square)][license-link]
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/muammar-yacoob?label=Sponsor&logo=github-sponsors&logoColor=white&color=hotpink)][sponsor-link]
 [![Discord](https://img.shields.io/badge/Discord-Join-blue?logo=discord&logoColor=white)][discord-link]
 [![Report Bug](https://img.shields.io/badge/Report-Bug-orangered?logo=github&logoColor=white)][issues-link]
-[![GitHub Stars](https://img.shields.io/github/stars/muammar-yacoob/unity-mcp?style=social)][stars-link]
+[![GitHub Stars](https://img.shields.io/github/stars/muammar-yacoob/UnityMCP?style=social)][stars-link]
 
-<img src="https://raw.githubusercontent.com/muammar-yacoob/unity-mcp/main/res/MCP.png" alt="Unity MCP">
+<img src="https://raw.githubusercontent.com/muammar-yacoob/UnityMCP/main/res/MCP.png" alt="Unity MCP">
 
 </div>
 
@@ -61,12 +61,12 @@ Unity MCP provides **real-time control** of Unity Editor through the Model Conte
 
 **Option 1: Claude Code (Recommended)**
 ```bash
-claude mcp add @spark-apps/unity-mcp
+claude mcp add @spark-apps/UnityMCP
 ```
 
 **Option 2: Manual Installation**
 ```bash
-npm i -g @spark-apps/unity-mcp
+npm i -g @spark-apps/UnityMCP
 ```
 
 Then add to your MCP client config:
@@ -77,7 +77,7 @@ Then add to your MCP client config:
 ```json
 {
   "mcpServers": {
-    "unity-mcp": {"command": "npx", "args": ["-y", "@spark-apps/unity-mcp"]}
+    "UnityMCP": {"command": "npx", "args": ["-y", "@spark-apps/UnityMCP"]}
   }
 }
 ```
@@ -222,7 +222,7 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
 
 - [Unity Editor Scripting API](https://docs.unity3d.com/ScriptReference/UnityEditor.html)
 - [Model Context Protocol](https://modelcontextprotocol.io/)
-- [Report Issues](https://github.com/muammar-yacoob/unity-mcp/issues)
+- [Report Issues](https://github.com/muammar-yacoob/UnityMCP/issues)
 
 ---
 
@@ -248,7 +248,7 @@ MIT © [Muammar Yacoob](https://github.com/muammar-yacoob)
 
 **🌟 If Unity MCP saves you time, show some love!**
 
-[![Star on GitHub](https://img.shields.io/github/stars/muammar-yacoob/unity-mcp?style=social)][stars-link]
+[![Star on GitHub](https://img.shields.io/github/stars/muammar-yacoob/UnityMCP?style=social)][stars-link]
 [![Sponsor](https://img.shields.io/badge/Sponsor-💖-pink?style=for-the-badge)][sponsor-link]
 
 **Built with ❤️ for game developers who want to automate repetitive tasks**

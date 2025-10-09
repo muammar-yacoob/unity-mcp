@@ -1,5 +1,5 @@
 {
-  "name": "@spark-apps/unity-mcp",
+  "name": "@spark-apps/UnityMCP",
   "version": "0.1.0",
   "description": "Model Context Protocol (MCP) server for automated Unity game development and 2D shooter creation",
   "type": "module",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/muammar-yacoob/unity-mcp.git"
+    "url": "git+https://github.com/muammar-yacoob/UnityMCP.git"
   },
   "keywords": [
     "unity",
@@ -44,7 +44,7 @@
     "node": ">=18.0.0"
   },
   "bugs": {
-    "url": "https://github.com/muammar-yacoob/unity-mcp/issues"
+    "url": "https://github.com/muammar-yacoob/UnityMCP/issues"
   },
-  "homepage": "https://github.com/muammar-yacoob/unity-mcp#readme"
+  "homepage": "https://github.com/muammar-yacoob/UnityMCP#readme"
 }
