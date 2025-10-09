@@ -30,7 +30,7 @@
 
 ## ✨ What It Does
 
-Unity MCP provides **real-time control** of Unity Editor through the Model Context Protocol allowing you to:
+Unity MCP provides **real-time control** of Unity Editor through the Model Context Protocol, allowing you to:
 
 | <div align="left">Feature</div> | <div align="left">Description</div> |
 |:---------|:-------------|
