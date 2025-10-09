@@ -32,10 +32,14 @@ export class SetupService {
 
     // Copy C# editor scripts
     const scripts = [
+      'MCPConfig.cs.hbs',
       'MCPEditorServer.cs.hbs',
+      'MCPEditorWindow.cs.hbs',
       'EditorCommandHandler.cs.hbs',
       'PlayModeHandler.cs.hbs',
-      'SceneHandler.cs.hbs'
+      'SceneHandler.cs.hbs',
+      'AssetHandler.cs.hbs',
+      'AdvancedToolsHandler.cs.hbs'
     ];
 
     const installedScripts: string[] = [];
@@ -61,19 +65,64 @@ export class SetupService {
 This folder contains the Unity Editor scripts for MCP (Model Context Protocol) integration.
 
 ## What it does
-- Enables AI assistants to control Unity Editor in real-time
-- Provides HTTP server for receiving editor commands
-- Supports selection, transform, alignment, and batch operations
-- Enables automated play mode testing
+- Enables AI assistants to control Unity Editor in real-time via HTTP REST API
+- 30+ powerful tools for editor automation, testing, and asset management
+- Clean UI with collapsable sections and real-time status monitoring
+- ScriptableObject configuration with persistent settings
+- Console monitoring, package management, test runner integration
+
+## Features
+### Editor Control (12 tools)
+- Select, Transform, Align, Distribute objects
+- Duplicate, Delete, Find objects
+- Execute menu items
+
+### Scene Management (6 tools)
+- Load, Save, Create scenes
+- Get hierarchy, Find in scene
+- Cleanup operations
+
+### Testing & Play Mode (4 tools)
+- Enter/Exit Play Mode
+- Run Unity Test Runner tests
+- Time scale control
+
+### Assets & Console (5 tools)
+- Console logs (Get/Clear)
+- Create prefabs, Get assets
+- Refresh Asset Database
+- Add assets to scene
+
+### Advanced Tools (9 tools)
+- Execute any Unity menu item
+- Install Unity packages
+- Script management (CRUD operations)
+- Validate C# scripts
+- Advanced asset operations
 
 ## Usage
 1. The MCP server starts automatically when Unity Editor loads
-2. It listens on http://localhost:8080
-3. Use the MCP tools to send commands from your AI assistant
+2. Default: http://localhost:8080
+3. Open Control Panel: Tools/Unity MCP/Control Panel
 
 ## Menu Items
+- Tools/Unity MCP/Control Panel - Open the MCP control panel UI
 - Tools/Unity MCP/Start Server - Manually start the server
 - Tools/Unity MCP/Stop Server - Stop the server
+
+## Control Panel Features
+- 🟢 Real-time connection status (🟢 Connected | 🟠 Starting | 🔴 Error | ⚪ Disconnected)
+- Server Settings: Port, Auto-start, Remote connections, Timeouts
+- Features: Console monitoring, Auto-refresh, Verbose logging
+- Quick Actions: View console, Refresh assets, Save scene, Clear console
+- Tools Overview: All 30 available tools categorized
+- Advanced Settings: Undo/Redo, Scene backups, Reset to defaults
+
+## Configuration
+Settings are stored in a ScriptableObject at:
+Assets/Editor/UnityMCP/Resources/MCPConfig.asset
+
+You can also access it via: Tools/Unity MCP/Control Panel → Open Config
 
 ## Documentation
 See: https://github.com/muammar-yacoob/unity-mcp

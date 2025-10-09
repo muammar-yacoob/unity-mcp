@@ -120,15 +120,20 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
    ```
    Setup Unity MCP in my project at /path/to/unity/project
    ```
-3. This installs 4 C# scripts to `Assets/Editor/UnityMCP/`:
-   - `MCPEditorServer.cs` - HTTP server
+3. This installs 8 C# scripts to `Assets/Editor/UnityMCP/`:
+   - `MCPConfig.cs` - ScriptableObject configuration with persistent settings
+   - `MCPEditorServer.cs` - HTTP server with auto-start and remote connections
+   - `MCPEditorWindow.cs` - Control Panel UI with status monitoring 🟢🟠🔴
    - `EditorCommandHandler.cs` - Command processor with undo support
-   - `PlayModeHandler.cs` - Play mode automation
-   - `SceneHandler.cs` - Scene operations
+   - `PlayModeHandler.cs` - Play mode automation and test runner
+   - `SceneHandler.cs` - Scene operations and hierarchy management
+   - `AssetHandler.cs` - Console logs, prefabs, and asset database
+   - `AdvancedToolsHandler.cs` - Package manager, menu execution, script CRUD
 4. Restart Unity Editor
-5. Verify in Console: `[Unity MCP] Server started on port 8080`
+5. Open Control Panel: **Tools → Unity MCP → Control Panel**
+6. Verify status: 🟢 **Connected** (Server running on port 8080)
 
-**Done!** The MCP tools can now control Unity Editor via HTTP.
+**Done!** The MCP tools can now control Unity Editor via HTTP. Use the Control Panel to manage settings and monitor connection status.
 
 </details>
 
@@ -137,38 +142,57 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
 ## 🛠️ Available Tools
 
 <details>
-<summary><strong>🔧 View All Available Tools (19 tools)</strong></summary>
+<summary><strong>🔧 View All 30 Available Tools</strong></summary>
 
-**Safe Operations (Read-only)**
+### **🎯 Editor Control (7 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
 | ![](https://img.shields.io/badge/⚙️%20-1a365d?style=for-the-badge)![Setup Unity MCP](https://img.shields.io/badge/Setup%20Unity%20MCP%20-007bff?style=for-the-badge) | Install editor integration into Unity project |
 | ![](https://img.shields.io/badge/🎯%20-1a365d?style=for-the-badge)![Select Objects](https://img.shields.io/badge/Select%20Objects%20-007bff?style=for-the-badge) | Select by name, tag, or pattern with framing |
-| ![](https://img.shields.io/badge/🔍%20-1a365d?style=for-the-badge)![Find Objects](https://img.shields.io/badge/Find%20Objects%20-007bff?style=for-the-badge) | Find by component type or pattern |
-| ![](https://img.shields.io/badge/🎬%20-1a365d?style=for-the-badge)![List Scenes](https://img.shields.io/badge/List%20Scenes%20-007bff?style=for-the-badge) | List all scenes in build settings |
-| ![](https://img.shields.io/badge/🌳%20-1a365d?style=for-the-badge)![Get Hierarchy](https://img.shields.io/badge/Get%20Hierarchy%20-007bff?style=for-the-badge) | Get complete scene hierarchy |
-| ![](https://img.shields.io/badge/🔎%20-1a365d?style=for-the-badge)![Find In Scene](https://img.shields.io/badge/Find%20In%20Scene%20-007bff?style=for-the-badge) | Find objects in current scene |
-| ![](https://img.shields.io/badge/📊%20-1a365d?style=for-the-badge)![Play Mode Status](https://img.shields.io/badge/Play%20Mode%20Status%20-007bff?style=for-the-badge) | Get play mode status and logs |
-
-**Modifications (With Undo Support)**
-| <div align="left">Tool</div> | <div align="left">Description</div> |
-|:------|:-------------|
 | ![](https://img.shields.io/badge/🔄%20-1a5e3a?style=for-the-badge)![Transform Objects](https://img.shields.io/badge/Transform%20Objects%20-28a745?style=for-the-badge) | Move, rotate, scale objects |
 | ![](https://img.shields.io/badge/📐%20-1a5e3a?style=for-the-badge)![Align Objects](https://img.shields.io/badge/Align%20Objects%20-28a745?style=for-the-badge) | Align left/right/top/bottom/center |
 | ![](https://img.shields.io/badge/📏%20-1a5e3a?style=for-the-badge)![Distribute Objects](https://img.shields.io/badge/Distribute%20Objects%20-28a745?style=for-the-badge) | Distribute evenly along axis |
 | ![](https://img.shields.io/badge/📦%20-1a5e3a?style=for-the-badge)![Duplicate Objects](https://img.shields.io/badge/Duplicate%20Objects%20-28a745?style=for-the-badge) | Clone objects with undo support |
+| ![](https://img.shields.io/badge/🔍%20-1a365d?style=for-the-badge)![Find Objects](https://img.shields.io/badge/Find%20Objects%20-007bff?style=for-the-badge) | Find by component type or pattern |
+
+### **🗺️ Scene Management (6 tools)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
+| ![](https://img.shields.io/badge/🎬%20-1a365d?style=for-the-badge)![List Scenes](https://img.shields.io/badge/List%20Scenes%20-007bff?style=for-the-badge) | List all scenes in build settings |
+| ![](https://img.shields.io/badge/📂%20-cc6600?style=for-the-badge)![Load Scene](https://img.shields.io/badge/Load%20Scene%20-ff9500?style=for-the-badge) | Load scene by name or index |
+| ![](https://img.shields.io/badge/💾%20-cc6600?style=for-the-badge)![Save Scene](https://img.shields.io/badge/Save%20Scene%20-ff9500?style=for-the-badge) | Save current or all scenes |
+| ![](https://img.shields.io/badge/🌳%20-1a365d?style=for-the-badge)![Get Hierarchy](https://img.shields.io/badge/Get%20Hierarchy%20-007bff?style=for-the-badge) | Get complete scene hierarchy |
+| ![](https://img.shields.io/badge/🔎%20-1a365d?style=for-the-badge)![Find In Scene](https://img.shields.io/badge/Find%20In%20Scene%20-007bff?style=for-the-badge) | Find objects in current scene |
+| ![](https://img.shields.io/badge/🧹%20-c41e3a?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-ff073a?style=for-the-badge) | Remove missing scripts and empty objects |
+
+### **🧪 Testing & Play Mode (5 tools)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
 | ![](https://img.shields.io/badge/▶️%20-cc6600?style=for-the-badge)![Enter Play Mode](https://img.shields.io/badge/Enter%20Play%20Mode%20-ff9500?style=for-the-badge) | Start play mode programmatically |
 | ![](https://img.shields.io/badge/⏸️%20-cc6600?style=for-the-badge)![Exit Play Mode](https://img.shields.io/badge/Exit%20Play%20Mode%20-ff9500?style=for-the-badge) | Exit play mode programmatically |
 | ![](https://img.shields.io/badge/🤖%20-cc6600?style=for-the-badge)![Run Test](https://img.shields.io/badge/Run%20Test%20-ff9500?style=for-the-badge) | Execute automated test scenarios |
+| ![](https://img.shields.io/badge/📊%20-1a365d?style=for-the-badge)![Play Mode Status](https://img.shields.io/badge/Play%20Mode%20Status%20-007bff?style=for-the-badge) | Get play mode status and logs |
 | ![](https://img.shields.io/badge/⏱️%20-cc6600?style=for-the-badge)![Set Time Scale](https://img.shields.io/badge/Set%20Time%20Scale%20-ff9500?style=for-the-badge) | Slow motion or fast forward |
-| ![](https://img.shields.io/badge/📂%20-cc6600?style=for-the-badge)![Load Scene](https://img.shields.io/badge/Load%20Scene%20-ff9500?style=for-the-badge) | Load scene by name or index |
-| ![](https://img.shields.io/badge/💾%20-cc6600?style=for-the-badge)![Save Scene](https://img.shields.io/badge/Save%20Scene%20-ff9500?style=for-the-badge) | Save current or all scenes |
 
-**Destructive Operations (Use with Caution)**
+### **📦 Assets & Console (5 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
+| ![](https://img.shields.io/badge/📋%20-1a365d?style=for-the-badge)![Get Console Logs](https://img.shields.io/badge/Get%20Console%20Logs%20-007bff?style=for-the-badge) | Retrieve Unity console logs for debugging |
+| ![](https://img.shields.io/badge/🧹%20-1a365d?style=for-the-badge)![Clear Console](https://img.shields.io/badge/Clear%20Console%20-007bff?style=for-the-badge) | Clear all console logs |
+| ![](https://img.shields.io/badge/🎁%20-cc6600?style=for-the-badge)![Create Prefab](https://img.shields.io/badge/Create%20Prefab%20-ff9500?style=for-the-badge) | Create prefab from selected GameObject |
+| ![](https://img.shields.io/badge/📂%20-1a365d?style=for-the-badge)![Get Assets](https://img.shields.io/badge/Get%20Assets%20-007bff?style=for-the-badge) | List project assets with filtering |
+| ![](https://img.shields.io/badge/🔄%20-cc6600?style=for-the-badge)![Refresh Assets](https://img.shields.io/badge/Refresh%20Assets%20-ff9500?style=for-the-badge) | Refresh Unity asset database |
+
+### **⚡ Advanced Tools (7 tools)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
+| ![](https://img.shields.io/badge/🎬%20-cc6600?style=for-the-badge)![Execute Menu Item](https://img.shields.io/badge/Execute%20Menu%20Item%20-ff9500?style=for-the-badge) | Execute any Unity Editor menu command |
+| ![](https://img.shields.io/badge/📦%20-cc6600?style=for-the-badge)![Add Package](https://img.shields.io/badge/Add%20Package%20-ff9500?style=for-the-badge) | Install Unity packages via Package Manager |
+| ![](https://img.shields.io/badge/🧪%20-cc6600?style=for-the-badge)![Run Unity Tests](https://img.shields.io/badge/Run%20Unity%20Tests%20-ff9500?style=for-the-badge) | Execute Test Runner tests (EditMode/PlayMode) |
+| ![](https://img.shields.io/badge/📥%20-cc6600?style=for-the-badge)![Add Asset to Scene](https://img.shields.io/badge/Add%20Asset%20to%20Scene%20-ff9500?style=for-the-badge) | Add prefab or asset to current scene |
+| ![](https://img.shields.io/badge/📝%20-cc6600?style=for-the-badge)![Script Operations](https://img.shields.io/badge/Script%20Operations%20-ff9500?style=for-the-badge) | Create, read, update, delete C# scripts |
+| ![](https://img.shields.io/badge/✅%20-1a365d?style=for-the-badge)![Validate Script](https://img.shields.io/badge/Validate%20Script%20-007bff?style=for-the-badge) | Validate C# script syntax |
 | ![](https://img.shields.io/badge/❌%20-c41e3a?style=for-the-badge)![Delete Objects](https://img.shields.io/badge/Delete%20Objects%20-ff073a?style=for-the-badge) | Delete objects with undo support |
-| ![](https://img.shields.io/badge/🧹%20-c41e3a?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-ff073a?style=for-the-badge) | Remove missing scripts and empty objects |
 
 </details>
 
@@ -205,6 +229,57 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
 - *"Show me the complete hierarchy of the current scene"*
 - *"Find all objects with Rigidbody component"*
 - *"Clean up scene by removing missing scripts"*
+
+</details>
+
+---
+
+## 🎛️ Unity Control Panel
+
+<details>
+<summary><strong>⚙️ Manage settings and monitor status</strong></summary>
+
+Once installed, access the Control Panel via **Tools → Unity MCP → Control Panel**.
+
+**Features:**
+- **🟢 Real-time Status Monitoring**
+  - 🟢 **Connected** - Server running normally
+  - 🟠 **Starting** - Server is initializing
+  - 🔴 **Error** - Connection failed
+  - ⚪ **Disconnected** - Server stopped
+
+- **⚙️ Server Settings** (Collapsable)
+  - Port configuration (default: 8080)
+  - Auto-start on Unity load
+  - Request timeout settings
+  - Remote connections (⚠️ use with caution)
+
+- **✨ Features** (Collapsable)
+  - Console monitoring (max logs configurable)
+  - Auto-refresh assets on changes
+  - Verbose logging for debugging
+
+- **⚡ Quick Actions** (Collapsable)
+  - 📋 View Console Logs
+  - 🔄 Refresh Assets
+  - 💾 Save Scene
+  - 🧹 Clear Console
+  - 📁 Open Config
+  - 📖 Documentation
+
+- **🔧 Tools Overview** (Collapsable)
+  - View all 30 available tools categorized by type
+  - Quick reference without leaving Unity
+
+- **⚡ Advanced Settings** (Collapsable)
+  - Undo/Redo support
+  - Auto-backup scenes
+  - Reset to defaults
+
+**Configuration is stored as a ScriptableObject:**
+`Assets/Editor/UnityMCP/Resources/MCPConfig.asset`
+
+All settings persist across Unity sessions!
 
 </details>
 
