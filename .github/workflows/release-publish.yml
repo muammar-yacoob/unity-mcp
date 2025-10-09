@@ -8,6 +8,14 @@ on:
 
 jobs:
   release-and-publish:
+    # Run for release-triggering commits, including in merge commits
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(toJSON(github.event.commits.*.message), 'feat:') ||
+      contains(toJSON(github.event.commits.*.message), 'feat!:') ||
+      contains(toJSON(github.event.commits.*.message), 'fix:') ||
+      contains(toJSON(github.event.commits.*.message), 'perf:') ||
+      contains(toJSON(github.event.commits.*.message), 'BREAKING CHANGE')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,46 +29,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug - Show commit messages and check triggers
-        run: |
-          echo "=== WORKFLOW TRIGGER DEBUG ==="
-          echo "Event name: ${{ github.event_name }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Repository: ${{ github.repository }}"
-          echo ""
-          echo "=== COMMITS JSON ==="
-          echo '${{ toJSON(github.event.commits) }}'
-          echo ""
-          echo "=== RECENT COMMITS ==="
-          git log --oneline -10
-          echo ""
-          echo "=== LAST COMMIT MESSAGE ==="
-          LAST_MSG=$(git log -1 --pretty=format:"%s")
-          echo "Message: $LAST_MSG"
-          echo ""
-          echo "=== CHECKING CONVENTIONAL COMMIT PATTERNS ==="
-          if [[ "$LAST_MSG" =~ ^feat: ]]; then
-            echo "✅ Found feat: commit - should trigger release"
-          elif [[ "$LAST_MSG" =~ ^fix: ]]; then
-            echo "✅ Found fix: commit - should trigger release"
-          elif [[ "$LAST_MSG" =~ ^perf: ]]; then
-            echo "✅ Found perf: commit - should trigger release"
-          elif [[ "$LAST_MSG" == *"BREAKING CHANGE"* ]]; then
-            echo "✅ Found BREAKING CHANGE - should trigger release"
-          else
-            echo "❌ No conventional commit pattern found - would skip release"
-          fi
-
-      - name: Check workflow file syntax
-        run: |
-          echo "=== WORKFLOW FILE CHECK ==="
-          if [ -f ".github/workflows/release-publish.yml" ]; then
-            echo "✅ Workflow file exists"
-            echo "File size: $(wc -c < .github/workflows/release-publish.yml) bytes"
-          else
-            echo "❌ Workflow file missing"
-          fi
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -69,13 +37,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Install dependencies
-        run: |
-          echo "=== INSTALLING DEPENDENCIES ==="
-          cd packages/mcp-server
-          npm install
-          echo "=== PACKAGE.JSON DEBUG ==="
-          cat package.json | jq '.name, .version, .scripts'
+        run: bun install
 
       - name: Configure Git
         run: |
@@ -84,31 +52,14 @@ jobs:
           git config pull.rebase false
 
       - name: Build project
-        run: |
-          echo "=== BUILDING PROJECT ==="
-          cd packages/mcp-server
-          npm run build
-          echo "=== BUILD OUTPUT ==="
-          ls -la dist/
-
-      - name: Debug - Check semantic-release config
-        run: |
-          echo "=== SEMANTIC-RELEASE CONFIG ==="
-          cat .releaserc.json
-          echo "=== CHECKING IF RELEASE SHOULD TRIGGER ==="
-          cd packages/mcp-server
-          npx semantic-release --dry-run --debug
+        run: bun run build
 
       - name: Run semantic-release
         id: semantic-release
-        working-directory: packages/mcp-server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DEBUG: semantic-release:*
-        run: |
-          echo "=== RUNNING SEMANTIC-RELEASE ==="
-          npx semantic-release --debug
+        run: npx semantic-release
 
       - name: Create Distribution Package
         if: steps.semantic-release.outputs.new_release_published == 'true'
