@@ -1,6 +1,6 @@
 {
   "branches": ["main"],
-  "repositoryUrl": "https://github.com/muammar-yacoob/UnityMCP.git",
+  "repositoryUrl": "https://github.com/muammar-yacoob/unity-mcp.git",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",

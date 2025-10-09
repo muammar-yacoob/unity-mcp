@@ -17,12 +17,12 @@
 **🎮 Control Unity Editor • ⚡ Real-time automation • 🚀 AI-powered workflows**
 
 
-[![npm](https://img.shields.io/npm/v/@spark-apps/UnityMCP?style=flat-square&logo=npm&logoColor=white&color=crimson)](https://www.npmjs.com/package/@spark-apps/UnityMCP)
+[![npm](https://img.shields.io/npm/v/@spark-apps/unity-mcp?style=flat-square&logo=npm&logoColor=white&color=crimson)](https://www.npmjs.com/package/@spark-apps/unity-mcp)
 [![MCP Server](https://badge.mcpx.dev?type=server&color=blue&labelColor=gray)](https://www.npmjs.com/settings/spark-apps/packages)
 [![MIT](https://img.shields.io/badge/License-MIT-blueviolet?style=flat-square)][license-link]
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/muammar-yacoob?label=Sponsor&logo=github-sponsors&logoColor=white&color=hotpink)](https://github.com/sponsors/muammar-yacoob)
 [![Discord](https://img.shields.io/badge/Discord-Join-blue?logo=discord&logoColor=white)][discord-link]
-[![GitHub Stars](https://img.shields.io/github/stars/muammar-yacoob/UnityMCP?style=social)][stars-link]
+[![GitHub Stars](https://img.shields.io/github/stars/muammar-yacoob/unity-mcp?style=social)][stars-link]
 
 <img src="res/MCP.png" alt="Unity MCP">
 
@@ -67,7 +67,7 @@ Unity MCP provides **real-time control** of Unity Editor via the Model Context P
 
 **One command does everything:**
 ```bash
-claude mcp add @spark-apps/UnityMCP
+claude mcp add @spark-apps/unity-mcp
 ```
 ✅ Installs the package
 ✅ Configures your MCP client automatically
@@ -81,7 +81,7 @@ claude mcp add @spark-apps/UnityMCP
 
 **Step 1: Install the package globally**
 ```bash
-npm i -g @spark-apps/UnityMCP
+npm i -g @spark-apps/unity-mcp
 ```
 
 **Step 2: Add to your MCP client configuration**
@@ -95,7 +95,7 @@ Add this configuration:
 ```json
 {
   "mcpServers": {
-    "UnityMCP": {"command": "npx", "args": ["-y", "@spark-apps/UnityMCP"]}
+    "unity-mcp": {"command": "npx", "args": ["-y", "@spark-apps/unity-mcp"]}
   }
 }
 ```
