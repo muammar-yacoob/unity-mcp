@@ -49,26 +49,13 @@ jobs:
         run: bun run build
         working-directory: ./packages/mcp-server
 
-      - name: Debug - Check git history before release
-        working-directory: ./packages/mcp-server
+      - name: Sync with remote before release
         run: |
-          echo "=== GIT CONFIGURATION ==="
-          git config -l | grep -E "user.name|user.email"
-          echo ""
-          echo "=== CURRENT BRANCH ==="
-          git branch -a
-          echo ""
-          echo "=== RECENT COMMITS ==="
-          git log --oneline --decorate -15
-          echo ""
-          echo "=== TAGS ==="
-          git tag -l
-          echo ""
-          echo "=== PACKAGE VERSION ==="
-          cat package.json | grep version
-          echo ""
-          echo "=== SEMANTIC RELEASE DRY RUN ==="
-          npx semantic-release --dry-run
+          echo "=== SYNCING WITH REMOTE ==="
+          git fetch origin main
+          git reset --hard origin/main
+          echo "✅ Local branch now in sync with remote"
+          git log --oneline -5
 
       - name: Run semantic-release
         id: semantic-release
