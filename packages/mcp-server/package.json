@@ -44,7 +44,7 @@
   "author": "Muammar Yacoob <https://github.com/muammar-yacoob>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && mkdir -p dist/unity && cp -r src/unity/templates dist/unity/",
+    "build": "tsc && node -e \"require('fs-extra').copySync('src/unity/templates', 'dist/unity/templates')\"",
     "dev": "tsc --watch",
     "start": "bun dist/index.js",
     "clean": "rm -rf dist",
