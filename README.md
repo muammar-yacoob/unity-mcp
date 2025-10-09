@@ -1,463 +1,256 @@
+[//]: # (Constants)
+[license-link]: ../../blob/main/LICENSE
+[stars-link]: ../../stargazers
+[issues-link]: ../../issues
+[discord-link]: https://discord.gg/1424501956759523442
+[website-link]: https://spark-games.co.uk
+[coffee-link]: https://buymeacoffee.com/spark88
+[release-link]: ../../releases
+[fork-link]: ../../fork
+[privacy-link]: ./PRIVACY.md
+[vid-link]: https://www.youtube.com/shorts/CCbY_ETwFss
+
+# Unity MCP
+
 <div align="center">
 
-# ⚡ Unity MCP
+**🎮 Control Unity Editor • ⚡ Real-time automation • 🚀 AI-powered workflows**
 
-### Real-Time Unity Editor Control via AI
 
-**🎮 Control Unity Editor • 🤖 AI-Powered Automation • 🚀 Zero Template Code**
+[![npm](https://img.shields.io/npm/v/@spark-apps/unity-mcp?style=flat-square&logo=npm&logoColor=white&color=crimson)](https://www.npmjs.com/package/@spark-apps/unity-mcp)
+[![MCP Server](https://badge.mcpx.dev?type=server&color=blue&labelColor=gray)](https://www.npmjs.com/settings/spark-apps/packages)
+[![MIT](https://img.shields.io/badge/License-MIT-blueviolet?style=flat-square)][license-link]
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/muammar-yacoob?label=Sponsor&logo=github-sponsors&logoColor=white&color=hotpink)](https://github.com/sponsors/muammar-yacoob)
+[![Discord](https://img.shields.io/badge/Discord-Join-blue?logo=discord&logoColor=white)][discord-link]
+[![GitHub Stars](https://img.shields.io/github/stars/muammar-yacoob/unity-mcp?style=social)][stars-link]
 
-[![npm version](https://img.shields.io/npm/v/@spark-apps/unity-mcp?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@spark-apps/unity-mcp)
-[![Downloads](https://img.shields.io/npm/dt/@spark-apps/unity-mcp?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@spark-apps/unity-mcp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/muammar-yacoob?style=for-the-badge&logo=github)](https://github.com/sponsors/muammar-yacoob)
-
-![Unity Version](https://img.shields.io/badge/Unity-2022.3%2B-black?style=flat-square&logo=unity)
-![Node Version](https://img.shields.io/badge/Node-18.0%2B-green?style=flat-square&logo=node.js)
-![MCP](https://img.shields.io/badge/MCP-Compatible-blue?style=flat-square)
-
----
-
-### 🎯 The Only Unity MCP That Actually Controls Your Editor
+<img src="res/MCP.png" alt="Unity MCP">
 
 </div>
 
-## 🎯 What Makes This Different
+## ✨ What It Does
 
-<table>
-<tr>
-<td width="50%">
+Unity MCP provides **real-time control** of Unity Editor through the Model Context Protocol, allowing you to:
 
-### ❌ Other Unity MCPs
-- Generate code templates
-- No editor interaction
-- Manual implementation needed
-- Limited to code generation
+| <div align="left">Feature</div> | <div align="left">Description</div> |
+|:---------|:-------------|
+| ![](https://img.shields.io/badge/🎯%20-1a365d?style=for-the-badge)![Editor Control](https://img.shields.io/badge/Editor%20Control%20-007bff?style=for-the-badge) | Select, move, rotate, and scale objects with natural language |
+| ![](https://img.shields.io/badge/📐%20-1a5e3a?style=for-the-badge)![Batch Operations](https://img.shields.io/badge/Batch%20Operations%20-28a745?style=for-the-badge) | Align, distribute, duplicate objects with undo support |
+| ![](https://img.shields.io/badge/🧪%20-cc6600?style=for-the-badge)![Automated Testing](https://img.shields.io/badge/Automated%20Testing%20-ff9500?style=for-the-badge) | Enter play mode and run test scenarios programmatically |
+| ![](https://img.shields.io/badge/🗺️%20-c41e3a?style=for-the-badge)![Scene Management](https://img.shields.io/badge/Scene%20Management%20-ff073a?style=for-the-badge) | Load, save, inspect scene hierarchy in real-time |
 
-</td>
-<td width="50%">
 
-### ✅ Unity MCP
-- **Real-time editor control**
-- **Direct IPC communication**
-- **Instant execution**
-- **Undo support built-in**
-
-</td>
-</tr>
-</table>
-
-> 💡 **TIP:** Combine with [context7 MCP](https://github.com/context7/mcp-server) for Unity documentation and code generation!
-
-## ✨ Core Features
-
-<details open>
-<summary><b>🎯 Editor Manipulation</b></summary>
-
-<br>
-
-| Feature | Description |
-|---------|-------------|
-| 🎯 **Selection** | Select objects by name, tag, or pattern with automatic framing |
-| 🔄 **Transform** | Absolute or relative position/rotation/scale operations |
-| 📐 **Alignment** | Align objects left, right, top, bottom, center |
-| 📏 **Distribution** | Evenly distribute 3+ objects horizontally or vertically |
-| 📦 **Batch Operations** | Duplicate, delete, parent multiple objects with undo |
-| 🔍 **Find Objects** | Find by component type or name pattern |
-
-</details>
-
-<details open>
-<summary><b>🧪 Play Mode Testing</b></summary>
-
-<br>
-
-| Feature | Description |
-|---------|-------------|
-| ▶️ **Play Mode Control** | Enter/exit play mode programmatically |
-| 🤖 **Automated Tests** | Move, destroy, activate objects during runtime |
-| ⏸️ **Pause & Debug** | Pause and step through frames for debugging |
-| ⏱️ **Time Scale** | Slow motion or fast forward testing |
-| 📊 **Status Monitoring** | Real-time play mode status with detailed logs |
-
-</details>
-
-<details open>
-<summary><b>🗺️ Scene Operations</b></summary>
-
-<br>
-
-| Feature | Description |
-|---------|-------------|
-| 🎬 **Scene Navigation** | List, load, save scenes programmatically |
-| 🌳 **Hierarchy Inspection** | Get complete scene hierarchy with components |
-| 🔎 **Advanced Search** | Find objects by tag, name, or component type |
-| 🧹 **Scene Cleanup** | Remove missing scripts and empty GameObjects |
-
-</details>
 
 ## 🚀 Quick Setup
 
+### 📋 Prerequisites
+
 <details>
-<summary><b>📋 Prerequisites</b></summary>
+<summary><strong>🔑 Requirements</strong></summary>
 
-<br>
-
-| Requirement | Version | Download |
-|------------|---------|----------|
-| 🟢 Node.js | >= 18.0.0 | [nodejs.org](https://nodejs.org/) |
-| 🎮 Unity | 2022.3 LTS+ | [unity.com](https://unity.com/) |
-| 🤖 Claude Desktop | Latest | [claude.ai](https://claude.ai/download) |
+- **Node.js** >= 18.0.0 - [Download](https://nodejs.org/)
+- **Unity** 2022.3 LTS or later - [Download](https://unity.com/)
+- **Claude Desktop** or any MCP client - [Download](https://claude.ai/download)
 
 </details>
 
-<details open>
-<summary><b>📥 Installation</b></summary>
+---
 
-<br>
+## 📥 Installation
 
-**Option 1: Global Installation (Recommended)**
+> **⚠️ REQUIRED:** You must install Unity MCP before using any of its tools.
+
+<details>
+<summary><strong>📦 Choose your setup method</strong></summary>
+
+### Method 1: Automatic Setup (Recommended) ⚡
+
+**One command does everything:**
 ```bash
-npm install -g @spark-apps/unity-mcp
+claude mcp add @spark-apps/unity-mcp
+```
+✅ Installs the package
+✅ Configures your MCP client automatically
+✅ Ready to use immediately after restart
+
+---
+
+### Method 2: Manual Setup 🛠️
+
+**If you prefer to configure manually or use a different MCP client:**
+
+**Step 1: Install the package globally**
+```bash
+npm i -g @spark-apps/unity-mcp
 ```
 
-**Option 2: Use npx directly**
-```bash
-npx -y @spark-apps/unity-mcp
-```
+**Step 2: Add to your MCP client configuration**
 
-</details>
+Edit your MCP client config file:
+- <span style="background: #1e90ff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold;">Windows</span> `%APPDATA%\\Claude\\claude_desktop_config.json`
+- <span style="background: #c0c0c0; color: black; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold;">macOS</span> `~/Library/Application Support/Claude/claude_desktop_config.json`
+- <span style="background: #ffd700; color: black; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold;">Linux</span> `~/.config/Claude/claude_desktop_config.json`
 
-<details open>
-<summary><b>⚙️ Configure Claude Desktop</b></summary>
-
-<br>
-
-**Step 1:** Locate your Claude Desktop config file:
-
-| Platform | Path |
-|----------|------|
-| 🍎 macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
-| 🪟 Windows | `%APPDATA%/Claude/claude_desktop_config.json` |
-| 🐧 Linux | `~/.config/Claude/claude_desktop_config.json` |
-
-**Step 2:** Add Unity MCP to the configuration:
-
+Add this configuration:
 ```json
 {
   "mcpServers": {
-    "unity-mcp": {
-      "command": "npx",
-      "args": ["-y", "@spark-apps/unity-mcp"]
-    }
+    "unity-mcp": {"command": "npx", "args": ["-y", "@spark-apps/unity-mcp"]}
   }
 }
 ```
 
-**Step 3:** Restart Claude Desktop
-
-**Step 4:** Verify installation
-- Look for the 🔌 icon in Claude Desktop
-- Click it to see "unity-mcp" listed as a connected server
+**Step 3: Restart your MCP client**
 
 </details>
 
-<details open>
-<summary><b>🎮 Unity Editor Integration</b></summary>
+---
 
-<br>
+## 🎮 Unity Editor Integration
 
-Before using Unity MCP, install the editor scripts **once per project**:
+<details>
+<summary><strong>⚡ Required one-time setup per Unity project</strong></summary>
 
-1. Open Claude Desktop
+**Why is this needed?**
+Unity MCP installs C# editor scripts into your Unity project that create an HTTP server on port 8080. The MCP tools communicate with Unity through this server.
+
+**Setup Steps:**
+1. Open your MCP client (e.g., Claude Desktop or Claude Code)
 2. Tell Claude:
    ```
    Setup Unity MCP in my project at /path/to/unity/project
    ```
-3. Restart Unity Editor
-4. Verify installation:
-   - Check Console for: `[Unity MCP] Server started on port 8080`
-   - Or go to **Tools → Unity MCP → Server Status**
+3. This installs 4 C# scripts to `Assets/Editor/UnityMCP/`:
+   - `MCPEditorServer.cs` - HTTP server
+   - `EditorCommandHandler.cs` - Command processor with undo support
+   - `PlayModeHandler.cs` - Play mode automation
+   - `SceneHandler.cs` - Scene operations
+4. Restart Unity Editor
+5. Verify in Console: `[Unity MCP] Server started on port 8080`
 
-✅ **That's it!** You're ready to control Unity with AI.
+**Done!** The MCP tools can now control Unity Editor via HTTP.
 
 </details>
+
+---
 
 ## 🛠️ Available Tools
 
 <details>
-<summary><b>🔧 Complete Tool List (20 tools)</b></summary>
+<summary><strong>🔧 View All Available Tools (19 tools)</strong></summary>
 
-<br>
+**Safe Operations (Read-only)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
+| ![](https://img.shields.io/badge/⚙️%20-1a365d?style=for-the-badge)![Setup Unity MCP](https://img.shields.io/badge/Setup%20Unity%20MCP%20-007bff?style=for-the-badge) | Install editor integration into Unity project |
+| ![](https://img.shields.io/badge/🎯%20-1a365d?style=for-the-badge)![Select Objects](https://img.shields.io/badge/Select%20Objects%20-007bff?style=for-the-badge) | Select by name, tag, or pattern with framing |
+| ![](https://img.shields.io/badge/🔍%20-1a365d?style=for-the-badge)![Find Objects](https://img.shields.io/badge/Find%20Objects%20-007bff?style=for-the-badge) | Find by component type or pattern |
+| ![](https://img.shields.io/badge/🎬%20-1a365d?style=for-the-badge)![List Scenes](https://img.shields.io/badge/List%20Scenes%20-007bff?style=for-the-badge) | List all scenes in build settings |
+| ![](https://img.shields.io/badge/🌳%20-1a365d?style=for-the-badge)![Get Hierarchy](https://img.shields.io/badge/Get%20Hierarchy%20-007bff?style=for-the-badge) | Get complete scene hierarchy |
+| ![](https://img.shields.io/badge/🔎%20-1a365d?style=for-the-badge)![Find In Scene](https://img.shields.io/badge/Find%20In%20Scene%20-007bff?style=for-the-badge) | Find objects in current scene |
+| ![](https://img.shields.io/badge/📊%20-1a365d?style=for-the-badge)![Play Mode Status](https://img.shields.io/badge/Play%20Mode%20Status%20-007bff?style=for-the-badge) | Get play mode status and logs |
 
-### ⚙️ Setup
-| Tool | Description |
-|------|-------------|
-| `setup_unity_mcp` | Install editor integration (run once per project) |
+**Modifications (With Undo Support)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
+| ![](https://img.shields.io/badge/🔄%20-1a5e3a?style=for-the-badge)![Transform Objects](https://img.shields.io/badge/Transform%20Objects%20-28a745?style=for-the-badge) | Move, rotate, scale objects |
+| ![](https://img.shields.io/badge/📐%20-1a5e3a?style=for-the-badge)![Align Objects](https://img.shields.io/badge/Align%20Objects%20-28a745?style=for-the-badge) | Align left/right/top/bottom/center |
+| ![](https://img.shields.io/badge/📏%20-1a5e3a?style=for-the-badge)![Distribute Objects](https://img.shields.io/badge/Distribute%20Objects%20-28a745?style=for-the-badge) | Distribute evenly along axis |
+| ![](https://img.shields.io/badge/📦%20-1a5e3a?style=for-the-badge)![Duplicate Objects](https://img.shields.io/badge/Duplicate%20Objects%20-28a745?style=for-the-badge) | Clone objects with undo support |
+| ![](https://img.shields.io/badge/▶️%20-cc6600?style=for-the-badge)![Enter Play Mode](https://img.shields.io/badge/Enter%20Play%20Mode%20-ff9500?style=for-the-badge) | Start play mode programmatically |
+| ![](https://img.shields.io/badge/⏸️%20-cc6600?style=for-the-badge)![Exit Play Mode](https://img.shields.io/badge/Exit%20Play%20Mode%20-ff9500?style=for-the-badge) | Exit play mode programmatically |
+| ![](https://img.shields.io/badge/🤖%20-cc6600?style=for-the-badge)![Run Test](https://img.shields.io/badge/Run%20Test%20-ff9500?style=for-the-badge) | Execute automated test scenarios |
+| ![](https://img.shields.io/badge/⏱️%20-cc6600?style=for-the-badge)![Set Time Scale](https://img.shields.io/badge/Set%20Time%20Scale%20-ff9500?style=for-the-badge) | Slow motion or fast forward |
+| ![](https://img.shields.io/badge/📂%20-cc6600?style=for-the-badge)![Load Scene](https://img.shields.io/badge/Load%20Scene%20-ff9500?style=for-the-badge) | Load scene by name or index |
+| ![](https://img.shields.io/badge/💾%20-cc6600?style=for-the-badge)![Save Scene](https://img.shields.io/badge/Save%20Scene%20-ff9500?style=for-the-badge) | Save current or all scenes |
 
-### 🎯 Editor Manipulation
-| Tool | Description |
-|------|-------------|
-| `unity_select_objects` | Select by name, tag, or pattern |
-| `unity_transform_objects` | Move, rotate, scale objects |
-| `unity_align_objects` | Align left/right/top/bottom/center |
-| `unity_distribute_objects` | Distribute evenly along axis |
-| `unity_duplicate_objects` | Duplicate with undo support |
-| `unity_delete_objects` | Delete with undo support |
-| `unity_find_objects` | Find by component or pattern |
-
-### 🧪 Play Mode Testing
-| Tool | Description |
-|------|-------------|
-| `unity_enter_play_mode` | Enter play mode (with optional pause) |
-| `unity_exit_play_mode` | Exit play mode |
-| `unity_run_test` | Run automated test scenarios |
-| `unity_playmode_status` | Get status and test logs |
-| `unity_set_timescale` | Slow motion or fast forward |
-
-### 🗺️ Scene Operations
-| Tool | Description |
-|------|-------------|
-| `unity_list_scenes` | List all scenes in build settings |
-| `unity_load_scene` | Load scene by name or index |
-| `unity_save_scene` | Save current or all scenes |
-| `unity_get_hierarchy` | Get complete scene hierarchy |
-| `unity_find_in_scene` | Find objects in scene |
-| `unity_cleanup_scene` | Remove missing scripts/empty objects |
+**Destructive Operations (Use with Caution)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
+| ![](https://img.shields.io/badge/❌%20-c41e3a?style=for-the-badge)![Delete Objects](https://img.shields.io/badge/Delete%20Objects%20-ff073a?style=for-the-badge) | Delete objects with undo support |
+| ![](https://img.shields.io/badge/🧹%20-c41e3a?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-ff073a?style=for-the-badge) | Remove missing scripts and empty objects |
 
 </details>
 
-## 💬 Usage Examples
+---
+
+## 💬 Example Commands
 
 <details>
-<summary><b>🎯 Editor Manipulation</b></summary>
+<summary><strong>🎯 Object Manipulation</strong></summary>
 
-<br>
-
-```
-"Select all objects with tag 'Enemy' and align them horizontally"
-
-"Move the Player object to position (0, 5, 10)"
-
-"Select objects matching 'Cube' and distribute them evenly along the x axis"
-
-"Find all objects with Camera component"
-
-"Align the selected UI elements to the left"
-```
+- *"Select all objects with tag 'Enemy' and align them horizontally"*
+- *"Move the Player object to position (0, 5, 10)"*
+- *"Distribute selected objects evenly along the x axis"*
+- *"Find all objects with Camera component"*
+- *"Duplicate selected object 5 times"*
 
 </details>
 
 <details>
-<summary><b>🧪 Play Mode Testing</b></summary>
+<summary><strong>🧪 Automated Testing</strong></summary>
 
-<br>
-
-```
-"Enter play mode and run a test that moves the Player to (10, 0, 0) for 5 seconds"
-
-"Enter play mode, wait 3 seconds, then exit"
-
-"Get the current play mode status and show test logs"
-
-"Set time scale to 0.5 for slow motion testing"
-
-"Run a test that destroys the 'Boss' object after 2 seconds"
-```
+- *"Enter play mode and move Player to (10, 0, 0) for 5 seconds"*
+- *"Set time scale to 0.5 for slow motion"*
+- *"Run a test that destroys the Boss after 2 seconds"*
+- *"Check play mode status and show test logs"*
 
 </details>
 
 <details>
-<summary><b>🗺️ Scene Operations</b></summary>
+<summary><strong>🗺️ Scene Operations</strong></summary>
 
-<br>
-
-```
-"List all scenes in the project"
-
-"Load the MainMenu scene"
-
-"Show me the complete hierarchy of the current scene"
-
-"Find all objects in the scene with Rigidbody component"
-
-"Clean up the scene by removing missing scripts"
-```
+- *"List all scenes in the project"*
+- *"Load the MainMenu scene"*
+- *"Show me the complete hierarchy of the current scene"*
+- *"Find all objects with Rigidbody component"*
+- *"Clean up scene by removing missing scripts"*
 
 </details>
 
-## 🎓 Workflow Examples
-
-### Quick Object Arrangement
-```
-You: "I need to arrange 5 cubes evenly in a row"
-
-Claude uses:
-1. unity_select_objects (pattern: "Cube")
-2. unity_distribute_objects (axis: "horizontal")
-
-Result: Cubes perfectly distributed!
-```
-
-### Automated Testing Workflow
-```
-You: "Test if the player can move to the goal"
-
-Claude uses:
-1. unity_enter_play_mode
-2. unity_run_test (targetObject: "Player", action: "move", x: 10, y: 0, z: 0, duration: 3)
-3. unity_playmode_status (check results)
-4. unity_exit_play_mode
-
-Result: Automated test with detailed logs!
-```
-
-### Scene Cleanup
-```
-You: "Clean up this messy scene"
-
-Claude uses:
-1. unity_get_hierarchy (inspect scene)
-2. unity_cleanup_scene (removeMissingScripts: true, removeEmpty: true)
-3. unity_save_scene
-
-Result: Clean, optimized scene!
-```
-
-## 🏗️ Architecture
-
-Unity MCP uses a **client-server architecture** for real-time editor control:
-
-```
-┌─────────────────┐         HTTP/JSON         ┌─────────────────┐
-│                 │      (localhost:8080)      │                 │
-│  Claude Desktop │◄──────────────────────────►│  Unity Editor   │
-│   (MCP Client)  │                            │   (HTTP Server) │
-│                 │                            │                 │
-└─────────────────┘                            └─────────────────┘
-        │                                              │
-        │ TypeScript Services                          │ C# Editor Scripts
-        │  - EditorManipulationService                 │  - MCPEditorServer
-        │  - PlayModeTestingService                    │  - EditorCommandHandler
-        │  - SceneOperationsService                    │  - PlayModeHandler
-        │                                              │  - SceneHandler
-        └──────────────────────────────────────────────┘
-```
-
-### How It Works
-1. **Setup Phase**: Install C# editor scripts into Unity project
-2. **Runtime**: Unity Editor runs HTTP server on port 8080
-3. **Commands**: MCP sends HTTP requests to Unity
-4. **Execution**: Unity executes commands using Editor APIs (Selection, Transform, Undo, etc.)
-5. **Response**: Unity returns results via JSON
-
-## 🔧 Advanced Usage
-
-### Custom Port
-If port 8080 is taken, modify the Unity scripts:
-```csharp
-// In MCPEditorServer.cs
-private const int PORT = 9090; // Change to your preferred port
-```
-
-Then update the TypeScript service:
-```typescript
-const editorService = new EditorManipulationService(9090);
-```
-
-### Undo Support
-All destructive operations (transform, delete, etc.) are registered with Unity's Undo system. Press Ctrl+Z (Cmd+Z on Mac) to undo MCP operations.
+---
 
 ## 🐛 Troubleshooting
 
-### "Unity Editor MCP server is not running"
+<details>
+<summary><strong>❌ Common Issues</strong></summary>
+
+**MCP Server Not Showing:**
+1. Verify Node.js is installed: `node --version`
+2. Check config file path is correct
+3. Ensure JSON syntax is valid
+4. Restart MCP client completely
+
+**Unity Editor Not Responding:**
 1. Ensure Unity Editor is open
-2. Check Console for `[Unity MCP] Server started on port 8080`
-3. If not running, go to **Tools → Unity MCP → Start Server**
-4. Restart Unity Editor if necessary
+2. Check `Assets/Editor/UnityMCP/` scripts are installed
+3. Verify Console for `[Unity MCP] Server started on port 8080`
+4. Check no errors in Unity Console
 
-### Port Already in Use
-1. Check what's using port 8080: `lsof -i :8080` (Mac/Linux) or `netstat -ano | findstr :8080` (Windows)
-2. Stop the conflicting process or change the MCP port (see Advanced Usage)
-
-### MCP Commands Not Working
-1. Verify setup with: "Is the Unity MCP server running?"
-2. Check Unity Console for error messages
-3. Ensure you ran `setup_unity_mcp` on your project
-4. Try manually starting server: **Tools → Unity MCP → Start Server**
-
-## 📖 Documentation & Resources
-
-<div align="center">
-
-[![Unity Docs](https://img.shields.io/badge/Unity_Editor_API-Docs-black?style=for-the-badge&logo=unity)](https://docs.unity3d.com/ScriptReference/UnityEditor.html)
-[![MCP Protocol](https://img.shields.io/badge/MCP-Protocol-blue?style=for-the-badge)](https://modelcontextprotocol.io/)
-[![Report Issues](https://img.shields.io/badge/Report-Issues-red?style=for-the-badge&logo=github)](https://github.com/muammar-yacoob/unity-mcp/issues)
-
-</div>
-
-## 🤝 Contributing
-
-Contributions are welcome! This project focuses on **real Unity workflow automation**.
-
-<details>
-<summary><b>✅ Focus Areas (PRs Welcome)</b></summary>
-
-<br>
-
-- ✅ Editor manipulation and automation
-- ✅ Testing workflows
-- ✅ Scene management
-- ✅ Asset operations
-- ✅ Performance improvements
-- ✅ Bug fixes
+**Port Already in Use:**
+1. Default port is `8080`
+2. Check what's using it: `lsof -i :8080` (Mac/Linux) or `netstat -ano | findstr :8080` (Windows)
+3. Stop conflicting process or change port in Unity scripts
 
 </details>
 
-<details>
-<summary><b>❌ Not in Scope</b></summary>
+---
 
-<br>
+## 🌱 Support & Contributions
 
-- ❌ Code generation (use context7 MCP)
-- ❌ Game-specific templates
-- ❌ Asset creation from scratch
+⭐ **Star the repo** & I power up like Mario 🍄  
+☕ **Devs run on coffee** - [Buy me one?][coffee-link]  
+💰 **Crypto tips welcome** - [Tip in crypto](https://tip.md/muammar-yacoob)  
+🤝 **Contributions are welcome** - [🍴 Fork][fork-link], improve, PR!  
+🎥 **Need help?** <img src="https://img.icons8.com/color/20/youtube-play.png" alt="YouTube" width="20" height="20" style="vertical-align: middle;"> [Setup Tutorial][vid-link] • <img src="https://img.icons8.com/color/20/discord--v2.png" alt="Discord" width="20" height="20" style="vertical-align: middle;"> [Join Discord][discord-link]
 
-</details>
+## 💖 Sponsor
+Your support helps maintain and improve the tool. please consider [sponsoring the project][stars-link]. 
 
-## 📝 License
-
-MIT © [Muammar Yacoob](https://github.com/muammar-yacoob)
 
 ---
 
 <div align="center">
 
-## 🌟 Support This Project
 
-**If Unity MCP saves you time, show some love!**
-
-[![Star on GitHub](https://img.shields.io/github/stars/muammar-yacoob/unity-mcp?style=social)](https://github.com/muammar-yacoob/unity-mcp)
-[![Sponsor](https://img.shields.io/badge/Sponsor-💖-pink?style=for-the-badge)](https://github.com/sponsors/muammar-yacoob)
-
-### Ways to Support
-
-| Action | Impact |
-|--------|--------|
-| ⭐ **Star this repo** | Helps others discover Unity MCP |
-| 💖 **[Sponsor](https://github.com/sponsors/muammar-yacoob)** | Supports continued development |
-| 🐛 **Report bugs** | Improves stability for everyone |
-| 📢 **Share** | Helps the Unity community |
-| 🔧 **Contribute** | Makes Unity MCP better |
-
----
-
-### 🛠️ Built for Game Developers
-
-**Unity MCP** is built with ❤️ for developers who want to:
-- Automate repetitive editor tasks
-- Test game mechanics faster
-- Focus on creativity, not tedious work
-
-<sub>Made with TypeScript, C#, and the Model Context Protocol</sub>
-
-</div>
+**Made with ❤️ for Game Devs** • [Privacy Policy](PRIVACY.md) • [Terms of Service](TERMS.md)
