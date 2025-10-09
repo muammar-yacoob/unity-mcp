@@ -56,7 +56,9 @@ jobs:
 
       - name: Sync with remote
         run: |
-          git pull origin main --rebase=false
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
 
       - name: Run semantic-release
         id: semantic-release
