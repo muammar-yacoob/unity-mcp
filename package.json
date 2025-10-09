@@ -1,6 +1,6 @@
 {
   "name": "@spark-apps/unity-mcp",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "Model Context Protocol (MCP) server for automated Unity game development and 2D shooter creation",
   "type": "module",
   "private": true,
