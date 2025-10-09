@@ -8,14 +8,6 @@ on:
 
 jobs:
   release-and-publish:
-    # Run for release-triggering commits, including in merge commits
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      contains(toJSON(github.event.commits.*.message), 'feat:') ||
-      contains(toJSON(github.event.commits.*.message), 'feat!:') ||
-      contains(toJSON(github.event.commits.*.message), 'fix:') ||
-      contains(toJSON(github.event.commits.*.message), 'perf:') ||
-      contains(toJSON(github.event.commits.*.message), 'BREAKING CHANGE')
     runs-on: ubuntu-latest
     permissions:
       contents: write
