@@ -2,7 +2,7 @@
 [license-link]: ../../blob/main/LICENSE
 [stars-link]: ../../stargazers
 [issues-link]: ../../issues
-[discord-link]: https://discord.gg/1424501956759523442
+[discord-link]: https://discord.gg/5skXfKRytR
 [website-link]: https://spark-games.co.uk
 [coffee-link]: https://buymeacoffee.com/spark88
 [release-link]: ../../releases
