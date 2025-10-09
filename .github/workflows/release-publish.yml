@@ -59,33 +59,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
-
-      - name: Create Distribution Package
-        if: steps.semantic-release.outputs.new_release_published == 'true'
-        run: |
-          # Create distribution directory
-          mkdir -p dist-package
-          
-          # Copy essential files
-          cp package.json dist-package/
-          cp README.md dist-package/ 2>/dev/null || true
-          cp LICENSE dist-package/ 2>/dev/null || true
-          
-          # Copy built distribution files
-          find . -name "dist" -type d -exec cp -r {} dist-package/ \;
-          
-          # Update package.json version if new release
-          VERSION="${{ steps.semantic-release.outputs.new_release_version }}"
-          if [ ! -z "$VERSION" ]; then
-            cd dist-package
-            npm version "$VERSION" --no-git-tag-version
-            cd ..
-          fi
-
-      - name: Create Release Archive
-        if: steps.semantic-release.outputs.new_release_published == 'true'
-        run: |
-          cd dist-package
-          tar -czf ../unity-mcp-${{ steps.semantic-release.outputs.new_release_version }}.tar.gz *
-          cd .. 
+        working-directory: packages/mcp-server
+        run: npx semantic-release 

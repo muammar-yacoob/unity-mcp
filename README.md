@@ -282,7 +282,7 @@ All settings persist across Unity sessions!
 ## 🐛 Troubleshooting
 
 <details>
-<summary><strong>❌ Common Issues</strong></summary>
+<summary><strong>🐞 Common Issues</strong></summary>
 
 **MCP Server Not Showing:**
 1. Verify Node.js is installed: `node --version`
