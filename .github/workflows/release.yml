@@ -1,13 +1,13 @@
-name: Release and Publish
+name: Create Release
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
+    inputs: {}
 
 jobs:
-  release-and-publish:
+  build:
     # Run for release-triggering commits, including in merge commits
     if: |
       github.event_name == 'workflow_dispatch' ||
@@ -19,8 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
-      id-token: write
       issues: write
       pull-requests: write
     steps:
@@ -37,44 +35,45 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
       - name: Install dependencies
-        run: bun install
+        run: npm ci
+        working-directory: ./packages/mcp-server
+
+      - name: Build project
+        run: npm run build
+        working-directory: ./packages/mcp-server
+
+      - name: Install semantic-release
+        run: npm install -g semantic-release @semantic-release/github @semantic-release/changelog @semantic-release/git @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/npm
+        working-directory: ./packages/mcp-server
 
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config pull.rebase false
 
-      - name: Build project
-        run: bun run build
-
-      - name: Run semantic-release
+      - name: Semantic Release
         id: semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
+        working-directory: ./packages/mcp-server
 
       - name: Create Distribution Package
         if: steps.semantic-release.outputs.new_release_published == 'true'
         run: |
           # Create distribution directory
           mkdir -p dist-package
-          
+
           # Copy essential files
           cp package.json dist-package/
           cp README.md dist-package/ 2>/dev/null || true
           cp LICENSE dist-package/ 2>/dev/null || true
-          
-          # Copy built distribution files
-          find . -name "dist" -type d -exec cp -r {} dist-package/ \;
-          
+
+          # Copy built distribution
+          cp -r dist dist-package/
+
           # Update package.json version if new release
           VERSION="${{ steps.semantic-release.outputs.new_release_version }}"
           if [ ! -z "$VERSION" ]; then
@@ -88,4 +87,4 @@ jobs:
         run: |
           cd dist-package
           tar -czf ../UnityMCP-${{ steps.semantic-release.outputs.new_release_version }}.tar.gz *
-          cd .. 
+          cd ..
