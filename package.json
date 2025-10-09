@@ -1,0 +1,50 @@
+{
+  "name": "@spark-apps/unity-mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol (MCP) server for automated Unity game development and 2D shooter creation",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "cd packages/mcp-server && npm run build",
+    "dev": "cd packages/mcp-server && npm run dev",
+    "test": "cd packages/mcp-server && npm test",
+    "type-check": "cd packages/mcp-server && npm run type-check",
+    "clean": "cd packages/mcp-server && npm run clean && rm -rf node_modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muammar-yacoob/unity-mcp.git"
+  },
+  "keywords": [
+    "unity",
+    "game-development",
+    "mcp",
+    "model-context-protocol",
+    "automation",
+    "unity-editor",
+    "game-engine",
+    "unity-automation",
+    "real-time-control"
+  ],
+  "author": "Muammar Yacoob <https://github.com/muammar-yacoob>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.17.24",
+    "semantic-release": "^23.0.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^11.0.0",
+    "@semantic-release/github": "^9.0.0",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/muammar-yacoob/unity-mcp/issues"
+  },
+  "homepage": "https://github.com/muammar-yacoob/unity-mcp#readme"
+}
