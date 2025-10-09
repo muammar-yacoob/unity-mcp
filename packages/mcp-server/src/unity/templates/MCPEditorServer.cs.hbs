@@ -18,10 +18,12 @@ namespace UnityMCP
         private static HttpListener listener;
         private static Thread serverThread;
         private static bool isRunning = false;
-        private const int PORT = 8080;
+        private static bool isStarting = false;
+        private static MCPConfig config;
 
         static MCPEditorServer()
         {
+            config = MCPConfig.GetOrCreate();
             EditorApplication.update += Initialize;
         }
 
@@ -29,31 +31,64 @@ namespace UnityMCP
         {
             EditorApplication.update -= Initialize;
 
-            if (!isRunning)
+            if (!isRunning && config.autoStart)
             {
                 StartServer();
             }
         }
 
+        /// <summary>
+        /// Get the HTTP listener instance
+        /// </summary>
+        public static HttpListener GetListener()
+        {
+            return listener;
+        }
+
+        /// <summary>
+        /// Check if server is currently starting
+        /// </summary>
+        public static bool IsStarting()
+        {
+            return isStarting;
+        }
+
         [MenuItem("Tools/Unity MCP/Start Server")]
         public static void StartServer()
         {
-            if (isRunning) return;
+            if (isRunning || isStarting) return;
+
+            isStarting = true;
 
             try
             {
+                if (config == null)
+                {
+                    config = MCPConfig.GetOrCreate();
+                }
+
                 listener = new HttpListener();
-                listener.Prefixes.Add($"http://localhost:{PORT}/");
+                string prefix = config.allowRemoteConnections
+                    ? $"http://+:{config.port}/"
+                    : $"http://localhost:{config.port}/";
+                listener.Prefixes.Add(prefix);
                 listener.Start();
                 isRunning = true;
+                isStarting = false;
 
                 serverThread = new Thread(HandleRequests);
                 serverThread.Start();
 
-                Debug.Log($"[Unity MCP] Server started on port {PORT}");
+                Debug.Log($"[Unity MCP] Server started on port {config.port}");
+                if (config.verboseLogging)
+                {
+                    Debug.Log($"[Unity MCP] Remote connections: {config.allowRemoteConnections}");
+                    Debug.Log($"[Unity MCP] Request timeout: {config.requestTimeout}s");
+                }
             }
             catch (Exception e)
             {
+                isStarting = false;
                 Debug.LogError($"[Unity MCP] Failed to start server: {e.Message}");
             }
         }
@@ -135,6 +170,14 @@ namespace UnityMCP
                 else if (path.StartsWith("/scene/"))
                 {
                     responseString = SceneHandler.HandleCommand(path, requestBody);
+                }
+                else if (path.StartsWith("/console/") || path.StartsWith("/asset/") || path.StartsWith("/project/"))
+                {
+                    responseString = AssetHandler.HandleCommand(path, requestBody, request.Url.Query);
+                }
+                else if (path.StartsWith("/advanced/"))
+                {
+                    responseString = AdvancedToolsHandler.HandleCommand(path, requestBody);
                 }
                 else if (path == "/health")
                 {
