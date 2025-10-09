@@ -28,7 +28,7 @@ export function registerTools(server: FastMCP) {
     }),
     execute: async (params) => {
       try {
-        const result = await setupService.setupunity-mcp({
+        const result = await setupService.setupUnityMCP({
           projectPath: params.projectPath,
         });
         return JSON.stringify(result, null, 2);
