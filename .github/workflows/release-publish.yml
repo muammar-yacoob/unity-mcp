@@ -8,14 +8,6 @@ on:
 
 jobs:
   release-and-publish:
-    # Run for release-triggering commits, including in merge commits
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      contains(toJSON(github.event.commits.*.message), 'feat:') ||
-      contains(toJSON(github.event.commits.*.message), 'feat!:') ||
-      contains(toJSON(github.event.commits.*.message), 'fix:') ||
-      contains(toJSON(github.event.commits.*.message), 'perf:') ||
-      contains(toJSON(github.event.commits.*.message), 'BREAKING CHANGE')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -29,16 +21,45 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug - Show commit messages
+      - name: Debug - Show commit messages and check triggers
         run: |
-          echo "=== COMMIT MESSAGES DEBUG ==="
+          echo "=== WORKFLOW TRIGGER DEBUG ==="
           echo "Event name: ${{ github.event_name }}"
-          echo "Commits JSON:"
+          echo "Ref: ${{ github.ref }}"
+          echo "Repository: ${{ github.repository }}"
+          echo ""
+          echo "=== COMMITS JSON ==="
           echo '${{ toJSON(github.event.commits) }}'
-          echo "=== CHECKING FOR RELEASE TRIGGERS ==="
+          echo ""
+          echo "=== RECENT COMMITS ==="
           git log --oneline -10
+          echo ""
           echo "=== LAST COMMIT MESSAGE ==="
-          git log -1 --pretty=format:"%s"
+          LAST_MSG=$(git log -1 --pretty=format:"%s")
+          echo "Message: $LAST_MSG"
+          echo ""
+          echo "=== CHECKING CONVENTIONAL COMMIT PATTERNS ==="
+          if [[ "$LAST_MSG" =~ ^feat: ]]; then
+            echo "✅ Found feat: commit - should trigger release"
+          elif [[ "$LAST_MSG" =~ ^fix: ]]; then
+            echo "✅ Found fix: commit - should trigger release"
+          elif [[ "$LAST_MSG" =~ ^perf: ]]; then
+            echo "✅ Found perf: commit - should trigger release"
+          elif [[ "$LAST_MSG" == *"BREAKING CHANGE"* ]]; then
+            echo "✅ Found BREAKING CHANGE - should trigger release"
+          else
+            echo "❌ No conventional commit pattern found - would skip release"
+          fi
+
+      - name: Check workflow file syntax
+        run: |
+          echo "=== WORKFLOW FILE CHECK ==="
+          if [ -f ".github/workflows/release-publish.yml" ]; then
+            echo "✅ Workflow file exists"
+            echo "File size: $(wc -c < .github/workflows/release-publish.yml) bytes"
+          else
+            echo "❌ Workflow file missing"
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
