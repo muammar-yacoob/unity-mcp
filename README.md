@@ -141,52 +141,52 @@ Done! Use the Control Panel to manage settings and monitor your connection.
 ### **🎯 Editor Control (7 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/⚙️%20-1E3A8A?style=for-the-badge)![Setup Unity MCP](https://img.shields.io/badge/Setup%20Unity%20MCP%20-1E3A8A?style=for-the-badge) | Install editor integration into Unity project |
-| ![](https://img.shields.io/badge/🎯%20-06B6D4?style=for-the-badge)![Select Objects](https://img.shields.io/badge/Select%20Objects%20-06B6D4?style=for-the-badge) | Select by name, tag, or pattern with framing |
-| ![](https://img.shields.io/badge/🔄%20-14B8A6?style=for-the-badge)![Transform Objects](https://img.shields.io/badge/Transform%20Objects%20-14B8A6?style=for-the-badge) | Move, rotate, scale objects |
+| ![](https://img.shields.io/badge/⚙️%20-0EA5E9?style=for-the-badge)![Setup Unity MCP](https://img.shields.io/badge/Setup%20Unity%20MCP%20-0EA5E9?style=for-the-badge) | Install editor integration into Unity project |
+| ![](https://img.shields.io/badge/🎯%20-0EA5E9?style=for-the-badge)![Select Objects](https://img.shields.io/badge/Select%20Objects%20-0EA5E9?style=for-the-badge) | Select by name, tag, or pattern with framing |
+| ![](https://img.shields.io/badge/🔄%20-0EA5E9?style=for-the-badge)![Transform Objects](https://img.shields.io/badge/Transform%20Objects%20-0EA5E9?style=for-the-badge) | Move, rotate, scale objects |
 | ![](https://img.shields.io/badge/📐%20-0EA5E9?style=for-the-badge)![Align Objects](https://img.shields.io/badge/Align%20Objects%20-0EA5E9?style=for-the-badge) | Align left/right/top/bottom/center |
-| ![](https://img.shields.io/badge/📏%20-22D3EE?style=for-the-badge)![Distribute Objects](https://img.shields.io/badge/Distribute%20Objects%20-22D3EE?style=for-the-badge) | Distribute evenly along axis |
-| ![](https://img.shields.io/badge/📦%20-60A5FA?style=for-the-badge)![Duplicate Objects](https://img.shields.io/badge/Duplicate%20Objects%20-60A5FA?style=for-the-badge) | Clone objects with undo support |
-| ![](https://img.shields.io/badge/🔍%20-1E40AF?style=for-the-badge)![Find Objects](https://img.shields.io/badge/Find%20Objects%20-1E40AF?style=for-the-badge) | Find by component type or pattern |
+| ![](https://img.shields.io/badge/📏%20-0EA5E9?style=for-the-badge)![Distribute Objects](https://img.shields.io/badge/Distribute%20Objects%20-0EA5E9?style=for-the-badge) | Distribute evenly along axis |
+| ![](https://img.shields.io/badge/📦%20-0EA5E9?style=for-the-badge)![Duplicate Objects](https://img.shields.io/badge/Duplicate%20Objects%20-0EA5E9?style=for-the-badge) | Clone objects with undo support |
+| ![](https://img.shields.io/badge/🔍%20-0EA5E9?style=for-the-badge)![Find Objects](https://img.shields.io/badge/Find%20Objects%20-0EA5E9?style=for-the-badge) | Find by component type or pattern |
 
 ### **🗺️ Scene Management (6 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/🎬%20-059669?style=for-the-badge)![List Scenes](https://img.shields.io/badge/List%20Scenes%20-059669?style=for-the-badge) | List all scenes in build settings |
+| ![](https://img.shields.io/badge/🎬%20-10B981?style=for-the-badge)![List Scenes](https://img.shields.io/badge/List%20Scenes%20-10B981?style=for-the-badge) | List all scenes in build settings |
 | ![](https://img.shields.io/badge/📂%20-10B981?style=for-the-badge)![Load Scene](https://img.shields.io/badge/Load%20Scene%20-10B981?style=for-the-badge) | Load scene by name or index |
-| ![](https://img.shields.io/badge/💾%20-34D399?style=for-the-badge)![Save Scene](https://img.shields.io/badge/Save%20Scene%20-34D399?style=for-the-badge) | Save current or all scenes |
-| ![](https://img.shields.io/badge/🌳%20-84CC16?style=for-the-badge)![Get Hierarchy](https://img.shields.io/badge/Get%20Hierarchy%20-84CC16?style=for-the-badge) | Get complete scene hierarchy |
-| ![](https://img.shields.io/badge/🔎%20-22C55E?style=for-the-badge)![Find In Scene](https://img.shields.io/badge/Find%20In%20Scene%20-22C55E?style=for-the-badge) | Find objects in current scene |
-| ![](https://img.shields.io/badge/🧹%20-16A34A?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-16A34A?style=for-the-badge) | Remove missing scripts and empty objects |
+| ![](https://img.shields.io/badge/💾%20-10B981?style=for-the-badge)![Save Scene](https://img.shields.io/badge/Save%20Scene%20-10B981?style=for-the-badge) | Save current or all scenes |
+| ![](https://img.shields.io/badge/🌳%20-10B981?style=for-the-badge)![Get Hierarchy](https://img.shields.io/badge/Get%20Hierarchy%20-10B981?style=for-the-badge) | Get complete scene hierarchy |
+| ![](https://img.shields.io/badge/🔎%20-10B981?style=for-the-badge)![Find In Scene](https://img.shields.io/badge/Find%20In%20Scene%20-10B981?style=for-the-badge) | Find objects in current scene |
+| ![](https://img.shields.io/badge/🧹%20-10B981?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-10B981?style=for-the-badge) | Remove missing scripts and empty objects |
 
 ### **🧪 Testing & Play Mode (5 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/▶️%20-7C3AED?style=for-the-badge)![Enter Play Mode](https://img.shields.io/badge/Enter%20Play%20Mode%20-7C3AED?style=for-the-badge) | Start play mode programmatically |
-| ![](https://img.shields.io/badge/⏸️%20-D946EF?style=for-the-badge)![Exit Play Mode](https://img.shields.io/badge/Exit%20Play%20Mode%20-D946EF?style=for-the-badge) | Exit play mode programmatically |
+| ![](https://img.shields.io/badge/▶️%20-8B5CF6?style=for-the-badge)![Enter Play Mode](https://img.shields.io/badge/Enter%20Play%20Mode%20-8B5CF6?style=for-the-badge) | Start play mode programmatically |
+| ![](https://img.shields.io/badge/⏸️%20-8B5CF6?style=for-the-badge)![Exit Play Mode](https://img.shields.io/badge/Exit%20Play%20Mode%20-8B5CF6?style=for-the-badge) | Exit play mode programmatically |
 | ![](https://img.shields.io/badge/🤖%20-8B5CF6?style=for-the-badge)![Run Test](https://img.shields.io/badge/Run%20Test%20-8B5CF6?style=for-the-badge) | Execute automated test scenarios |
-| ![](https://img.shields.io/badge/📊%20-C084FC?style=for-the-badge)![Play Mode Status](https://img.shields.io/badge/Play%20Mode%20Status%20-C084FC?style=for-the-badge) | Get play mode status and logs |
-| ![](https://img.shields.io/badge/⏱️%20-E879F9?style=for-the-badge)![Set Time Scale](https://img.shields.io/badge/Set%20Time%20Scale%20-E879F9?style=for-the-badge) | Slow motion or fast forward |
+| ![](https://img.shields.io/badge/📊%20-8B5CF6?style=for-the-badge)![Play Mode Status](https://img.shields.io/badge/Play%20Mode%20Status%20-8B5CF6?style=for-the-badge) | Get play mode status and logs |
+| ![](https://img.shields.io/badge/⏱️%20-8B5CF6?style=for-the-badge)![Set Time Scale](https://img.shields.io/badge/Set%20Time%20Scale%20-8B5CF6?style=for-the-badge) | Slow motion or fast forward |
 
 ### **📦 Assets & Console (5 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
 | ![](https://img.shields.io/badge/📋%20-F59E0B?style=for-the-badge)![Get Console Logs](https://img.shields.io/badge/Get%20Console%20Logs%20-F59E0B?style=for-the-badge) | Retrieve Unity console logs for debugging |
-| ![](https://img.shields.io/badge/🧹%20-F97316?style=for-the-badge)![Clear Console](https://img.shields.io/badge/Clear%20Console%20-F97316?style=for-the-badge) | Clear all console logs |
-| ![](https://img.shields.io/badge/🎁%20-FB923C?style=for-the-badge)![Create Prefab](https://img.shields.io/badge/Create%20Prefab%20-FB923C?style=for-the-badge) | Create prefab from selected GameObject |
-| ![](https://img.shields.io/badge/📂%20-FDBA74?style=for-the-badge)![Get Assets](https://img.shields.io/badge/Get%20Assets%20-FDBA74?style=for-the-badge) | List project assets with filtering |
-| ![](https://img.shields.io/badge/🔄%20-FCD34D?style=for-the-badge)![Refresh Assets](https://img.shields.io/badge/Refresh%20Assets%20-FCD34D?style=for-the-badge) | Refresh Unity asset database |
+| ![](https://img.shields.io/badge/🧹%20-F59E0B?style=for-the-badge)![Clear Console](https://img.shields.io/badge/Clear%20Console%20-F59E0B?style=for-the-badge) | Clear all console logs |
+| ![](https://img.shields.io/badge/🎁%20-F59E0B?style=for-the-badge)![Create Prefab](https://img.shields.io/badge/Create%20Prefab%20-F59E0B?style=for-the-badge) | Create prefab from selected GameObject |
+| ![](https://img.shields.io/badge/📂%20-F59E0B?style=for-the-badge)![Get Assets](https://img.shields.io/badge/Get%20Assets%20-F59E0B?style=for-the-badge) | List project assets with filtering |
+| ![](https://img.shields.io/badge/🔄%20-F59E0B?style=for-the-badge)![Refresh Assets](https://img.shields.io/badge/Refresh%20Assets%20-F59E0B?style=for-the-badge) | Refresh Unity asset database |
 
 ### **⚡ Advanced Tools (7 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/🎬%20-BE123C?style=for-the-badge)![Execute Menu Item](https://img.shields.io/badge/Execute%20Menu%20Item%20-BE123C?style=for-the-badge) | Execute any Unity Editor menu command |
-| ![](https://img.shields.io/badge/📦%20-F43F5E?style=for-the-badge)![Add Package](https://img.shields.io/badge/Add%20Package%20-F43F5E?style=for-the-badge) | Install Unity packages via Package Manager |
+| ![](https://img.shields.io/badge/🎬%20-EC4899?style=for-the-badge)![Execute Menu Item](https://img.shields.io/badge/Execute%20Menu%20Item%20-EC4899?style=for-the-badge) | Execute any Unity Editor menu command |
+| ![](https://img.shields.io/badge/📦%20-EC4899?style=for-the-badge)![Add Package](https://img.shields.io/badge/Add%20Package%20-EC4899?style=for-the-badge) | Install Unity packages via Package Manager |
 | ![](https://img.shields.io/badge/🧪%20-EC4899?style=for-the-badge)![Run Unity Tests](https://img.shields.io/badge/Run%20Unity%20Tests%20-EC4899?style=for-the-badge) | Execute Test Runner tests (EditMode/PlayMode) |
-| ![](https://img.shields.io/badge/📥%20-FB7185?style=for-the-badge)![Add Asset to Scene](https://img.shields.io/badge/Add%20Asset%20to%20Scene%20-FB7185?style=for-the-badge) | Add prefab or asset to current scene |
-| ![](https://img.shields.io/badge/📝%20-F87171?style=for-the-badge)![Script Operations](https://img.shields.io/badge/Script%20Operations%20-F87171?style=for-the-badge) | Create, read, update, delete C# scripts |
-| ![](https://img.shields.io/badge/✅%20-FCA5A5?style=for-the-badge)![Validate Script](https://img.shields.io/badge/Validate%20Script%20-FCA5A5?style=for-the-badge) | Validate C# script syntax |
-| ![](https://img.shields.io/badge/❌%20-DC2626?style=for-the-badge)![Delete Objects](https://img.shields.io/badge/Delete%20Objects%20-DC2626?style=for-the-badge) | Delete objects with undo support |
+| ![](https://img.shields.io/badge/📥%20-EC4899?style=for-the-badge)![Add Asset to Scene](https://img.shields.io/badge/Add%20Asset%20to%20Scene%20-EC4899?style=for-the-badge) | Add prefab or asset to current scene |
+| ![](https://img.shields.io/badge/📝%20-EC4899?style=for-the-badge)![Script Operations](https://img.shields.io/badge/Script%20Operations%20-EC4899?style=for-the-badge) | Create, read, update, delete C# scripts |
+| ![](https://img.shields.io/badge/✅%20-EC4899?style=for-the-badge)![Validate Script](https://img.shields.io/badge/Validate%20Script%20-EC4899?style=for-the-badge) | Validate C# script syntax |
+| ![](https://img.shields.io/badge/❌%20-EC4899?style=for-the-badge)![Delete Objects](https://img.shields.io/badge/Delete%20Objects%20-EC4899?style=for-the-badge) | Delete objects with undo support |
 
 </details>
 
