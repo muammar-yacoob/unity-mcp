@@ -8,14 +8,6 @@ on:
 
 jobs:
   release-and-publish:
-    # Run for release-triggering commits, including in merge commits
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      contains(toJSON(github.event.commits.*.message), 'feat:') ||
-      contains(toJSON(github.event.commits.*.message), 'feat!:') ||
-      contains(toJSON(github.event.commits.*.message), 'fix:') ||
-      contains(toJSON(github.event.commits.*.message), 'perf:') ||
-      contains(toJSON(github.event.commits.*.message), 'BREAKING CHANGE')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -29,6 +21,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug - Show commit messages
+        run: |
+          echo "=== COMMIT MESSAGES DEBUG ==="
+          echo "Event name: ${{ github.event_name }}"
+          echo "Commits JSON:"
+          echo '${{ toJSON(github.event.commits) }}'
+          echo "=== CHECKING FOR RELEASE TRIGGERS ==="
+          git log --oneline -10
+          echo "=== LAST COMMIT MESSAGE ==="
+          git log -1 --pretty=format:"%s"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,13 +40,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
       - name: Install dependencies
-        run: bun install
+        run: |
+          echo "=== INSTALLING DEPENDENCIES ==="
+          cd packages/mcp-server
+          npm install
+          echo "=== PACKAGE.JSON DEBUG ==="
+          cat package.json | jq '.name, .version, .scripts'
 
       - name: Configure Git
         run: |
@@ -52,14 +55,31 @@ jobs:
           git config pull.rebase false
 
       - name: Build project
-        run: bun run build
+        run: |
+          echo "=== BUILDING PROJECT ==="
+          cd packages/mcp-server
+          npm run build
+          echo "=== BUILD OUTPUT ==="
+          ls -la dist/
+
+      - name: Debug - Check semantic-release config
+        run: |
+          echo "=== SEMANTIC-RELEASE CONFIG ==="
+          cat .releaserc.json
+          echo "=== CHECKING IF RELEASE SHOULD TRIGGER ==="
+          cd packages/mcp-server
+          npx semantic-release --dry-run --debug
 
       - name: Run semantic-release
         id: semantic-release
+        working-directory: packages/mcp-server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+          DEBUG: semantic-release:*
+        run: |
+          echo "=== RUNNING SEMANTIC-RELEASE ==="
+          npx semantic-release --debug
 
       - name: Create Distribution Package
         if: steps.semantic-release.outputs.new_release_published == 'true'
