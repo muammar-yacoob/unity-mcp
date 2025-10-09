@@ -4,6 +4,7 @@ import { SetupService } from "../unity/services/SetupService.js";
 import { EditorManipulationService } from "../unity/services/EditorManipulationService.js";
 import { PlayModeTestingService } from "../unity/services/PlayModeTestingService.js";
 import { SceneOperationsService } from "../unity/services/SceneOperationsService.js";
+import { AssetService } from "../unity/services/AssetService.js";
 
 /**
  * Register all Unity MCP tools with the server
@@ -14,6 +15,7 @@ export function registerTools(server: FastMCP) {
   const editorService = new EditorManipulationService();
   const playModeService = new PlayModeTestingService();
   const sceneService = new SceneOperationsService();
+  const assetService = new AssetService();
 
   // ===== SETUP TOOL =====
   server.addTool({
@@ -381,6 +383,101 @@ export function registerTools(server: FastMCP) {
     execute: async (params) => {
       try {
         const result = await sceneService.cleanupScene(params);
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  // ===== CONSOLE & ASSET TOOLS =====
+  server.addTool({
+    name: "unity_get_console_logs",
+    description: "Get console logs from Unity Editor for debugging. Filter by log type and limit results.",
+    parameters: z.object({
+      logType: z.enum(["all", "error", "warning", "log"]).optional().default("all").describe("Type of logs to retrieve"),
+      limit: z.number().optional().default(50).describe("Maximum number of logs to return"),
+    }),
+    execute: async (params) => {
+      try {
+        const result = await assetService.getConsoleLogs(params);
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  server.addTool({
+    name: "unity_clear_console",
+    description: "Clear all console logs in Unity Editor.",
+    parameters: z.object({}),
+    execute: async () => {
+      try {
+        const result = await assetService.clearConsole();
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  server.addTool({
+    name: "unity_create_prefab",
+    description: "Create a prefab from currently selected GameObject(s) in Unity Editor.",
+    parameters: z.object({
+      prefabName: z.string().describe("Name for the prefab file"),
+      folderPath: z.string().optional().default("Assets/Prefabs").describe("Folder path to save prefab (e.g., 'Assets/Prefabs')"),
+    }),
+    execute: async (params) => {
+      try {
+        const result = await assetService.createPrefab(params);
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  server.addTool({
+    name: "unity_get_assets",
+    description: "Get list of assets in Unity project. Filter by type or folder path.",
+    parameters: z.object({
+      type: z.string().optional().describe("Asset type filter (e.g., 'Prefab', 'Material', 'Script')"),
+      folder: z.string().optional().describe("Folder path to search in (e.g., 'Assets/Scripts')"),
+    }),
+    execute: async (params) => {
+      try {
+        const result = await assetService.getAssets(params);
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  server.addTool({
+    name: "unity_refresh_assets",
+    description: "Refresh Unity asset database to detect new or modified files.",
+    parameters: z.object({}),
+    execute: async () => {
+      try {
+        const result = await assetService.refreshAssets();
         return JSON.stringify(result, null, 2);
       } catch (error) {
         return JSON.stringify({

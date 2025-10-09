@@ -30,7 +30,7 @@
 
 ## ✨ What It Does
 
-Unity MCP provides **real-time control** of Unity Editor through the Model Context Protocol allowing you to:
+Unity MCP provides **real-time control** of Unity Editor through the Model Context Protocol, allowing you to:
 
 | <div align="left">Feature</div> | <div align="left">Description</div> |
 |:---------|:-------------|
@@ -38,6 +38,8 @@ Unity MCP provides **real-time control** of Unity Editor through the Model Conte
 | ![](https://img.shields.io/badge/📐%20-1a5e3a?style=for-the-badge)![Batch Operations](https://img.shields.io/badge/Batch%20Operations%20-28a745?style=for-the-badge) | Align, distribute, duplicate objects with undo support |
 | ![](https://img.shields.io/badge/🧪%20-cc6600?style=for-the-badge)![Automated Testing](https://img.shields.io/badge/Automated%20Testing%20-ff9500?style=for-the-badge) | Enter play mode and run test scenarios programmatically |
 | ![](https://img.shields.io/badge/🗺️%20-c41e3a?style=for-the-badge)![Scene Management](https://img.shields.io/badge/Scene%20Management%20-ff073a?style=for-the-badge) | Load, save, inspect scene hierarchy in real-time |
+| ![](https://img.shields.io/badge/📋%20-6f42c1?style=for-the-badge)![Console Monitoring](https://img.shields.io/badge/Console%20Monitoring%20-9f7aea?style=for-the-badge) | Real-time console logs and debugging |
+| ![](https://img.shields.io/badge/📦%20-6f42c1?style=for-the-badge)![Asset Management](https://img.shields.io/badge/Asset%20Management%20-9f7aea?style=for-the-badge) | Prefab creation and asset database operations |
 
 
 
@@ -120,11 +122,12 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
    ```
    Setup Unity MCP in my project at /path/to/unity/project
    ```
-3. This installs 4 C# scripts to `Assets/Editor/UnityMCP/`:
+3. This installs 5 C# scripts to `Assets/Editor/UnityMCP/`:
    - `MCPEditorServer.cs` - HTTP server
    - `EditorCommandHandler.cs` - Command processor with undo support
    - `PlayModeHandler.cs` - Play mode automation
    - `SceneHandler.cs` - Scene operations
+   - `AssetHandler.cs` - Console logs and asset management
 4. Restart Unity Editor
 5. Verify in Console: `[Unity MCP] Server started on port 8080`
 
@@ -137,7 +140,7 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
 ## 🛠️ Available Tools
 
 <details>
-<summary><strong>🔧 View All Available Tools (19 tools)</strong></summary>
+<summary><strong>🔧 View All Available Tools (24 tools)</strong></summary>
 
 **Safe Operations (Read-only)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
@@ -169,6 +172,15 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
 |:------|:-------------|
 | ![](https://img.shields.io/badge/❌%20-c41e3a?style=for-the-badge)![Delete Objects](https://img.shields.io/badge/Delete%20Objects%20-ff073a?style=for-the-badge) | Delete objects with undo support |
 | ![](https://img.shields.io/badge/🧹%20-c41e3a?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-ff073a?style=for-the-badge) | Remove missing scripts and empty objects |
+
+**Asset & Console Operations (NEW!)**
+| <div align="left">Tool</div> | <div align="left">Description</div> |
+|:------|:-------------|
+| ![](https://img.shields.io/badge/📋%20-6f42c1?style=for-the-badge)![Get Console Logs](https://img.shields.io/badge/Get%20Console%20Logs%20-9f7aea?style=for-the-badge) | Real-time console logs for debugging |
+| ![](https://img.shields.io/badge/🗑️%20-6f42c1?style=for-the-badge)![Clear Console](https://img.shields.io/badge/Clear%20Console%20-9f7aea?style=for-the-badge) | Clear all console logs |
+| ![](https://img.shields.io/badge/📦%20-6f42c1?style=for-the-badge)![Create Prefab](https://img.shields.io/badge/Create%20Prefab%20-9f7aea?style=for-the-badge) | Create prefab from selected objects |
+| ![](https://img.shields.io/badge/📁%20-6f42c1?style=for-the-badge)![Get Assets](https://img.shields.io/badge/Get%20Assets%20-9f7aea?style=for-the-badge) | List project assets with filtering |
+| ![](https://img.shields.io/badge/🔄%20-6f42c1?style=for-the-badge)![Refresh Assets](https://img.shields.io/badge/Refresh%20Assets%20-9f7aea?style=for-the-badge) | Refresh asset database |
 
 </details>
 
@@ -205,6 +217,72 @@ Unity MCP installs C# editor scripts into your Unity project that create an HTTP
 - *"Show me the complete hierarchy of the current scene"*
 - *"Find all objects with Rigidbody component"*
 - *"Clean up scene by removing missing scripts"*
+
+</details>
+
+<details>
+<summary><strong>📋 Console & Debugging (NEW!)</strong></summary>
+
+- *"Show me the last 20 error logs from Unity console"*
+- *"Clear the console and run the test again"*
+- *"Check console logs for any warnings"*
+- *"Monitor console while in play mode"*
+
+</details>
+
+<details>
+<summary><strong>📦 Asset Management (NEW!)</strong></summary>
+
+- *"Create a prefab called 'PlayerPrefab' from the selected object"*
+- *"List all prefabs in Assets/Prefabs folder"*
+- *"Show me all scripts in the project"*
+- *"Refresh asset database after adding new files"*
+
+</details>
+
+---
+
+## 🎯 MCP Resources & Prompts (NEW!)
+
+<details>
+<summary><strong>📚 Accessible Resources</strong></summary>
+
+Unity MCP now provides **Resources** - live data you can reference in your conversations using the `#` symbol:
+
+| Resource | Description |
+|:---------|:------------|
+| `#unity://project/info` | Server information and capabilities |
+| `#unity://console/logs` | Real-time console logs from Unity |
+| `#unity://scene/hierarchy` | Current scene structure with all GameObjects |
+| `#unity://project/assets` | List of all assets in your project |
+
+**Usage Example:**
+```
+"Check #unity://console/logs for any errors while testing"
+"Show me #unity://scene/hierarchy and find all cameras"
+```
+
+</details>
+
+<details>
+<summary><strong>⚡ Workflow Prompts</strong></summary>
+
+Pre-configured **Prompts** for common Unity workflows:
+
+| Prompt | Purpose |
+|:-------|:--------|
+| `unity_editor_automation` | General editor automation guidance |
+| `unity_scene_setup` | Scene setup workflow |
+| `unity_testing_workflow` | Automated testing workflow |
+| `unity_prefab_workflow` | Prefab creation and management |
+| `unity_debug_workflow` | Debugging workflow |
+| `unity_alignment_workflow` | Batch alignment operations |
+
+**Usage Example:**
+```
+Use the unity_testing_workflow prompt to test player movement
+Follow the unity_scene_setup prompt to create a new gameplay scene
+```
 
 </details>
 
