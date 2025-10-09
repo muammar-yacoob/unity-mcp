@@ -1,0 +1,267 @@
+using UnityEngine;
+using UnityEditor;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace UnityMCP
+{
+    /// <summary>
+    /// Handles Unity asset, console, and project operations
+    /// Provides console log access, prefab creation, and asset management
+    /// </summary>
+    public static class AssetHandler
+    {
+        private static List<LogEntry> consoleLogs = new List<LogEntry>();
+        private const int MAX_LOGS = 1000;
+
+        [InitializeOnLoadMethod]
+        private static void Initialize()
+        {
+            Application.logMessageReceived += LogMessageReceived;
+        }
+
+        private static void LogMessageReceived(string condition, string stackTrace, LogType type)
+        {
+            consoleLogs.Add(new LogEntry
+            {
+                message = condition,
+                stackTrace = stackTrace,
+                type = type,
+                timestamp = DateTime.Now
+            });
+
+            if (consoleLogs.Count > MAX_LOGS)
+            {
+                consoleLogs.RemoveAt(0);
+            }
+        }
+
+        public static string HandleCommand(string path, string body, string query)
+        {
+            try
+            {
+                switch (path)
+                {
+                    case "/console/logs":
+                        return GetConsoleLogs(query);
+                    case "/console/clear":
+                        return ClearConsole();
+                    case "/asset/prefab/create":
+                        return CreatePrefab(body);
+                    case "/project/assets":
+                        return GetAssets(query);
+                    case "/asset/refresh":
+                        return RefreshAssets();
+                    default:
+                        return JsonResponse(false, $"Unknown endpoint: {path}");
+                }
+            }
+            catch (Exception e)
+            {
+                return JsonResponse(false, e.Message);
+            }
+        }
+
+        private static string GetConsoleLogs(string query)
+        {
+            var queryParams = ParseQuery(query);
+            string logType = queryParams.ContainsKey("logType") ? queryParams["logType"] : "all";
+            int limit = queryParams.ContainsKey("limit") ? int.Parse(queryParams["limit"]) : 50;
+
+            var filtered = consoleLogs.AsEnumerable();
+
+            if (logType != "all")
+            {
+                LogType filterType = logType switch
+                {
+                    "error" => LogType.Error,
+                    "warning" => LogType.Warning,
+                    "log" => LogType.Log,
+                    _ => LogType.Log
+                };
+                filtered = filtered.Where(l => l.type == filterType);
+            }
+
+            var logs = filtered.Reverse().Take(limit).Select(l => new
+            {
+                message = l.message,
+                type = l.type.ToString(),
+                timestamp = l.timestamp.ToString("yyyy-MM-dd HH:mm:ss")
+            }).ToArray();
+
+            return $"{{\"success\":true,\"logs\":{Json.Serialize(logs)},\"total\":{logs.Length}}}";
+        }
+
+        private static string ClearConsole()
+        {
+            consoleLogs.Clear();
+
+            // Also clear Unity's console window
+            var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
+            if (logEntries != null)
+            {
+                var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+                clearMethod?.Invoke(null, null);
+            }
+
+            return JsonResponse(true, "Console cleared");
+        }
+
+        private static string CreatePrefab(string body)
+        {
+            var data = ParseJson(body);
+            string prefabName = data.ContainsKey("prefabName") ? data["prefabName"] : "NewPrefab";
+            string folderPath = data.ContainsKey("folderPath") ? data["folderPath"] : "Assets/Prefabs";
+
+            var selected = Selection.gameObjects;
+            if (selected.Length == 0)
+            {
+                return JsonResponse(false, "No GameObject selected");
+            }
+
+            // Create folder if it doesn't exist
+            if (!AssetDatabase.IsValidFolder(folderPath))
+            {
+                string[] folders = folderPath.Split('/');
+                string currentPath = folders[0];
+                for (int i = 1; i < folders.Length; i++)
+                {
+                    string newPath = currentPath + "/" + folders[i];
+                    if (!AssetDatabase.IsValidFolder(newPath))
+                    {
+                        AssetDatabase.CreateFolder(currentPath, folders[i]);
+                    }
+                    currentPath = newPath;
+                }
+            }
+
+            string prefabPath = $"{folderPath}/{prefabName}.prefab";
+
+            // Create prefab
+            GameObject prefab = PrefabUtility.SaveAsPrefabAsset(selected[0], prefabPath);
+
+            if (prefab != null)
+            {
+                return JsonResponse(true, $"Prefab created at {prefabPath}", new { path = prefabPath });
+            }
+            else
+            {
+                return JsonResponse(false, "Failed to create prefab");
+            }
+        }
+
+        private static string GetAssets(string query)
+        {
+            var queryParams = ParseQuery(query);
+            string typeFilter = queryParams.ContainsKey("type") ? queryParams["type"] : null;
+            string folderFilter = queryParams.ContainsKey("folder") ? queryParams["folder"] : "Assets";
+
+            string searchFilter = typeFilter != null ? $"t:{typeFilter}" : "";
+            string[] guids = AssetDatabase.FindAssets(searchFilter, new[] { folderFilter });
+
+            var assets = guids.Select(guid =>
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                string name = System.IO.Path.GetFileNameWithoutExtension(path);
+                string extension = System.IO.Path.GetExtension(path);
+                string type = extension.TrimStart('.');
+
+                return new { name, path, type };
+            }).ToArray();
+
+            return $"{{\"success\":true,\"assets\":{Json.Serialize(assets)},\"total\":{assets.Length}}}";
+        }
+
+        private static string RefreshAssets()
+        {
+            AssetDatabase.Refresh();
+            return JsonResponse(true, "Asset database refreshed");
+        }
+
+        // Helper methods
+        private static Dictionary<string, string> ParseQuery(string query)
+        {
+            var result = new Dictionary<string, string>();
+            if (string.IsNullOrEmpty(query)) return result;
+
+            query = query.TrimStart('?');
+            foreach (var pair in query.Split('&'))
+            {
+                var parts = pair.Split('=');
+                if (parts.Length == 2)
+                {
+                    result[HttpUtility.UrlDecode(parts[0])] = HttpUtility.UrlDecode(parts[1]);
+                }
+            }
+            return result;
+        }
+
+        private static Dictionary<string, string> ParseJson(string json)
+        {
+            var result = new Dictionary<string, string>();
+            if (string.IsNullOrEmpty(json)) return result;
+
+            json = json.Trim('{', '}');
+            foreach (var pair in json.Split(','))
+            {
+                var parts = pair.Split(':');
+                if (parts.Length == 2)
+                {
+                    string key = parts[0].Trim('"', ' ');
+                    string value = parts[1].Trim('"', ' ');
+                    result[key] = value;
+                }
+            }
+            return result;
+        }
+
+        private static string JsonResponse(bool success, string message, object data = null)
+        {
+            string dataJson = data != null ? $",\"data\":{Json.Serialize(data)}" : "";
+            return $"{{\"success\":{success.ToString().ToLower()},\"message\":\"{message}\"{dataJson}}}";
+        }
+
+        private class LogEntry
+        {
+            public string message;
+            public string stackTrace;
+            public LogType type;
+            public DateTime timestamp;
+        }
+
+        // Simple JSON serializer for basic objects
+        private static class Json
+        {
+            public static string Serialize(object obj)
+            {
+                if (obj == null) return "null";
+                if (obj is string str) return $"\"{str}\"";
+                if (obj is bool b) return b.ToString().ToLower();
+                if (obj is int || obj is float || obj is double) return obj.ToString();
+                if (obj is Array arr)
+                {
+                    var items = new List<string>();
+                    foreach (var item in arr)
+                    {
+                        items.Add(Serialize(item));
+                    }
+                    return $"[{string.Join(",", items)}]";
+                }
+                if (obj.GetType().IsClass)
+                {
+                    var props = obj.GetType().GetFields();
+                    var items = new List<string>();
+                    foreach (var prop in props)
+                    {
+                        var value = prop.GetValue(obj);
+                        items.Add($"\"{prop.Name}\":{Serialize(value)}");
+                    }
+                    return $"{{{string.Join(",", items)}}}";
+                }
+                return obj.ToString();
+            }
+        }
+    }
+}

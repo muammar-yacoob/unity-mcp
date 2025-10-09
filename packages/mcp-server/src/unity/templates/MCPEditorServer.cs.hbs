@@ -136,6 +136,10 @@ namespace UnityMCP
                 {
                     responseString = SceneHandler.HandleCommand(path, requestBody);
                 }
+                else if (path.StartsWith("/console/") || path.StartsWith("/asset/") || path.StartsWith("/project/"))
+                {
+                    responseString = AssetHandler.HandleCommand(path, requestBody, request.Url.Query);
+                }
                 else if (path == "/health")
                 {
                     responseString = "{\"status\":\"ok\",\"version\":\"1.0.0\"}";
