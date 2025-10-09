@@ -35,7 +35,8 @@ export class SetupService {
       'MCPEditorServer.cs.hbs',
       'EditorCommandHandler.cs.hbs',
       'PlayModeHandler.cs.hbs',
-      'SceneHandler.cs.hbs'
+      'SceneHandler.cs.hbs',
+      'AssetHandler.cs.hbs'
     ];
 
     const installedScripts: string[] = [];
@@ -65,6 +66,8 @@ This folder contains the Unity Editor scripts for MCP (Model Context Protocol) i
 - Provides HTTP server for receiving editor commands
 - Supports selection, transform, alignment, and batch operations
 - Enables automated play mode testing
+- Console log monitoring and asset management
+- Prefab creation and asset database operations
 
 ## Usage
 1. The MCP server starts automatically when Unity Editor loads
