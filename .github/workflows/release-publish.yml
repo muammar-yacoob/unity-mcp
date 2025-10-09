@@ -54,6 +54,10 @@ jobs:
       - name: Build project
         run: bun run build
 
+      - name: Sync with remote
+        run: |
+          git pull origin main --rebase=false
+
       - name: Run semantic-release
         id: semantic-release
         env:
