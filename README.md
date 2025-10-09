@@ -109,31 +109,25 @@ Add this configuration:
 ## 🎮 Unity Editor Integration
 
 <details>
-<summary><strong>⚡ Required one-time setup per Unity project</strong></summary>
+<summary><strong>⚡ One-time setup per Unity project</strong></summary>
 
-**Why is this needed?**
-Unity MCP installs C# editor scripts into your Unity project that create an HTTP server on port 8080. The MCP tools communicate with Unity through this server.
+Tell Claude to set up the integration:
+```
+Setup Unity MCP in my project at /path/to/unity/project
+```
 
-**Setup Steps:**
-1. Open your MCP client (e.g., Claude Desktop or Claude Code)
-2. Tell Claude:
-   ```
-   Setup Unity MCP in my project at /path/to/unity/project
-   ```
-3. This installs 8 C# scripts to `Assets/Editor/UnityMCP/`:
-   - `MCPConfig.cs` - ScriptableObject configuration with persistent settings
-   - `MCPEditorServer.cs` - HTTP server with auto-start and remote connections
-   - `MCPEditorWindow.cs` - Control Panel UI with status monitoring 🟢🟠🔴
-   - `EditorCommandHandler.cs` - Command processor with undo support
-   - `PlayModeHandler.cs` - Play mode automation and test runner
-   - `SceneHandler.cs` - Scene operations and hierarchy management
-   - `AssetHandler.cs` - Console logs, prefabs, and asset database
-   - `AdvancedToolsHandler.cs` - Package manager, menu execution, script CRUD
-4. Restart Unity Editor
-5. Open Control Panel: **Tools → Unity MCP → Control Panel**
-6. Verify status: 🟢 **Connected** (Server running on port 8080)
+This installs 8 editor scripts to `Assets/Editor/UnityMCP/` including:
+- HTTP server with auto-start (port 8080)
+- Control Panel UI with 🟢🟠🔴⚪ status monitoring
+- ScriptableObject configuration for persistent settings
+- Handlers for all 30 tools
 
-**Done!** The MCP tools can now control Unity Editor via HTTP. Use the Control Panel to manage settings and monitor connection status.
+**After installation:**
+1. Restart Unity Editor
+2. Open **Tools → Unity MCP → Control Panel**
+3. Verify 🟢 **Connected** status
+
+Done! Use the Control Panel to manage settings and monitor your connection.
 
 </details>
 
