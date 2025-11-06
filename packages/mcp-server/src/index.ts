@@ -1,14 +1,15 @@
+#!/usr/bin/env node
 import startServer from "./server/server.js";
 
 // Start the server
 async function main() {
   try {
     const server = await startServer();
-    
+
     server.start({
       transportType: "stdio",
     });
-    
+
     console.error("MCP Server running on stdio");
   } catch (error) {
     console.error("Error starting MCP server:", error);

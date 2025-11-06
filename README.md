@@ -284,6 +284,16 @@ All settings persist across Unity sessions!
 <details>
 <summary><strong>🐞 Common Issues</strong></summary>
 
+**Verifying Installation:**
+
+After setup, verify Unity MCP appears in your MCP client's available servers list. The server communicates via stdio and will start automatically when your MCP client launches.
+
+If you need to test the server directly:
+```bash
+node /path/to/your/node_modules/@spark-apps/unity-mcp/dist/index.js
+```
+You should see: `MCP Server running on stdio`
+
 **MCP Server Not Showing:**
 1. Verify Node.js is installed: `node --version`
 2. Check config file path is correct
