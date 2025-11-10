@@ -8,7 +8,7 @@ import { FastMCP } from "fastmcp";
 export function registerPrompts(server: FastMCP) {
   // Unity editor automation prompt
   server.addPrompt({
-    name: "unity_editor_automation",
+    name: "editor_automation",
     description: "Get help with Unity Editor automation tasks",
     arguments: [
       {

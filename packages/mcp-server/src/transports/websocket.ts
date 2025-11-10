@@ -217,10 +217,10 @@ export class WebSocketTransport implements ITransport {
   }
 
   private endpointToMethod(endpoint: string): string {
-    // Convert '/editor/select' to 'unity_editor_select'
+    // Convert '/editor/select' to 'editor_select'
     // Remove leading slash and replace remaining slashes with underscores
     const cleaned = endpoint.replace(/^\//, '').replace(/\//g, '_');
-    return `unity_${cleaned}`;
+    return cleaned;
   }
 
   async isConnected(): Promise<boolean> {

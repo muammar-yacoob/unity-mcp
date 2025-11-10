@@ -203,7 +203,7 @@ The WebSocket server auto-starts based on your transport configuration. You can 
 ### **🎯 Editor Control (7 tools)**
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/⚙️%20-0EA5E9?style=for-the-badge)![Setup Unity MCP](https://img.shields.io/badge/Setup%20Unity%20MCP%20-0EA5E9?style=for-the-badge) | Install editor integration into Unity project |
+| ![](https://img.shields.io/badge/⚙️%20-0EA5E9?style=for-the-badge)![Setup MCP](https://img.shields.io/badge/Setup%20MCP%20-0EA5E9?style=for-the-badge) | Install editor integration into Unity project |
 | ![](https://img.shields.io/badge/🎯%20-0EA5E9?style=for-the-badge)![Select Objects](https://img.shields.io/badge/Select%20Objects%20-0EA5E9?style=for-the-badge) | Select by name, tag, or pattern with framing |
 | ![](https://img.shields.io/badge/🔄%20-0EA5E9?style=for-the-badge)![Transform Objects](https://img.shields.io/badge/Transform%20Objects%20-0EA5E9?style=for-the-badge) | Move, rotate, scale objects |
 | ![](https://img.shields.io/badge/📐%20-0EA5E9?style=for-the-badge)![Align Objects](https://img.shields.io/badge/Align%20Objects%20-0EA5E9?style=for-the-badge) | Align left/right/top/bottom/center |

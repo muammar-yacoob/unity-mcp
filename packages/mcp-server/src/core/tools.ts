@@ -28,7 +28,7 @@ export function registerTools(server: FastMCP) {
 
   // ===== SETUP TOOL =====
   server.addTool({
-    name: "setup_unity_mcp",
+    name: "setup_mcp",
     description: "Install Unity MCP editor integration into a Unity project. Run this first to enable editor control.",
     parameters: z.object({
       projectPath: z.string().describe("Path to the Unity project root directory (containing Assets folder)"),
@@ -50,7 +50,7 @@ export function registerTools(server: FastMCP) {
 
   // ===== EDITOR MANIPULATION TOOLS =====
   server.addTool({
-    name: "unity_select_objects",
+    name: "select_objects",
     description: "Select objects in Unity Editor by name, tag, or pattern. Frame the selection in Scene view.",
     parameters: z.object({
       names: z.array(z.string()).optional().describe("Object names to select"),
@@ -72,7 +72,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_transform_objects",
+    name: "transform_objects",
     description: "Transform selected objects in Unity Editor. Set or modify position, rotation, and scale.",
     parameters: z.object({
       position: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Absolute position [x, y, z]"),
@@ -96,7 +96,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_align_objects",
+    name: "align_objects",
     description: "Align selected objects in Unity Editor. Supports left, right, top, bottom, center horizontal/vertical.",
     parameters: z.object({
       alignment: z.enum(["left", "right", "top", "bottom", "center-horizontal", "center-vertical"]).describe("Alignment direction"),
@@ -115,7 +115,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_distribute_objects",
+    name: "distribute_objects",
     description: "Distribute selected objects evenly in Unity Editor. Requires 3+ objects selected.",
     parameters: z.object({
       axis: z.enum(["horizontal", "vertical", "x", "y"]).describe("Distribution axis"),
@@ -134,7 +134,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_duplicate_objects",
+    name: "duplicate_objects",
     description: "Duplicate selected objects in Unity Editor with undo support.",
     parameters: z.object({}),
     execute: async () => {
@@ -151,7 +151,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_delete_objects",
+    name: "delete_objects",
     description: "Delete selected objects in Unity Editor with undo support.",
     parameters: z.object({}),
     execute: async () => {
@@ -168,7 +168,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_find_objects",
+    name: "find_objects",
     description: "Find objects in Unity Editor by component type or name pattern.",
     parameters: z.object({
       type: z.string().optional().describe("Component type to find (e.g., 'UnityEngine.Camera')"),
@@ -189,7 +189,7 @@ export function registerTools(server: FastMCP) {
 
   // ===== PLAY MODE TESTING TOOLS =====
   server.addTool({
-    name: "unity_enter_play_mode",
+    name: "enter_play_mode",
     description: "Enter Unity play mode for testing. Optionally pause on enter for debugging.",
     parameters: z.object({
       pauseOnEnter: z.boolean().optional().default(false).describe("Pause immediately after entering play mode"),
@@ -208,7 +208,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_exit_play_mode",
+    name: "exit_play_mode",
     description: "Exit Unity play mode.",
     parameters: z.object({}),
     execute: async () => {
@@ -225,7 +225,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_run_test",
+    name: "run_test",
     description: "Run automated test in Unity play mode. Can move, destroy, or activate objects and wait for duration.",
     parameters: z.object({
       testName: z.string().describe("Name of the test for logging"),
@@ -252,7 +252,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_playmode_status",
+    name: "playmode_status",
     description: "Get Unity play mode status including test logs and timing information.",
     parameters: z.object({}),
     execute: async () => {
@@ -269,7 +269,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_set_timescale",
+    name: "set_timescale",
     description: "Set Unity time scale for slow motion or fast forward testing. Default is 1.0.",
     parameters: z.object({
       timeScale: z.number().min(0).max(10).describe("Time scale multiplier (0.1 = slow motion, 2.0 = fast forward)"),
@@ -289,7 +289,7 @@ export function registerTools(server: FastMCP) {
 
   // ===== SCENE OPERATION TOOLS =====
   server.addTool({
-    name: "unity_list_scenes",
+    name: "list_scenes",
     description: "List all scenes in Unity project build settings and currently loaded scenes.",
     parameters: z.object({}),
     execute: async () => {
@@ -306,7 +306,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_load_scene",
+    name: "load_scene",
     description: "Load a Unity scene by name or build index.",
     parameters: z.object({
       index: z.number().optional().describe("Scene build index"),
@@ -326,7 +326,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_save_scene",
+    name: "save_scene",
     description: "Save current Unity scene or all open scenes.",
     parameters: z.object({
       saveAll: z.boolean().optional().default(false).describe("Save all open scenes"),
@@ -345,7 +345,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_get_hierarchy",
+    name: "get_hierarchy",
     description: "Get Unity scene hierarchy with all GameObjects, components, and children.",
     parameters: z.object({}),
     execute: async () => {
@@ -362,7 +362,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_find_in_scene",
+    name: "find_in_scene",
     description: "Find objects in current Unity scene by tag, name pattern, or component type.",
     parameters: z.object({
       tag: z.string().optional().describe("Tag to search for"),
@@ -383,7 +383,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_cleanup_scene",
+    name: "cleanup_scene",
     description: "Clean up Unity scene by removing missing scripts and empty GameObjects.",
     parameters: z.object({
       removeMissingScripts: z.boolean().optional().default(true).describe("Remove missing script references"),
@@ -404,7 +404,7 @@ export function registerTools(server: FastMCP) {
 
   // ===== CONSOLE & ASSET TOOLS =====
   server.addTool({
-    name: "unity_get_console_logs",
+    name: "get_console_logs",
     description: "Get console logs from Unity Editor for debugging. Filter by log type and limit results.",
     parameters: z.object({
       logType: z.enum(["all", "error", "warning", "log"]).optional().default("all").describe("Type of logs to retrieve"),
@@ -424,7 +424,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_clear_console",
+    name: "clear_console",
     description: "Clear all console logs in Unity Editor.",
     parameters: z.object({}),
     execute: async () => {
@@ -441,7 +441,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_create_prefab",
+    name: "create_prefab",
     description: "Create a prefab from currently selected GameObject(s) in Unity Editor.",
     parameters: z.object({
       prefabName: z.string().describe("Name for the prefab file"),
@@ -461,7 +461,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_get_assets",
+    name: "get_assets",
     description: "Get list of assets in Unity project. Filter by type or folder path.",
     parameters: z.object({
       type: z.string().optional().describe("Asset type filter (e.g., 'Prefab', 'Material', 'Script')"),
@@ -481,7 +481,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_refresh_assets",
+    name: "refresh_assets",
     description: "Refresh Unity asset database to detect new or modified files.",
     parameters: z.object({}),
     execute: async () => {
@@ -499,7 +499,7 @@ export function registerTools(server: FastMCP) {
 
   // ===== ADVANCED TOOLS =====
   server.addTool({
-    name: "unity_execute_menu_item",
+    name: "execute_menu_item",
     description: "Execute Unity Editor menu item by path (e.g., 'Assets/Refresh', 'Window/Package Manager').",
     parameters: z.object({
       menuPath: z.string().describe("Full menu path to execute"),
@@ -518,7 +518,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_add_package",
+    name: "add_package",
     description: "Install Unity package via Package Manager. Supports package names or git URLs.",
     parameters: z.object({
       packageName: z.string().describe("Package name (e.g., 'com.unity.textmeshpro') or git URL"),
@@ -537,7 +537,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_run_tests",
+    name: "run_tests",
     description: "Execute Unity Test Runner tests. Supports EditMode and PlayMode tests with filtering.",
     parameters: z.object({
       testMode: z.enum(["EditMode", "PlayMode"]).optional().default("EditMode").describe("Test mode to run"),
@@ -557,7 +557,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_add_asset_to_scene",
+    name: "add_asset_to_scene",
     description: "Add an asset (prefab) to the current scene. Optionally parent to an existing GameObject.",
     parameters: z.object({
       assetPath: z.string().describe("Path to asset (e.g., 'Assets/Prefabs/Player.prefab')"),
@@ -577,7 +577,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_create_script",
+    name: "create_script",
     description: "Create a new C# script file with optional template content.",
     parameters: z.object({
       scriptName: z.string().describe("Name of the script (without .cs extension)"),
@@ -598,7 +598,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_read_script",
+    name: "read_script",
     description: "Read the contents of a C# script file.",
     parameters: z.object({
       scriptPath: z.string().describe("Path to script file (e.g., 'Assets/Scripts/Player.cs')"),
@@ -617,7 +617,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_update_script",
+    name: "update_script",
     description: "Update the contents of an existing C# script file.",
     parameters: z.object({
       scriptPath: z.string().describe("Path to script file"),
@@ -637,7 +637,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_delete_script",
+    name: "delete_script",
     description: "Delete a C# script file from the project.",
     parameters: z.object({
       scriptPath: z.string().describe("Path to script file to delete"),
@@ -656,7 +656,7 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "unity_validate_script",
+    name: "validate_script",
     description: "Validate C# script syntax. Can validate by file path or content string.",
     parameters: z.object({
       scriptPath: z.string().optional().describe("Path to script file to validate"),

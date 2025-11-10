@@ -99,42 +99,42 @@ Instead of:
 [GameSmith] MCP server connected with 0 tools
 ```
 
-## Available Tools (33 total)
+## Available Tools (30 total)
 
-Once fixed, the client will correctly detect all 33 tools:
-- setup_unity_mcp
-- unity_select_objects
-- unity_transform_objects
-- unity_align_objects
-- unity_distribute_objects
-- unity_duplicate_objects
-- unity_delete_objects
-- unity_find_objects
-- unity_enter_play_mode
-- unity_exit_play_mode
-- unity_run_test
-- unity_playmode_status
-- unity_set_timescale
-- unity_list_scenes
-- unity_load_scene
-- unity_save_scene
-- unity_get_hierarchy
-- unity_find_in_scene
-- unity_cleanup_scene
-- unity_get_console_logs
-- unity_clear_console
-- unity_create_prefab
-- unity_get_assets
-- unity_refresh_assets
-- unity_execute_menu_item
-- unity_add_package
-- unity_run_tests
-- unity_add_asset_to_scene
-- unity_create_script
-- unity_read_script
-- unity_update_script
-- unity_delete_script
-- unity_validate_script
+Once fixed, the client will correctly detect all 30 tools:
+- setup_mcp
+- select_objects
+- transform_objects
+- align_objects
+- distribute_objects
+- duplicate_objects
+- delete_objects
+- find_objects
+- enter_play_mode
+- exit_play_mode
+- run_test
+- playmode_status
+- set_timescale
+- list_scenes
+- load_scene
+- save_scene
+- get_hierarchy
+- find_in_scene
+- cleanup_scene
+- get_console_logs
+- clear_console
+- create_prefab
+- get_assets
+- refresh_assets
+- execute_menu_item
+- add_package
+- run_tests
+- add_asset_to_scene
+- create_script
+- read_script
+- update_script
+- delete_script
+- validate_script
 
 ## References
 
