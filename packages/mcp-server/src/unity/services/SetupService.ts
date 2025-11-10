@@ -34,6 +34,7 @@ export class SetupService {
     const scripts = [
       'MCPConfig.cs.hbs',
       'MCPEditorServer.cs.hbs',
+      'MCPWebSocketServer.cs.hbs',
       'MCPEditorWindow.cs.hbs',
       'EditorCommandHandler.cs.hbs',
       'PlayModeHandler.cs.hbs',
@@ -65,11 +66,12 @@ export class SetupService {
 This folder contains the Unity Editor scripts for MCP (Model Context Protocol) integration.
 
 ## What it does
-- Enables AI assistants to control Unity Editor in real-time via HTTP REST API
+- Enables AI assistants to control Unity Editor in real-time via HTTP REST API or WebSocket
 - 30+ powerful tools for editor automation, testing, and asset management
 - Clean UI with collapsable sections and real-time status monitoring
 - ScriptableObject configuration with persistent settings
 - Console monitoring, package management, test runner integration
+- Dual transport support: HTTP (default) or WebSocket for real-time communication
 
 ## Features
 ### Editor Control (12 tools)

@@ -60,6 +60,8 @@
     "fs-extra": "^11.2.0",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
+    "uuid": "^9.0.1",
+    "ws": "^8.18.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -67,6 +69,8 @@
     "@types/fs-extra": "^11.0.4",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.19.19",
+    "@types/uuid": "^9.0.8",
+    "@types/ws": "^8.5.12",
     "typescript": "^5.9.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",

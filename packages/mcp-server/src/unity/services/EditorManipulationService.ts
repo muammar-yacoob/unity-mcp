@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { ITransport } from '../../transports/index.js';
+import { BaseService } from './BaseService.js';
 
 export interface SelectObjectsParams {
   names?: string[];
@@ -39,26 +40,13 @@ export interface FindParams {
 }
 
 /**
- * Service for Unity Editor manipulation via HTTP communication
+ * Service for Unity Editor manipulation
  * Provides real-time control over Unity Editor selection, transforms, and operations
+ * Supports both HTTP and WebSocket transports
  */
-export class EditorManipulationService {
-  private baseUrl: string;
-
-  constructor(port: number = 8080) {
-    this.baseUrl = `http://localhost:${port}`;
-  }
-
-  /**
-   * Check if Unity Editor MCP server is running
-   */
-  async health(): Promise<boolean> {
-    try {
-      const response = await axios.get(`${this.baseUrl}/health`, { timeout: 2000 });
-      return response.data.status === 'ok';
-    } catch {
-      return false;
-    }
+export class EditorManipulationService extends BaseService {
+  constructor(transport: ITransport) {
+    super(transport);
   }
 
   /**
@@ -122,23 +110,5 @@ export class EditorManipulationService {
    */
   async findObjects(params: FindParams) {
     return this.post('/editor/find', params);
-  }
-
-  private async post(endpoint: string, data: any) {
-    try {
-      const response = await axios.post(`${this.baseUrl}${endpoint}`, data, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 5000
-      });
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNREFUSED') {
-          throw new Error('Unity Editor MCP server is not running. Please start Unity Editor and ensure the MCP server is installed.');
-        }
-        throw new Error(`Unity Editor request failed: ${error.message}`);
-      }
-      throw error;
-    }
   }
 }

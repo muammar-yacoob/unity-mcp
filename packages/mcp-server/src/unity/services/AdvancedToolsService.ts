@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { ITransport } from '../../transports/index.js';
+import { BaseService } from './BaseService.js';
 
 export interface ExecuteMenuParams {
   menuPath: string;
@@ -45,12 +46,11 @@ export interface ValidateScriptParams {
 /**
  * Service for advanced Unity tools
  * Provides menu execution, package management, testing, and script operations
+ * Supports both HTTP and WebSocket transports
  */
-export class AdvancedToolsService {
-  private baseUrl: string;
-
-  constructor(port: number = 8080) {
-    this.baseUrl = `http://localhost:${port}`;
+export class AdvancedToolsService extends BaseService {
+  constructor(transport: ITransport) {
+    super(transport);
   }
 
   /**
@@ -114,23 +114,5 @@ export class AdvancedToolsService {
    */
   async validateScript(params: ValidateScriptParams) {
     return this.post('/advanced/validate_script', params);
-  }
-
-  private async post(endpoint: string, data: any) {
-    try {
-      const response = await axios.post(`${this.baseUrl}${endpoint}`, data, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 30000 // Advanced operations may take longer
-      });
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNREFUSED') {
-          throw new Error('Unity Editor MCP server is not running. Please start Unity Editor and ensure the MCP server is installed.');
-        }
-        throw new Error(`Unity Editor request failed: ${error.message}`);
-      }
-      throw error;
-    }
   }
 }

@@ -9,11 +9,21 @@ namespace unity-mcp
     [CreateAssetMenu(fileName = "MCPConfig", menuName = "Unity MCP/Configuration", order = 1)]
     public class MCPConfig : ScriptableObject
     {
-        [Header("Server Settings")]
+        [Header("Transport Settings")]
+        [Tooltip("Transport type: http or websocket")]
+        public string transportType = "http";
+
+        [Header("HTTP Server Settings")]
         [Tooltip("Port for HTTP server")]
         [Range(1024, 65535)]
         public int port = 8080;
 
+        [Header("WebSocket Server Settings")]
+        [Tooltip("Port for WebSocket server")]
+        [Range(1024, 65535)]
+        public int websocketPort = 8090;
+
+        [Header("General Settings")]
         [Tooltip("Auto-start server when Unity Editor loads")]
         public bool autoStart = true;
 

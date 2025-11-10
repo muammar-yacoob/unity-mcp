@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { ITransport } from '../../transports/index.js';
+import { BaseService } from './BaseService.js';
 
 export interface EnterPlayModeParams {
   pauseOnEnter?: boolean;
@@ -27,12 +28,11 @@ export interface ScreenshotParams {
 /**
  * Service for Unity Play Mode testing and automation
  * Enables automated testing workflows for game development
+ * Supports both HTTP and WebSocket transports
  */
-export class PlayModeTestingService {
-  private baseUrl: string;
-
-  constructor(port: number = 8080) {
-    this.baseUrl = `http://localhost:${port}`;
+export class PlayModeTestingService extends BaseService {
+  constructor(transport: ITransport) {
+    super(transport);
   }
 
   /**
@@ -89,23 +89,5 @@ export class PlayModeTestingService {
    */
   async captureScreenshot(params: ScreenshotParams = {}) {
     return this.post('/playmode/screenshot', params);
-  }
-
-  private async post(endpoint: string, data: any) {
-    try {
-      const response = await axios.post(`${this.baseUrl}${endpoint}`, data, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 10000 // Play mode operations may take longer
-      });
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNREFUSED') {
-          throw new Error('Unity Editor MCP server is not running. Please start Unity Editor and ensure the MCP server is installed.');
-        }
-        throw new Error(`Unity Editor request failed: ${error.message}`);
-      }
-      throw error;
-    }
   }
 }

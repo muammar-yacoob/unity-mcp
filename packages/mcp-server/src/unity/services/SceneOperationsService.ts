@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { ITransport } from '../../transports/index.js';
+import { BaseService } from './BaseService.js';
 
 export interface LoadSceneParams {
   index?: number;
@@ -27,12 +28,11 @@ export interface CleanupSceneParams {
 /**
  * Service for Unity scene operations and hierarchy management
  * Provides scene navigation, object finding, and batch operations
+ * Supports both HTTP and WebSocket transports
  */
-export class SceneOperationsService {
-  private baseUrl: string;
-
-  constructor(port: number = 8080) {
-    this.baseUrl = `http://localhost:${port}`;
+export class SceneOperationsService extends BaseService {
+  constructor(transport: ITransport) {
+    super(transport);
   }
 
   /**
@@ -82,23 +82,5 @@ export class SceneOperationsService {
    */
   async cleanupScene(params: CleanupSceneParams) {
     return this.post('/scene/cleanup', params);
-  }
-
-  private async post(endpoint: string, data: any) {
-    try {
-      const response = await axios.post(`${this.baseUrl}${endpoint}`, data, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 5000
-      });
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNREFUSED') {
-          throw new Error('Unity Editor MCP server is not running. Please start Unity Editor and ensure the MCP server is installed.');
-        }
-        throw new Error(`Unity Editor request failed: ${error.message}`);
-      }
-      throw error;
-    }
   }
 }

@@ -116,11 +116,12 @@ Tell Claude to set up the integration:
 Setup Unity MCP in my project at /path/to/unity/project
 ```
 
-This installs 8 editor scripts to `Assets/Editor/UnityMCP/` including:
+This installs 9 editor scripts to `Assets/Editor/UnityMCP/` including:
 - HTTP server with auto-start (port 8080)
+- WebSocket server for real-time communication (port 8090)
 - Control Panel UI with 🟢🟠🔴⚪ status monitoring
 - ScriptableObject configuration for persistent settings
-- Handlers for all 30 tools
+- Handlers for all 30+ tools
 
 **After installation:**
 1. Restart Unity Editor
@@ -128,6 +129,67 @@ This installs 8 editor scripts to `Assets/Editor/UnityMCP/` including:
 3. Verify 🟢 **Connected** status
 
 Done! Use the Control Panel to manage settings and monitor your connection.
+
+</details>
+
+---
+
+## 🔌 WebSocket Transport (Optional)
+
+<details>
+<summary><strong>⚡ Enable WebSocket for real-time communication</strong></summary>
+
+Unity MCP supports two transport protocols:
+- **HTTP** (default) - Standard REST API communication
+- **WebSocket** - Real-time bidirectional communication using JSON-RPC 2.0
+
+### Enable WebSocket Transport
+
+**Option 1: Environment Variables**
+```bash
+export UNITY_MCP_TRANSPORT=websocket
+export UNITY_MCP_WS_PORT=8090
+npx -y @spark-apps/unity-mcp
+```
+
+**Option 2: MCP Client Configuration**
+
+Edit your MCP client config:
+```json
+{
+  "mcpServers": {
+    "unity-mcp": {
+      "command": "npx",
+      "args": ["-y", "@spark-apps/unity-mcp"],
+      "env": {
+        "UNITY_MCP_TRANSPORT": "websocket",
+        "UNITY_MCP_WS_PORT": "8090"
+      }
+    }
+  }
+}
+```
+
+### Configuration Options
+
+| Variable | Description | Default |
+|:---------|:------------|:--------|
+| `UNITY_MCP_TRANSPORT` | Transport type: `http` or `websocket` | `http` |
+| `UNITY_MCP_HTTP_PORT` | Port for HTTP transport | `8080` |
+| `UNITY_MCP_WS_PORT` | Port for WebSocket transport | `8090` |
+| `UNITY_MCP_TIMEOUT` | Request timeout in milliseconds | `30000` |
+
+### Unity Editor Configuration
+
+The WebSocket server auto-starts based on your transport configuration. You can also:
+1. Open **Tools → Unity MCP → Start WebSocket Server** (manual start)
+2. Configure transport in **MCPConfig** ScriptableObject (`transportType` field)
+3. Set `websocketPort` in the config (default: 8090)
+
+**Benefits of WebSocket:**
+- Lower latency for rapid command sequences
+- Persistent connection reduces overhead
+- Better for real-time editor control workflows
 
 </details>
 

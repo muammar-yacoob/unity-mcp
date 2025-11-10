@@ -1,5 +1,6 @@
 import { FastMCP } from "fastmcp";
 import { z } from "zod";
+import { TransportFactory } from "../transports/index.js";
 import { SetupService } from "../unity/services/SetupService.js";
 import { EditorManipulationService } from "../unity/services/EditorManipulationService.js";
 import { PlayModeTestingService } from "../unity/services/PlayModeTestingService.js";
@@ -12,12 +13,18 @@ import { AdvancedToolsService } from "../unity/services/AdvancedToolsService.js"
  * Focused on real Unity Editor interaction and automation
  */
 export function registerTools(server: FastMCP) {
+  // Create transport instance (HTTP or WebSocket based on environment)
+  const transport = TransportFactory.create();
+
+  // Setup service doesn't need transport (it just copies files)
   const setupService = new SetupService();
-  const editorService = new EditorManipulationService();
-  const playModeService = new PlayModeTestingService();
-  const sceneService = new SceneOperationsService();
-  const assetService = new AssetService();
-  const advancedService = new AdvancedToolsService();
+
+  // All other services use the transport
+  const editorService = new EditorManipulationService(transport);
+  const playModeService = new PlayModeTestingService(transport);
+  const sceneService = new SceneOperationsService(transport);
+  const assetService = new AssetService(transport);
+  const advancedService = new AdvancedToolsService(transport);
 
   // ===== SETUP TOOL =====
   server.addTool({
