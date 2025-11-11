@@ -500,40 +500,52 @@ namespace UnityMCP
             GUILayout.Label("Manual Configuration", headerStyle);
             EditorGUILayout.Space(10);
 
+            // Claude Code CLI
             EditorGUILayout.HelpBox(
-                "Copy the configuration below and add it to your MCP client's configuration file.",
+                "For Claude Code: Use the CLI command below (recommended)",
                 MessageType.Info
             );
 
-            EditorGUILayout.Space(10);
-
-            GUILayout.Label("Configuration JSON:", EditorStyles.boldLabel);
             EditorGUILayout.Space(5);
+            GUILayout.Label("Claude Code CLI Command:", EditorStyles.boldLabel);
+
+            string cliCommand = $"claude mcp add \"{serverPath}\"";
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.TextArea(configJson, GUILayout.Height(200));
+            EditorGUILayout.SelectableLabel(cliCommand, GUILayout.Height(20));
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space(10);
-
-            if (GUILayout.Button("Copy to Clipboard", GUILayout.Height(30)))
+            if (GUILayout.Button("Copy CLI Command", GUILayout.Height(30)))
             {
-                EditorGUIUtility.systemCopyBuffer = configJson;
-                ShowNotification(new GUIContent("✅ Copied to clipboard!"));
+                EditorGUIUtility.systemCopyBuffer = cliCommand;
+                ShowNotification(new GUIContent("✅ CLI command copied!"));
             }
 
             EditorGUILayout.Space(15);
 
-            GUILayout.Label("Server Path:", EditorStyles.boldLabel);
-            EditorGUILayout.TextField(serverPath);
+            // Manual JSON for other clients
+            GUILayout.Label("Or manually add to config.json:", EditorStyles.boldLabel);
+            EditorGUILayout.Space(5);
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.TextArea(configJson, GUILayout.Height(120));
+            EditorGUILayout.EndVertical();
 
-            GUILayout.Label("Configuration File Locations:", EditorStyles.boldLabel);
+            if (GUILayout.Button("Copy JSON", GUILayout.Height(30)))
+            {
+                EditorGUIUtility.systemCopyBuffer = configJson;
+                ShowNotification(new GUIContent("✅ JSON copied!"));
+            }
+
+            EditorGUILayout.Space(15);
+
+            GUILayout.Label("Config Locations:", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
-                "Windows: %APPDATA%\\Claude\\claude_desktop_config.json\n" +
-                "macOS: ~/Library/Application Support/Claude/claude_desktop_config.json\n" +
-                "Linux: ~/.config/Claude/claude_desktop_config.json",
+                "Claude Desktop:\n" +
+                "  Windows: %APPDATA%\\Claude\\claude_desktop_config.json\n" +
+                "  macOS: ~/Library/Application Support/Claude/claude_desktop_config.json\n\n" +
+                "Claude Code:\n" +
+                "  Project: .claude/config.json (created by CLI)",
                 MessageType.None
             );
 
