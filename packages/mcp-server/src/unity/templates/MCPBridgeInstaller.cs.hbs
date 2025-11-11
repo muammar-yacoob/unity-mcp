@@ -362,15 +362,61 @@ namespace UnityMCP
             try
             {
                 string serverPath = GetMCPServerPath();
-                string configContent = CreateClaudeConfig(serverPath);
 
+                // Read existing config or create new
+                Newtonsoft.Json.Linq.JObject config;
+                if (File.Exists(configPath))
+                {
+                    string existingContent = File.ReadAllText(configPath);
+                    config = Newtonsoft.Json.Linq.JObject.Parse(existingContent);
+                }
+                else
+                {
+                    config = new Newtonsoft.Json.Linq.JObject();
+                }
+
+                // Ensure mcpServers section exists
+                if (config["mcpServers"] == null)
+                {
+                    config["mcpServers"] = new Newtonsoft.Json.Linq.JObject();
+                }
+
+                // Add or update unity-mcp server
+                var mcpServers = (Newtonsoft.Json.Linq.JObject)config["mcpServers"];
+                bool useNpx = !File.Exists(serverPath);
+
+                if (useNpx)
+                {
+                    mcpServers["unity-mcp"] = Newtonsoft.Json.Linq.JObject.Parse(@"{
+                        ""command"": ""npx"",
+                        ""args"": [""-y"", ""@spark-apps/unity-mcp""],
+                        ""env"": {
+                            ""UNITY_MCP_TRANSPORT"": ""websocket"",
+                            ""UNITY_MCP_WS_PORT"": ""8090""
+                        }
+                    }");
+                }
+                else
+                {
+                    mcpServers["unity-mcp"] = Newtonsoft.Json.Linq.JObject.Parse($@"{{
+                        ""command"": ""node"",
+                        ""args"": [""{serverPath.Replace("\\", "\\\\")}""],
+                        ""env"": {{
+                            ""UNITY_MCP_TRANSPORT"": ""websocket"",
+                            ""UNITY_MCP_WS_PORT"": ""8090""
+                        }}
+                    }}");
+                }
+
+                // Write back with formatting
                 Directory.CreateDirectory(Path.GetDirectoryName(configPath));
-                File.WriteAllText(configPath, configContent);
+                string formattedJson = config.ToString(Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(configPath, formattedJson);
 
                 EditorUtility.DisplayDialog(
                     "Success",
                     $"Claude Desktop configured successfully!\n\n" +
-                    $"Configuration saved to:\n{configPath}\n\n" +
+                    $"Unity MCP server {'updated' + (File.Exists(configPath) ? " (merged with existing config)" : "added")} at:\n{configPath}\n\n" +
                     $"Please restart Claude Desktop for changes to take effect.",
                     "OK"
                 );
