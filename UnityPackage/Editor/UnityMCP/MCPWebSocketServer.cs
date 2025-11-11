@@ -223,6 +223,12 @@ namespace UnityMCP
                 }
                 catch (Exception e)
                 {
+                    // Suppress ThreadAbortException - expected during Unity shutdown/reload
+                    if (e is System.Threading.ThreadAbortException)
+                    {
+                        break;
+                    }
+
                     if (isRunning)
                     {
                         Debug.LogError($"[Unity MCP] Error accepting connection: {e.Message}");
