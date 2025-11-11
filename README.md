@@ -116,7 +116,8 @@ Tell Claude to set up the integration:
 Setup Unity MCP in my project at /path/to/unity/project
 ```
 
-This installs 9 editor scripts to `Assets/Editor/UnityMCP/` including:
+This installs 10 editor scripts to `Assets/Editor/UnityMCP/` including:
+- **🚀 Bridge Installer** - Beautiful wizard for AI client setup
 - HTTP server with auto-start (port 8080)
 - WebSocket server for real-time communication (port 8090)
 - Control Panel UI with 🟢🟠🔴⚪ status monitoring
@@ -125,10 +126,85 @@ This installs 9 editor scripts to `Assets/Editor/UnityMCP/` including:
 
 **After installation:**
 1. Restart Unity Editor
-2. Open **Tools → Unity MCP → Control Panel**
-3. Verify 🟢 **Connected** status
+2. Open **Tools → Unity MCP → Bridge Installer** 🎯 **Start here!**
+3. Follow the setup wizard to configure your AI client
+
+The Bridge Installer will:
+- ✅ Check Node.js installation
+- 🎯 Auto-configure Claude Desktop or Claude Code
+- 📝 Provide manual config for other MCP clients
+- 🎉 Guide you to completion
 
 Done! Use the Control Panel to manage settings and monitor your connection.
+
+</details>
+
+---
+
+## 🚀 Bridge Installer Guide
+
+<details>
+<summary><strong>🎯 Step-by-step wizard for AI client setup</strong></summary>
+
+The Bridge Installer provides a beautiful wizard to configure your AI client in just a few clicks.
+
+### Opening the Installer
+
+After installing Unity MCP, open Unity and navigate to:
+```
+Tools → Unity MCP → Bridge Installer
+```
+
+### Wizard Steps
+
+**Step 1: Welcome & Requirements**
+- View what you'll get
+- Check prerequisites
+- ✅ Unity 2022.3+
+- ✅ Node.js 18.0+
+- ✅ AI client (Claude Desktop, etc.)
+
+**Step 2: Node.js Verification**
+- Automatic detection of Node.js version
+- Download link if not installed
+- Recheck button after installation
+
+**Step 3: Configure AI Client**
+
+Choose your setup method:
+
+#### Option A: Claude Desktop (One-Click)
+- Automatically creates configuration at:
+  - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+  - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+  - **Linux**: `~/.config/Claude/claude_desktop_config.json`
+- Restart reminder included
+
+#### Option B: Claude Code / VSCode
+- Creates `.claude/config.json` in your project
+- Works with Claude Code CLI and VSCode MCP extension
+
+#### Option C: Manual Configuration
+- Copy-paste ready JSON config
+- Platform-specific paths provided
+- For other MCP clients
+
+**Step 4: Complete!**
+- Success confirmation
+- Next steps guide
+- Quick launch to Control Panel
+
+### Troubleshooting
+
+**Node.js not detected?**
+1. Download from [nodejs.org](https://nodejs.org/)
+2. Restart Unity Editor
+3. Click "Recheck Installation"
+
+**Can't connect?**
+1. Verify server is running (Control Panel)
+2. Restart AI client after configuration
+3. Check firewall isn't blocking ports
 
 </details>
 
