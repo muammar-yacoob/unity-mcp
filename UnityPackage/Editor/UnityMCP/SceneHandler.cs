@@ -246,7 +246,7 @@ namespace UnityMCP
             // Remove missing script references
             if (data.removeMissingScripts)
             {
-                var allObjects = GameObject.FindObjectsByType<GameObject>();
+                var allObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
                 foreach (var obj in allObjects)
                 {
                     int count = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(obj);
@@ -262,7 +262,7 @@ namespace UnityMCP
             // Remove empty game objects
             if (data.removeEmpty)
             {
-                var allObjects = GameObject.FindObjectsByType<GameObject>();
+                var allObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
                 foreach (var obj in allObjects)
                 {
                     if (obj.transform.childCount == 0 && obj.GetComponents<Component>().Length == 1) // Only Transform

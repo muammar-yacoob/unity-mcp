@@ -299,7 +299,7 @@ namespace UnityMCP
                 var componentType = Type.GetType(data.type);
                 if (componentType != null)
                 {
-                    found = GameObject.FindObjectsOfType(componentType)
+                    found = GameObject.FindObjectsByType(componentType, FindObjectsSortMode.None)
                         .Select(c => (c as Component)?.gameObject)
                         .Where(go => go != null)
                         .ToArray();

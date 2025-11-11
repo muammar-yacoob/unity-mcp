@@ -235,7 +235,9 @@ namespace UnityMCP
         private TcpClient tcpClient;
         private NetworkStream stream;
         private Dictionary<string, Func<JObject, JObject>> toolRegistry;
+#pragma warning disable 0414
         private bool isWebSocketHandshake = false;
+#pragma warning restore 0414
 
         public WebSocketClient(TcpClient client, Dictionary<string, Func<JObject, JObject>> registry)
         {

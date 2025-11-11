@@ -13,7 +13,9 @@ namespace UnityMCP
     public static class PlayModeHandler
     {
         private static float testStartTime;
+#pragma warning disable 0414
         private static bool isTestRunning = false;
+#pragma warning restore 0414
         private static List<string> testLog = new List<string>();
 
         public static string HandleCommand(string path, string requestBody)
