@@ -388,31 +388,54 @@ namespace UnityMCP
 
                 if (useNpx)
                 {
-                    mcpServers["unity-mcp"] = Newtonsoft.Json.Linq.JObject.Parse(@"{
-                        ""command"": ""npx"",
-                        ""args"": [""-y"", ""@spark-apps/unity-mcp""],
-                        ""env"": {
-                            ""UNITY_MCP_TRANSPORT"": ""websocket"",
-                            ""UNITY_MCP_WS_PORT"": ""8090""
-                        }
-                    }");
+                    mcpServers["unity-mcp"] = Newtonsoft.Json.Linq.JObject.Parse(@"{""command"":""npx"",""args"":[""-y"",""@spark-apps/unity-mcp""],""env"":{""UNITY_MCP_TRANSPORT"":""websocket"",""UNITY_MCP_WS_PORT"":""8090""}}");
                 }
                 else
                 {
-                    mcpServers["unity-mcp"] = Newtonsoft.Json.Linq.JObject.Parse($@"{{
-                        ""command"": ""node"",
-                        ""args"": [""{serverPath.Replace("\\", "\\\\")}""],
-                        ""env"": {{
-                            ""UNITY_MCP_TRANSPORT"": ""websocket"",
-                            ""UNITY_MCP_WS_PORT"": ""8090""
-                        }}
-                    }}");
+                    mcpServers["unity-mcp"] = Newtonsoft.Json.Linq.JObject.Parse($@"{{""command"":""node"",""args"":[""{serverPath.Replace("\\", "\\\\")}""],""env"":{{""UNITY_MCP_TRANSPORT"":""websocket"",""UNITY_MCP_WS_PORT"":""8090""}}}}");
                 }
 
-                // Write back with formatting
+                // Write back with custom compact formatting for server configs
                 Directory.CreateDirectory(Path.GetDirectoryName(configPath));
-                string formattedJson = config.ToString(Newtonsoft.Json.Formatting.Indented);
-                File.WriteAllText(configPath, formattedJson);
+
+                // Serialize individual server entries compactly
+                var formattedConfig = new System.Text.StringBuilder();
+                formattedConfig.AppendLine("{");
+
+                bool isFirst = true;
+                foreach (var prop in config.Properties())
+                {
+                    if (!isFirst) formattedConfig.AppendLine(",");
+                    isFirst = false;
+
+                    if (prop.Name == "mcpServers")
+                    {
+                        formattedConfig.AppendLine("  \"mcpServers\": {");
+                        bool isFirstServer = true;
+                        foreach (var serverProp in ((Newtonsoft.Json.Linq.JObject)prop.Value).Properties())
+                        {
+                            if (!isFirstServer) formattedConfig.AppendLine(",");
+                            isFirstServer = false;
+
+                            // Compact server config on one line
+                            string compactServer = serverProp.Value.ToString(Newtonsoft.Json.Formatting.None);
+                            formattedConfig.Append($"    \"{serverProp.Name}\": {compactServer}");
+                        }
+                        formattedConfig.AppendLine();
+                        formattedConfig.Append("  }");
+                    }
+                    else
+                    {
+                        // Other properties with normal indentation
+                        string value = prop.Value.ToString(Newtonsoft.Json.Formatting.Indented).Replace("\n", "\n  ");
+                        formattedConfig.Append($"  \"{prop.Name}\": {value}");
+                    }
+                }
+
+                formattedConfig.AppendLine();
+                formattedConfig.AppendLine("}");
+
+                File.WriteAllText(configPath, formattedConfig.ToString());
 
                 string action = wasExisting ? "updated (merged with existing config)" : "added";
 
