@@ -289,7 +289,17 @@ namespace UnityMCP
                             }
                             catch (Exception e)
                             {
-                                Debug.LogError($"[Unity MCP] Error processing message: {e.Message}");
+                                // Suppress ThreadAbortException - expected during Unity shutdown/reload
+                                if (e is System.Threading.ThreadAbortException)
+                                {
+                                    break;
+                                }
+
+                                // Only log if it's not a connection closure
+                                if (tcpClient.Connected)
+                                {
+                                    Debug.LogError($"[Unity MCP] Error processing message: {e.Message}");
+                                }
                                 break;
                             }
                         }
@@ -298,6 +308,18 @@ namespace UnityMCP
             }
             catch (Exception e)
             {
+                // Suppress ThreadAbortException - expected during Unity shutdown/reload
+                if (e is System.Threading.ThreadAbortException)
+                {
+                    return;
+                }
+
+                // Suppress I/O errors from thread abort
+                if (e.InnerException is System.Threading.ThreadAbortException)
+                {
+                    return;
+                }
+
                 Debug.LogError($"[Unity MCP] WebSocket connection error: {e.Message}");
             }
             finally
