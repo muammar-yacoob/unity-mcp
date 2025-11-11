@@ -362,10 +362,11 @@ namespace UnityMCP
             try
             {
                 string serverPath = GetMCPServerPath();
+                bool wasExisting = File.Exists(configPath);
 
                 // Read existing config or create new
                 Newtonsoft.Json.Linq.JObject config;
-                if (File.Exists(configPath))
+                if (wasExisting)
                 {
                     string existingContent = File.ReadAllText(configPath);
                     config = Newtonsoft.Json.Linq.JObject.Parse(existingContent);
@@ -413,10 +414,12 @@ namespace UnityMCP
                 string formattedJson = config.ToString(Newtonsoft.Json.Formatting.Indented);
                 File.WriteAllText(configPath, formattedJson);
 
+                string action = wasExisting ? "updated (merged with existing config)" : "added";
+
                 EditorUtility.DisplayDialog(
                     "Success",
                     $"Claude Desktop configured successfully!\n\n" +
-                    $"Unity MCP server {'updated' + (File.Exists(configPath) ? " (merged with existing config)" : "added")} at:\n{configPath}\n\n" +
+                    $"Unity MCP server {action} at:\n{configPath}\n\n" +
                     $"Please restart Claude Desktop for changes to take effect.",
                     "OK"
                 );
