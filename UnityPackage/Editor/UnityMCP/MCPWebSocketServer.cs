@@ -295,6 +295,18 @@ namespace UnityMCP
                                     break;
                                 }
 
+                                // Suppress I/O errors from thread abort
+                                if (e.InnerException is System.Threading.ThreadAbortException)
+                                {
+                                    break;
+                                }
+
+                                // Suppress errors with thread abort message
+                                if (e.Message.Contains("Thread was being aborted"))
+                                {
+                                    break;
+                                }
+
                                 // Only log if it's not a connection closure
                                 if (tcpClient.Connected)
                                 {
@@ -316,6 +328,12 @@ namespace UnityMCP
 
                 // Suppress I/O errors from thread abort
                 if (e.InnerException is System.Threading.ThreadAbortException)
+                {
+                    return;
+                }
+
+                // Suppress errors with thread abort message
+                if (e.Message.Contains("Thread was being aborted"))
                 {
                     return;
                 }
