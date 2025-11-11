@@ -137,7 +137,7 @@ namespace UnityMCP
 
             if (connectionStatus == ConnectionStatus.Connected)
             {
-                GUILayout.Label($"Server running on http://localhost:{config.port}", EditorStyles.miniLabel);
+                GUILayout.Label($"Server running on ws://localhost:{config.websocketPort}", EditorStyles.miniLabel);
             }
             else if (connectionStatus == ConnectionStatus.Error)
             {
@@ -186,7 +186,7 @@ namespace UnityMCP
             {
                 EditorGUI.BeginChangeCheck();
 
-                config.port = EditorGUILayout.IntSlider("Port", config.port, 1024, 65535);
+                config.websocketPort = EditorGUILayout.IntSlider("Port", config.websocketPort, 1024, 65535);
                 config.autoStart = EditorGUILayout.Toggle("Auto-start on Load", config.autoStart);
                 config.requestTimeout = EditorGUILayout.IntSlider("Request Timeout (s)", config.requestTimeout, 1, 60);
                 config.allowRemoteConnections = EditorGUILayout.Toggle("Allow Remote Connections", config.allowRemoteConnections);
@@ -307,7 +307,7 @@ namespace UnityMCP
                         "Are you sure you want to reset all settings to defaults?",
                         "Reset", "Cancel"))
                     {
-                        config.port = 8080;
+                        config.websocketPort = 8080;
                         config.autoStart = true;
                         config.requestTimeout = 30;
                         config.allowRemoteConnections = false;
