@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace unity-mcp
+namespace UnityMCP
 {
     /// <summary>
     /// Handler for console logs, assets, and project operations

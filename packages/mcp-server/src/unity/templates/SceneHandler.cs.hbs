@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace unity-mcp
+namespace UnityMCP
 {
     /// <summary>
     /// Handles Unity scene operations and hierarchy management

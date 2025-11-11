@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace unity-mcp
+namespace UnityMCP
 {
     /// <summary>
     /// Configuration settings for Unity MCP Server

@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace unity-mcp
+namespace UnityMCP
 {
     /// <summary>
     /// Handles Unity Play Mode testing and automation

@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace unity-mcp
+namespace UnityMCP
 {
     /// <summary>
     /// Advanced tools for Unity: menu execution, package management, testing, and script operations

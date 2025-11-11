@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace unity-mcp
+namespace UnityMCP
 {
     /// <summary>
     /// Handles Unity Editor manipulation commands from MCP
