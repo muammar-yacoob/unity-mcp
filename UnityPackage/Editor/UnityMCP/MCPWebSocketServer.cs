@@ -109,6 +109,21 @@ namespace UnityMCP
             Debug.Log("[Unity MCP] WebSocket server stopped");
         }
 
+        public static bool IsRunning()
+        {
+            return isRunning;
+        }
+
+        public static bool IsStarting()
+        {
+            return isStarting;
+        }
+
+        public static TcpListener GetListener()
+        {
+            return server;
+        }
+
         private static void RegisterTools()
         {
             toolRegistry = new Dictionary<string, Func<JObject, JObject>>
@@ -143,9 +158,9 @@ namespace UnityMCP
                 // Play mode testing
                 ["playmode_enter"] = PlayModeHandler.EnterPlayMode,
                 ["playmode_exit"] = PlayModeHandler.ExitPlayMode,
-                ["playmode_status"] = PlayModeHandler.GetStatus,
+                ["playmode_status"] = (data) => JObject.Parse(PlayModeHandler.GetPlayModeStatus()),
                 ["playmode_test"] = PlayModeHandler.RunTest,
-                ["playmode_pause"] = PlayModeHandler.Pause,
+                ["playmode_pause"] = (data) => JObject.Parse(PlayModeHandler.PausePlayMode()),
                 ["playmode_step"] = PlayModeHandler.StepFrame,
                 ["playmode_timescale"] = PlayModeHandler.SetTimeScale,
                 ["playmode_screenshot"] = PlayModeHandler.CaptureScreenshot,

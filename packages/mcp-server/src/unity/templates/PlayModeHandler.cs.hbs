@@ -50,7 +50,7 @@ namespace UnityMCP
             }
         }
 
-        private static string EnterPlayMode(CommandData data)
+        public static string EnterPlayMode(CommandData data)
         {
             if (EditorApplication.isPlaying)
             {
@@ -74,7 +74,7 @@ namespace UnityMCP
             return Success("Entering play mode");
         }
 
-        private static void PauseOnEnter(PlayModeStateChange state)
+        public static void PauseOnEnter(PlayModeStateChange state)
         {
             if (state == PlayModeStateChange.EnteredPlayMode)
             {
@@ -84,7 +84,7 @@ namespace UnityMCP
             }
         }
 
-        private static string ExitPlayMode(CommandData data)
+        public static string ExitPlayMode(CommandData data)
         {
             if (!EditorApplication.isPlaying)
             {
@@ -101,7 +101,7 @@ namespace UnityMCP
             return Success("Exiting play mode");
         }
 
-        private static string GetPlayModeStatus()
+        public static string GetPlayModeStatus()
         {
             var status = new
             {
@@ -117,7 +117,7 @@ namespace UnityMCP
             return JsonUtility.ToJson(status);
         }
 
-        private static string RunTest(CommandData data)
+        public static string RunTest(CommandData data)
         {
             if (!EditorApplication.isPlaying)
             {
@@ -147,7 +147,7 @@ namespace UnityMCP
             }
         }
 
-        private static void ExecuteTest(CommandData data)
+        public static void ExecuteTest(CommandData data)
         {
             try
             {
@@ -214,14 +214,14 @@ namespace UnityMCP
             }
         }
 
-        private static string PausePlayMode()
+        public static string PausePlayMode()
         {
             EditorApplication.isPaused = !EditorApplication.isPaused;
             LogTest($"Pause: {EditorApplication.isPaused}");
             return Success($"Play mode paused: {EditorApplication.isPaused}");
         }
 
-        private static string StepFrame()
+        public static string StepFrame()
         {
             if (!EditorApplication.isPlaying)
             {
@@ -233,14 +233,14 @@ namespace UnityMCP
             return Success("Stepped one frame");
         }
 
-        private static string SetTimeScale(CommandData data)
+        public static string SetTimeScale(CommandData data)
         {
             Time.timeScale = data.timeScale;
             LogTest($"Time scale set to {data.timeScale}");
             return Success($"Time scale: {data.timeScale}");
         }
 
-        private static string CaptureScreenshot(CommandData data)
+        public static string CaptureScreenshot(CommandData data)
         {
             string path = data.screenshotPath ?? "Assets/Screenshots/test_screenshot.png";
             EditorApplication.delayCall += () =>
@@ -252,18 +252,18 @@ namespace UnityMCP
             return Success($"Capturing screenshot to {path}");
         }
 
-        private static void LogTest(string message)
+        public static void LogTest(string message)
         {
             testLog.Add($"[{Time.realtimeSinceStartup - testStartTime:F2}s] {message}");
             Debug.Log($"[Unity MCP Test] {message}");
         }
 
-        private static string Success(string message)
+        public static string Success(string message)
         {
             return $"{{\"success\":true,\"message\":\"{message}\"}}";
         }
 
-        private static string Error(string message)
+        public static string Error(string message)
         {
             return $"{{\"success\":false,\"error\":\"{message}\"}}";
         }

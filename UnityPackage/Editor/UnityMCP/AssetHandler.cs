@@ -17,12 +17,12 @@ namespace UnityMCP
         private const int MAX_LOGS = 5000;
 
         [InitializeOnLoadMethod]
-        private static void Initialize()
+        public static void Initialize()
         {
             Application.logMessageReceived += OnLogMessageReceived;
         }
 
-        private static void OnLogMessageReceived(string condition, string stackTrace, LogType type)
+        public static void OnLogMessageReceived(string condition, string stackTrace, LogType type)
         {
             consoleLogs.Add(new LogEntry
             {
@@ -66,7 +66,7 @@ namespace UnityMCP
         }
 
         // ===== CONSOLE OPERATIONS =====
-        private static string GetConsoleLogs(string body)
+        public static string GetConsoleLogs(string body)
         {
             var data = ParseJson(body);
             string logType = data.ContainsKey("logType") ? data["logType"] : "all";
@@ -90,7 +90,7 @@ namespace UnityMCP
             return JsonResponse(true, $"Retrieved {logs.Length} console logs", new { logs, total = consoleLogs.Count });
         }
 
-        private static string ClearConsole()
+        public static string ClearConsole()
         {
             consoleLogs.Clear();
 
@@ -103,7 +103,7 @@ namespace UnityMCP
         }
 
         // ===== ASSET OPERATIONS =====
-        private static string CreatePrefab(string body)
+        public static string CreatePrefab(string body)
         {
             var data = ParseJson(body);
             string prefabName = data.ContainsKey("prefabName") ? data["prefabName"] : "";
@@ -149,7 +149,7 @@ namespace UnityMCP
             return JsonResponse(true, $"Prefab created: {prefabPath}", new { path = prefabPath, name = prefabName });
         }
 
-        private static string GetAssets(string body)
+        public static string GetAssets(string body)
         {
             var data = ParseJson(body);
             string type = data.ContainsKey("type") ? data["type"] : "";
@@ -179,7 +179,7 @@ namespace UnityMCP
             return JsonResponse(true, $"Found {assets.Length} assets", new { assets, folder, filterType = type });
         }
 
-        private static string RefreshAssets()
+        public static string RefreshAssets()
         {
             AssetDatabase.Refresh();
             return JsonResponse(true, "Asset database refreshed");
@@ -236,13 +236,13 @@ namespace UnityMCP
             return result;
         }
 
-        private static string JsonResponse(bool success, string message, object data = null)
+        public static string JsonResponse(bool success, string message, object data = null)
         {
             string dataJson = data != null ? $",\"data\":{SimpleJsonSerialize(data)}" : "";
             return $"{{\"success\":{success.ToString().ToLower()},\"message\":\"{message}\"{dataJson}}}";
         }
 
-        private static string SimpleJsonSerialize(object obj)
+        public static string SimpleJsonSerialize(object obj)
         {
             if (obj == null) return "null";
             if (obj is string str) return $"\"{str}\"";

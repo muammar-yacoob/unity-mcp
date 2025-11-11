@@ -46,7 +46,7 @@ namespace UnityMCP
             }
         }
 
-        private static string ListScenes()
+        public static string ListScenes()
         {
             var scenes = new List<object>();
 
@@ -79,7 +79,7 @@ namespace UnityMCP
             return $"{{\"success\":true,\"buildScenes\":{JsonUtility.ToJson(scenes)},\"loadedScenes\":{JsonUtility.ToJson(loadedScenes)}}}";
         }
 
-        private static string LoadScene(CommandData data)
+        public static string LoadScene(CommandData data)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace UnityMCP
             }
         }
 
-        private static string SaveScene(CommandData data)
+        public static string SaveScene(CommandData data)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace UnityMCP
             }
         }
 
-        private static string CreateNewScene(CommandData data)
+        public static string CreateNewScene(CommandData data)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace UnityMCP
             }
         }
 
-        private static string GetHierarchy()
+        public static string GetHierarchy()
         {
             var scene = SceneManager.GetActiveScene();
             var rootObjects = scene.GetRootGameObjects();
@@ -175,7 +175,7 @@ namespace UnityMCP
             return $"{{\"success\":true,\"scene\":\"{scene.name}\",\"hierarchy\":{JsonUtility.ToJson(hierarchy)}}}";
         }
 
-        private static object BuildHierarchyNode(GameObject obj)
+        public static object BuildHierarchyNode(GameObject obj)
         {
             var children = new List<object>();
             for (int i = 0; i < obj.transform.childCount; i++)
@@ -194,7 +194,7 @@ namespace UnityMCP
             };
         }
 
-        private static string FindInScene(CommandData data)
+        public static string FindInScene(CommandData data)
         {
             var results = new List<string>();
 
@@ -226,7 +226,7 @@ namespace UnityMCP
             return $"{{\"success\":true,\"count\":{results.Count},\"objects\":[{string.Join(",", results.Select(n => $"\"{n}\""))}]}}";
         }
 
-        private static void FindByPattern(GameObject obj, string pattern, List<string> results)
+        public static void FindByPattern(GameObject obj, string pattern, List<string> results)
         {
             if (obj.name.Contains(pattern))
             {
@@ -239,7 +239,7 @@ namespace UnityMCP
             }
         }
 
-        private static string CleanupScene(CommandData data)
+        public static string CleanupScene(CommandData data)
         {
             int cleaned = 0;
 
@@ -276,12 +276,12 @@ namespace UnityMCP
             return Success($"Cleaned {cleaned} items from scene");
         }
 
-        private static string Success(string message)
+        public static string Success(string message)
         {
             return $"{{\"success\":true,\"message\":\"{message}\"}}";
         }
 
-        private static string Error(string message)
+        public static string Error(string message)
         {
             return $"{{\"success\":false,\"error\":\"{message}\"}}";
         }

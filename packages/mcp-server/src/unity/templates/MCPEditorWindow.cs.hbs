@@ -58,13 +58,13 @@ namespace UnityMCP
 
             try
             {
-                var listener = MCPEditorServer.GetListener();
+                var listener = MCPWebSocketServer.GetListener();
                 if (listener != null && listener.IsListening)
                 {
                     connectionStatus = ConnectionStatus.Connected;
                     lastError = "";
                 }
-                else if (MCPEditorServer.IsStarting())
+                else if (MCPWebSocketServer.IsStarting())
                 {
                     connectionStatus = ConnectionStatus.Connecting;
                 }
@@ -157,23 +157,23 @@ namespace UnityMCP
             GUI.enabled = connectionStatus != ConnectionStatus.Connected;
             if (GUILayout.Button("▶ Start Server", GUILayout.Height(30)))
             {
-                MCPEditorServer.StartServer();
+                MCPWebSocketServer.StartServer();
                 connectionStatus = ConnectionStatus.Connecting;
             }
 
             GUI.enabled = connectionStatus == ConnectionStatus.Connected;
             if (GUILayout.Button("■ Stop Server", GUILayout.Height(30)))
             {
-                MCPEditorServer.StopServer();
+                MCPWebSocketServer.StopServer();
                 connectionStatus = ConnectionStatus.Disconnected;
             }
 
             GUI.enabled = true;
             if (GUILayout.Button("↻ Restart", GUILayout.Height(30)))
             {
-                MCPEditorServer.StopServer();
+                MCPWebSocketServer.StopServer();
                 System.Threading.Thread.Sleep(500);
-                MCPEditorServer.StartServer();
+                MCPWebSocketServer.StartServer();
             }
 
             EditorGUILayout.EndHorizontal();

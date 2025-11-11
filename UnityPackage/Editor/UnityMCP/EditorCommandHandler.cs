@@ -48,7 +48,7 @@ namespace UnityMCP
             }
         }
 
-        private static string SelectObjects(CommandData data)
+        public static string SelectObjects(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -82,7 +82,7 @@ namespace UnityMCP
             return Success($"Selected {data.names?.Length ?? 0} objects");
         }
 
-        private static string TransformObjects(CommandData data)
+        public static string TransformObjects(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -107,7 +107,7 @@ namespace UnityMCP
             return Success($"Transformed {Selection.gameObjects.Length} objects");
         }
 
-        private static string AlignObjects(CommandData data)
+        public static string AlignObjects(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -161,7 +161,7 @@ namespace UnityMCP
             return Success($"Aligned {Selection.gameObjects.Length} objects to {data.alignment}");
         }
 
-        private static string DistributeObjects(CommandData data)
+        public static string DistributeObjects(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -198,7 +198,7 @@ namespace UnityMCP
             return Success($"Distributed {Selection.gameObjects.Length} objects along {data.axis}");
         }
 
-        private static string DuplicateObjects(CommandData data)
+        public static string DuplicateObjects(CommandData data)
         {
             GameObject[] duplicates = null;
 
@@ -220,7 +220,7 @@ namespace UnityMCP
             return Success($"Duplicated {Selection.gameObjects.Length} objects");
         }
 
-        private static string DeleteObjects(CommandData data)
+        public static string DeleteObjects(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -234,7 +234,7 @@ namespace UnityMCP
             return Success($"Deleted {Selection.gameObjects.Length} objects");
         }
 
-        private static string ParentObjects(CommandData data)
+        public static string ParentObjects(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -260,7 +260,7 @@ namespace UnityMCP
             return Success($"Parented {Selection.gameObjects.Length} objects to {data.parentName ?? "root"}");
         }
 
-        private static string ComponentOperation(CommandData data)
+        public static string ComponentOperation(CommandData data)
         {
             EditorApplication.delayCall += () =>
             {
@@ -290,7 +290,7 @@ namespace UnityMCP
             return Success($"{data.operation} component {data.componentType} on {Selection.gameObjects.Length} objects");
         }
 
-        private static string FindObjects(CommandData data)
+        public static string FindObjects(CommandData data)
         {
             GameObject[] found = null;
 
@@ -316,12 +316,12 @@ namespace UnityMCP
             return $"{{\"success\":true,\"count\":{names.Length},\"objects\":[{string.Join(",", names.Select(n => $"\"{n}\""))}]}}";
         }
 
-        private static string Success(string message)
+        public static string Success(string message)
         {
             return $"{{\"success\":true,\"message\":\"{message}\"}}";
         }
 
-        private static string Error(string message)
+        public static string Error(string message)
         {
             return $"{{\"success\":false,\"error\":\"{message}\"}}";
         }

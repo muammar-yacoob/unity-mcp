@@ -50,7 +50,7 @@ namespace UnityMCP
         }
 
         // ===== MENU EXECUTION =====
-        private static string ExecuteMenuItem(string body)
+        public static string ExecuteMenuItem(string body)
         {
             var data = ParseJson(body);
             string menuPath = data.ContainsKey("menuPath") ? data["menuPath"] : "";
@@ -62,13 +62,11 @@ namespace UnityMCP
 
             try
             {
-                bool exists = Menu.MenuItemExists(menuPath);
-                if (!exists)
+                bool executed = EditorApplication.ExecuteMenuItem(menuPath);
+                if (!executed)
                 {
-                    return JsonResponse(false, $"Menu item not found: {menuPath}");
+                    return JsonResponse(false, $"Menu item not found or failed to execute: {menuPath}");
                 }
-
-                EditorApplication.ExecuteMenuItem(menuPath);
                 return JsonResponse(true, $"Executed menu item: {menuPath}");
             }
             catch (Exception e)
@@ -78,7 +76,7 @@ namespace UnityMCP
         }
 
         // ===== PACKAGE MANAGEMENT =====
-        private static string AddPackage(string body)
+        public static string AddPackage(string body)
         {
             var data = ParseJson(body);
             string packageName = data.ContainsKey("packageName") ? data["packageName"] : "";
@@ -105,7 +103,7 @@ namespace UnityMCP
         }
 
         // ===== UNITY TEST RUNNER =====
-        private static string RunUnityTests(string body)
+        public static string RunUnityTests(string body)
         {
             var data = ParseJson(body);
             string testMode = data.ContainsKey("testMode") ? data["testMode"] : "EditMode";
@@ -139,7 +137,7 @@ namespace UnityMCP
         }
 
         // ===== ASSET TO SCENE =====
-        private static string AddAssetToScene(string body)
+        public static string AddAssetToScene(string body)
         {
             var data = ParseJson(body);
             string assetPath = data.ContainsKey("assetPath") ? data["assetPath"] : "";
@@ -173,7 +171,7 @@ namespace UnityMCP
         }
 
         // ===== SCRIPT MANAGEMENT =====
-        private static string CreateScript(string body)
+        public static string CreateScript(string body)
         {
             var data = ParseJson(body);
             string scriptName = data.ContainsKey("scriptName") ? data["scriptName"] : "";
@@ -233,7 +231,7 @@ public class {scriptName} : MonoBehaviour
             return JsonResponse(true, $"Script created: {scriptPath}", new { path = scriptPath });
         }
 
-        private static string ReadScript(string body)
+        public static string ReadScript(string body)
         {
             var data = ParseJson(body);
             string scriptPath = data.ContainsKey("scriptPath") ? data["scriptPath"] : "";
@@ -252,7 +250,7 @@ public class {scriptName} : MonoBehaviour
             return JsonResponse(true, "Script read successfully", new { path = scriptPath, content });
         }
 
-        private static string UpdateScript(string body)
+        public static string UpdateScript(string body)
         {
             var data = ParseJson(body);
             string scriptPath = data.ContainsKey("scriptPath") ? data["scriptPath"] : "";
@@ -274,7 +272,7 @@ public class {scriptName} : MonoBehaviour
             return JsonResponse(true, $"Script updated: {scriptPath}", new { path = scriptPath });
         }
 
-        private static string DeleteScript(string body)
+        public static string DeleteScript(string body)
         {
             var data = ParseJson(body);
             string scriptPath = data.ContainsKey("scriptPath") ? data["scriptPath"] : "";
@@ -295,7 +293,7 @@ public class {scriptName} : MonoBehaviour
             return JsonResponse(true, $"Script deleted: {scriptPath}", new { path = scriptPath });
         }
 
-        private static string ValidateScript(string body)
+        public static string ValidateScript(string body)
         {
             var data = ParseJson(body);
             string scriptPath = data.ContainsKey("scriptPath") ? data["scriptPath"] : "";
@@ -389,13 +387,13 @@ public class {scriptName} : MonoBehaviour
             return result;
         }
 
-        private static string JsonResponse(bool success, string message, object data = null)
+        public static string JsonResponse(bool success, string message, object data = null)
         {
             string dataJson = data != null ? $",\"data\":{SimpleJsonSerialize(data)}" : "";
             return $"{{\"success\":{success.ToString().ToLower()},\"message\":\"{message}\"{dataJson}}}";
         }
 
-        private static string SimpleJsonSerialize(object obj)
+        public static string SimpleJsonSerialize(object obj)
         {
             if (obj == null) return "null";
             if (obj is string str) return $"\"{str}\"";
