@@ -87,6 +87,13 @@ namespace UnityMCP
 
             isRunning = false;
 
+            // Stop listener first to unblock AcceptTcpClient
+            try
+            {
+                server?.Stop();
+            }
+            catch { }
+
             // Close all client connections
             lock (clients)
             {
@@ -101,8 +108,8 @@ namespace UnityMCP
                 clients.Clear();
             }
 
-            server?.Stop();
-            serverThread?.Abort();
+            // Thread will exit naturally when isRunning is false
+            serverThread = null;
 
             Debug.Log("[Unity MCP] WebSocket server stopped");
         }
