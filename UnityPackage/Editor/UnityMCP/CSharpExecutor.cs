@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CSharp;
 using UnityEditor;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace UnityMCP
 {
@@ -101,8 +102,44 @@ namespace UnityMCP
 
         /// <summary>
         /// Execute code with comprehensive error handling and logging
+        /// Automatically switches to Unity's main thread using UniTask if needed
         /// </summary>
         public static ExecutionResult ExecuteWithResult(string code)
+        {
+            // Use UniTask to safely execute on main thread
+            // This is synchronous but ensures main thread execution
+            try
+            {
+                return ExecuteWithResultAsync(code).GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+                return new ExecutionResult
+                {
+                    Success = false,
+                    Error = $"Failed to execute C# code: {e.Message}",
+                    Logs = new System.Collections.Generic.List<string>(),
+                    Warnings = new System.Collections.Generic.List<string>(),
+                    Errors = new System.Collections.Generic.List<string> { e.Message }
+                };
+            }
+        }
+
+        /// <summary>
+        /// Async execution with automatic main thread switching via UniTask
+        /// </summary>
+        private static async UniTask<ExecutionResult> ExecuteWithResultAsync(string code)
+        {
+            // Switch to Unity's main thread (PlayerLoop timing)
+            await UniTask.SwitchToMainThread();
+
+            return ExecuteWithResultInternal(code);
+        }
+
+        /// <summary>
+        /// Internal synchronous execution - guaranteed to run on main thread
+        /// </summary>
+        private static ExecutionResult ExecuteWithResultInternal(string code)
         {
             var result = new ExecutionResult
             {
@@ -112,7 +149,7 @@ namespace UnityMCP
                 Errors = new System.Collections.Generic.List<string>()
             };
 
-            // Capture logs during execution
+            // Capture logs during execution (safe on main thread)
             Application.logMessageReceived += LogHandler;
 
             try

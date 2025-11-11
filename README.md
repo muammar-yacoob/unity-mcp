@@ -45,7 +45,7 @@ Unity MCP provides **real-time control** of Unity Editor via the Model Context P
 
 **Why only 8 tools?**
 
-Unity MCP v0.4.0 adopts a revolutionary **minimal architecture** inspired by successful projects that prove *flexibility beats complexity*:
+Unity MCP v2.3.0 adopts a revolutionary **minimal architecture** inspired by successful projects that prove *flexibility beats complexity*:
 
 - **⭐ execute_csharp** - The game-changer that replaces dozens of specialized tools
 - **🗺️ 3 scene tools** - Essential scene operations (load, save, hierarchy)
@@ -58,7 +58,7 @@ Unity MCP v0.4.0 adopts a revolutionary **minimal architecture** inspired by suc
 | Approach | Tool Count | Flexibility | Maintenance |
 |:---------|:-----------|:------------|:------------|
 | 🔴 Traditional | 30+ rigid tools | Limited to predefined operations | High complexity |
-| ✅ **Unity MCP v0.4.0** | 8 essential tools | **Unlimited via execute_csharp** | Clean & simple |
+| ✅ **Unity MCP v2.3.0** | 8 essential tools | **Unlimited via execute_csharp** | Clean & simple |
 
 **execute_csharp changes everything** - It's not just another tool, it's a **direct portal to the entire Unity API**. Need to align objects? Execute C#. Want to manage packages? Execute C#. Create custom workflows? Execute C#. It's like having a senior Unity developer at your fingertips.
 
@@ -533,20 +533,20 @@ You should see: `MCP Server running on stdio`
 
 ---
 
-## 🚀 What Changed in v0.4.0?
+## 🚀 What Changed in v2.3.0?
 
 <details>
-<summary><strong>📊 From v0.3.0 → v0.4.0: The Simplification Update</strong></summary>
+<summary><strong>📊 From v2.2.x → v2.3.0: The Simplification Update</strong></summary>
 
 ### Architecture Transformation
 
-**Before (v0.3.0):**
+**Before (v2.2.x):**
 - 30+ specialized tools
 - 651 lines of tool definitions
 - Limited to predefined operations
 - Complex maintenance
 
-**After (v0.4.0):**
+**After (v2.3.0):**
 - 8 essential tools
 - 231 lines of tool definitions (64% reduction)
 - Unlimited flexibility via execute_csharp
@@ -579,7 +579,7 @@ transform_objects({ position: { y: 5 } })
 align_objects({ axis: "horizontal" })
 ```
 
-**New Way (v0.4.0):**
+**New Way (v2.3.0):**
 ```typescript
 // Single execute_csharp call - more powerful!
 execute_csharp({

@@ -1,7 +1,7 @@
 {
   "name": "@spark-apps/unity-mcp",
-  "version": "2.2.2",
-  "description": "Real-time Unity Editor control via MCP - select, transform, align objects, automate testing, and manage scenes with AI. Direct IPC integration for game developers.",
+  "version": "2.3.1",
+  "description": "Simplified Unity Editor control via MCP - Execute ANY Unity API code with execute_csharp, manage scenes, automate testing, and monitor console. 8 essential tools with unlimited flexibility.",
   "type": "module",
   "bin": {
     "unity-mcp": "dist/index.js"

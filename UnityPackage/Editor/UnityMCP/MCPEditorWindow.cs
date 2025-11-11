@@ -321,7 +321,7 @@ namespace UnityMCP
         private void DrawFooter()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            GUILayout.Label("Unity MCP v0.4.0 - Simplified Architecture | Made with ❤️ for Game Devs", EditorStyles.centeredGreyMiniLabel);
+            GUILayout.Label("Unity MCP v2.3.0 - Simplified Architecture | Made with ❤️ for Game Devs", EditorStyles.centeredGreyMiniLabel);
             EditorGUILayout.EndVertical();
         }
 
