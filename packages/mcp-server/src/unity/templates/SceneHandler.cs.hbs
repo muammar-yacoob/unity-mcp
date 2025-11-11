@@ -218,7 +218,7 @@ namespace UnityMCP
                 var type = Type.GetType(data.componentType);
                 if (type != null)
                 {
-                    var components = GameObject.FindObjectsOfType(type);
+                    var components = GameObject.FindObjectsByType(type, FindObjectsSortMode.None);
                     results = components.Select(c => (c as Component)?.gameObject.name).Where(n => n != null).ToList();
                 }
             }
@@ -246,7 +246,7 @@ namespace UnityMCP
             // Remove missing script references
             if (data.removeMissingScripts)
             {
-                var allObjects = GameObject.FindObjectsOfType<GameObject>();
+                var allObjects = GameObject.FindObjectsByType<GameObject>();
                 foreach (var obj in allObjects)
                 {
                     int count = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(obj);
@@ -262,7 +262,7 @@ namespace UnityMCP
             // Remove empty game objects
             if (data.removeEmpty)
             {
-                var allObjects = GameObject.FindObjectsOfType<GameObject>();
+                var allObjects = GameObject.FindObjectsByType<GameObject>();
                 foreach (var obj in allObjects)
                 {
                     if (obj.transform.childCount == 0 && obj.GetComponents<Component>().Length == 1) // Only Transform

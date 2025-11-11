@@ -124,57 +124,71 @@ namespace UnityMCP
             return server;
         }
 
+        private static JObject WrapHandler<T>(Func<T, string> handler, JObject data) where T : new()
+        {
+            var commandData = JsonUtility.FromJson<T>(data.ToString());
+            if (commandData == null) commandData = new T();
+            var result = handler(commandData);
+            return JObject.Parse(result);
+        }
+
+        private static JObject WrapHandlerNoArgs(Func<string> handler, JObject data)
+        {
+            var result = handler();
+            return JObject.Parse(result);
+        }
+
         private static void RegisterTools()
         {
             toolRegistry = new Dictionary<string, Func<JObject, JObject>>
             {
                 // Editor manipulation
-                ["editor_select"] = EditorCommandHandler.SelectObjects,
-                ["editor_transform"] = EditorCommandHandler.TransformObjects,
-                ["editor_align"] = EditorCommandHandler.AlignObjects,
-                ["editor_distribute"] = EditorCommandHandler.DistributeObjects,
-                ["editor_duplicate"] = EditorCommandHandler.DuplicateObjects,
-                ["editor_delete"] = EditorCommandHandler.DeleteObjects,
-                ["editor_parent"] = EditorCommandHandler.ParentObjects,
-                ["editor_component"] = EditorCommandHandler.ComponentOperation,
-                ["editor_find"] = EditorCommandHandler.FindObjects,
+                ["editor_select"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.SelectObjects, data),
+                ["editor_transform"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.TransformObjects, data),
+                ["editor_align"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.AlignObjects, data),
+                ["editor_distribute"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.DistributeObjects, data),
+                ["editor_duplicate"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.DuplicateObjects, data),
+                ["editor_delete"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.DeleteObjects, data),
+                ["editor_parent"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.ParentObjects, data),
+                ["editor_component"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.ComponentOperation, data),
+                ["editor_find"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.FindObjects, data),
 
                 // Scene operations
-                ["scene_list"] = SceneHandler.ListScenes,
-                ["scene_load"] = SceneHandler.LoadScene,
-                ["scene_save"] = SceneHandler.SaveScene,
-                ["scene_new"] = SceneHandler.CreateNewScene,
-                ["scene_hierarchy"] = SceneHandler.GetHierarchy,
-                ["scene_find"] = SceneHandler.FindInScene,
-                ["scene_cleanup"] = SceneHandler.CleanupScene,
+                ["scene_list"] = (data) => WrapHandlerNoArgs(SceneHandler.ListScenes, data),
+                ["scene_load"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.LoadScene, data),
+                ["scene_save"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.SaveScene, data),
+                ["scene_new"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.CreateNewScene, data),
+                ["scene_hierarchy"] = (data) => WrapHandlerNoArgs(SceneHandler.GetHierarchy, data),
+                ["scene_find"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.FindInScene, data),
+                ["scene_cleanup"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.CleanupScene, data),
 
                 // Asset operations
-                ["console_get_logs"] = AssetHandler.GetConsoleLogs,
-                ["console_clear"] = AssetHandler.ClearConsole,
-                ["asset_create_prefab"] = AssetHandler.CreatePrefab,
-                ["project_get_assets"] = AssetHandler.GetAssets,
-                ["asset_refresh"] = AssetHandler.RefreshAssets,
+                ["console_get_logs"] = (data) => WrapHandler<AssetHandler.CommandData>(AssetHandler.GetConsoleLogs, data),
+                ["console_clear"] = (data) => WrapHandlerNoArgs(AssetHandler.ClearConsole, data),
+                ["asset_create_prefab"] = (data) => WrapHandler<AssetHandler.CommandData>(AssetHandler.CreatePrefab, data),
+                ["project_get_assets"] = (data) => WrapHandler<AssetHandler.CommandData>(AssetHandler.GetAssets, data),
+                ["asset_refresh"] = (data) => WrapHandlerNoArgs(AssetHandler.RefreshAssets, data),
 
                 // Play mode testing
-                ["playmode_enter"] = PlayModeHandler.EnterPlayMode,
-                ["playmode_exit"] = PlayModeHandler.ExitPlayMode,
-                ["playmode_status"] = (data) => JObject.Parse(PlayModeHandler.GetPlayModeStatus()),
-                ["playmode_test"] = PlayModeHandler.RunTest,
-                ["playmode_pause"] = (data) => JObject.Parse(PlayModeHandler.PausePlayMode()),
-                ["playmode_step"] = PlayModeHandler.StepFrame,
-                ["playmode_timescale"] = PlayModeHandler.SetTimeScale,
-                ["playmode_screenshot"] = PlayModeHandler.CaptureScreenshot,
+                ["playmode_enter"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.EnterPlayMode, data),
+                ["playmode_exit"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.ExitPlayMode, data),
+                ["playmode_status"] = (data) => WrapHandlerNoArgs(PlayModeHandler.GetPlayModeStatus, data),
+                ["playmode_test"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.RunTest, data),
+                ["playmode_pause"] = (data) => WrapHandlerNoArgs(PlayModeHandler.PausePlayMode, data),
+                ["playmode_step"] = (data) => WrapHandlerNoArgs(PlayModeHandler.StepFrame, data),
+                ["playmode_timescale"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.SetTimeScale, data),
+                ["playmode_screenshot"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.CaptureScreenshot, data),
 
                 // Advanced tools
-                ["advanced_execute_menu"] = AdvancedToolsHandler.ExecuteMenuItem,
-                ["advanced_add_package"] = AdvancedToolsHandler.AddPackage,
-                ["advanced_run_tests"] = AdvancedToolsHandler.RunUnityTests,
-                ["advanced_add_asset_to_scene"] = AdvancedToolsHandler.AddAssetToScene,
-                ["advanced_create_script"] = AdvancedToolsHandler.CreateScript,
-                ["advanced_read_script"] = AdvancedToolsHandler.ReadScript,
-                ["advanced_update_script"] = AdvancedToolsHandler.UpdateScript,
-                ["advanced_delete_script"] = AdvancedToolsHandler.DeleteScript,
-                ["advanced_validate_script"] = AdvancedToolsHandler.ValidateScript,
+                ["advanced_execute_menu"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.ExecuteMenuItem, data),
+                ["advanced_add_package"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.AddPackage, data),
+                ["advanced_run_tests"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.RunUnityTests, data),
+                ["advanced_add_asset_to_scene"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.AddAssetToScene, data),
+                ["advanced_create_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.CreateScript, data),
+                ["advanced_read_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.ReadScript, data),
+                ["advanced_update_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.UpdateScript, data),
+                ["advanced_delete_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.DeleteScript, data),
+                ["advanced_validate_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.ValidateScript, data),
             };
         }
 

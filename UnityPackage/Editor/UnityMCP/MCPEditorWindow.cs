@@ -58,8 +58,7 @@ namespace UnityMCP
 
             try
             {
-                var listener = MCPWebSocketServer.GetListener();
-                if (listener != null && listener.IsListening)
+                if (MCPWebSocketServer.IsRunning())
                 {
                     connectionStatus = ConnectionStatus.Connected;
                     lastError = "";
