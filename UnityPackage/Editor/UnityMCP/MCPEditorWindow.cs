@@ -16,7 +16,6 @@ namespace UnityMCP
         private bool showFeatures = false;
         private bool showAdvanced = false;
         private bool showTools = false;
-        private bool showQuickActions = false;
 
         private DateTime lastStatusCheck;
         private ConnectionStatus connectionStatus = ConnectionStatus.Unknown;
@@ -103,7 +102,6 @@ namespace UnityMCP
             // Collapsible Sections
             DrawServerSettings();
             DrawFeatures();
-            DrawQuickActions();
             DrawToolsOverview();
             DrawAdvancedSettings();
 
@@ -234,65 +232,6 @@ namespace UnityMCP
                     EditorUtility.SetDirty(config);
                     AssetDatabase.SaveAssets();
                 }
-            }
-
-            EditorGUILayout.EndVertical();
-        }
-
-        private void DrawQuickActions()
-        {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-            showQuickActions = EditorGUILayout.Foldout(showQuickActions, "⚡ Quick Actions", true);
-
-            if (showQuickActions)
-            {
-                EditorGUILayout.BeginHorizontal();
-
-                if (GUILayout.Button("📋 View Console Logs"))
-                {
-                    EditorApplication.ExecuteMenuItem("Window/General/Console");
-                }
-
-                if (GUILayout.Button("🔄 Refresh Assets"))
-                {
-                    AssetDatabase.Refresh();
-                    Debug.Log("[Unity MCP] Assets refreshed");
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-
-                if (GUILayout.Button("💾 Save Scene"))
-                {
-                    UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
-                    Debug.Log("[Unity MCP] Scenes saved");
-                }
-
-                if (GUILayout.Button("🧹 Clear Console"))
-                {
-                    var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
-                    var clearMethod = logEntries?.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-                    clearMethod?.Invoke(null, null);
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-
-                if (GUILayout.Button("📁 Open Config"))
-                {
-                    Selection.activeObject = config;
-                    EditorGUIUtility.PingObject(config);
-                }
-
-                if (GUILayout.Button("📖 Documentation"))
-                {
-                    Application.OpenURL("https://github.com/muammar-yacoob/unity-mcp#readme");
-                }
-
-                EditorGUILayout.EndHorizontal();
             }
 
             EditorGUILayout.EndVertical();

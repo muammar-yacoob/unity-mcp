@@ -42,7 +42,6 @@ namespace UnityMCP
             }
         }
 
-        [MenuItem("Tools/Unity MCP/Start WebSocket Server")]
         public static void StartServer()
         {
             if (isRunning || isStarting) return;
@@ -82,7 +81,6 @@ namespace UnityMCP
             }
         }
 
-        [MenuItem("Tools/Unity MCP/Stop WebSocket Server")]
         public static void StopServer()
         {
             if (!isRunning) return;
