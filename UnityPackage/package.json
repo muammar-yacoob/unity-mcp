@@ -27,5 +27,7 @@
     "type": "git",
     "url": "https://github.com/muammar-yacoob/unity-mcp.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  }
 }
