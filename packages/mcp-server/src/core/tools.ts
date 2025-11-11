@@ -1,41 +1,87 @@
 import { FastMCP } from "fastmcp";
 import { z } from "zod";
 import { TransportFactory } from "../transports/index.js";
-import { EditorManipulationService } from "../unity/services/EditorManipulationService.js";
 import { PlayModeTestingService } from "../unity/services/PlayModeTestingService.js";
 import { SceneOperationsService } from "../unity/services/SceneOperationsService.js";
 import { AssetService } from "../unity/services/AssetService.js";
-import { AdvancedToolsService } from "../unity/services/AdvancedToolsService.js";
 
 /**
- * Register all Unity MCP tools with the server
- * Focused on real Unity Editor interaction and automation
+ * SIMPLIFIED ARCHITECTURE: 8 Essential Tools
+ *
+ * This MCP server now follows the minimal philosophy:
+ * - execute_csharp: Execute ANY Unity operation with full API access
+ * - 7 convenience tools for common operations
+ *
+ * Inspired by Arodoid's UnityMCP - simplicity over complexity
  */
 export function registerTools(server: FastMCP) {
   // Create transport instance (WebSocket by default, HTTP as fallback)
   const transport = TransportFactory.create();
 
-  // All services use the transport to communicate with Unity
-  const editorService = new EditorManipulationService(transport);
+  // Services for essential operations
   const playModeService = new PlayModeTestingService(transport);
   const sceneService = new SceneOperationsService(transport);
   const assetService = new AssetService(transport);
-  const advancedService = new AdvancedToolsService(transport);
 
-  // ===== EDITOR MANIPULATION TOOLS =====
+  // ===== THE KILLER TOOL ⭐ =====
   server.addTool({
-    name: "select_objects",
-    description: "Select objects in Unity Editor by name, tag, or pattern. Frame the selection in Scene view.",
+    name: "execute_csharp",
+    description: `Execute arbitrary C# code in Unity Editor context with full access to UnityEngine and UnityEditor APIs.
+
+This is the most powerful tool - it enables you to perform ANY Unity operation without predefined tools.
+
+Examples:
+- Select objects: Selection.activeGameObject = GameObject.Find("Player");
+- Transform: transform.position = new Vector3(0, 0, 0);
+- Create objects: GameObject.CreatePrimitive(PrimitiveType.Cube);
+- Modify components: GetComponent<Rigidbody>().mass = 10f;
+- Scene operations: EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+- Asset operations: AssetDatabase.CreateAsset(myAsset, "Assets/MyAsset.asset");
+- Play mode: EditorApplication.isPlaying = true;
+
+The code has access to:
+- UnityEngine (GameObject, Transform, Component, etc.)
+- UnityEditor (Selection, EditorApplication, AssetDatabase, etc.)
+- System.Linq
+- System.Collections.Generic
+
+Returns execution result with logs, warnings, and errors.`,
     parameters: z.object({
-      names: z.array(z.string()).optional().describe("Object names to select"),
-      tag: z.string().optional().describe("Select all objects with this tag"),
-      pattern: z.string().optional().describe("Select objects whose names contain this pattern"),
-      frame: z.boolean().optional().default(false).describe("Frame selected objects in Scene view"),
+      code: z.string().min(1).describe("C# code to execute. Can be multi-line. Will be wrapped in a static method."),
     }),
     execute: async (params) => {
       try {
-        const result = await editorService.selectObjects(params);
-        return JSON.stringify(result, null, 2);
+        // Send to Unity via transport
+        const response = await transport.request("/execute_csharp", {
+          code: params.code,
+        });
+
+        if (response && typeof response === "object" && "success" in response) {
+          const result = response as {
+            success: boolean;
+            message: string;
+            data?: any;
+          };
+
+          if (result.success) {
+            return JSON.stringify({
+              success: true,
+              message: "Code executed successfully",
+              ...result.data,
+            }, null, 2);
+          } else {
+            return JSON.stringify({
+              success: false,
+              error: result.message,
+              ...result.data,
+            }, null, 2);
+          }
+        }
+
+        return JSON.stringify({
+          success: false,
+          error: "Invalid response from Unity",
+        }, null, 2);
       } catch (error) {
         return JSON.stringify({
           success: false,
@@ -45,75 +91,14 @@ export function registerTools(server: FastMCP) {
     },
   });
 
+  // ===== SCENE OPERATIONS =====
   server.addTool({
-    name: "transform_objects",
-    description: "Transform selected objects in Unity Editor. Set or modify position, rotation, and scale.",
-    parameters: z.object({
-      position: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Absolute position [x, y, z]"),
-      rotation: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Absolute rotation [x, y, z] in degrees"),
-      scale: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Absolute scale [x, y, z]"),
-      moveBy: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Relative movement [x, y, z]"),
-      rotateBy: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Relative rotation [x, y, z] in degrees"),
-      scaleBy: z.tuple([z.number(), z.number(), z.number()]).optional().describe("Relative scale multiplier [x, y, z]"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await editorService.transformObjects(params as any);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "align_objects",
-    description: "Align selected objects in Unity Editor. Supports left, right, top, bottom, center horizontal/vertical.",
-    parameters: z.object({
-      alignment: z.enum(["left", "right", "top", "bottom", "center-horizontal", "center-vertical"]).describe("Alignment direction"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await editorService.alignObjects(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "distribute_objects",
-    description: "Distribute selected objects evenly in Unity Editor. Requires 3+ objects selected.",
-    parameters: z.object({
-      axis: z.enum(["horizontal", "vertical", "x", "y"]).describe("Distribution axis"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await editorService.distributeObjects(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "duplicate_objects",
-    description: "Duplicate selected objects in Unity Editor with undo support.",
+    name: "get_scene_hierarchy",
+    description: "Get the complete scene hierarchy with all GameObjects and their components. Returns a tree structure of the active scene.",
     parameters: z.object({}),
     execute: async () => {
       try {
-        const result = await editorService.duplicateObjects();
+        const result = await sceneService.getHierarchy();
         return JSON.stringify(result, null, 2);
       } catch (error) {
         return JSON.stringify({
@@ -125,32 +110,16 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "delete_objects",
-    description: "Delete selected objects in Unity Editor with undo support.",
-    parameters: z.object({}),
-    execute: async () => {
-      try {
-        const result = await editorService.deleteObjects();
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "find_objects",
-    description: "Find objects in Unity Editor by component type or name pattern.",
+    name: "load_scene",
+    description: "Load a scene by name or index. Useful for switching between scenes in your project.",
     parameters: z.object({
-      type: z.string().optional().describe("Component type to find (e.g., 'UnityEngine.Camera')"),
-      pattern: z.string().optional().describe("Name pattern to match"),
+      sceneName: z.string().optional().describe("Scene name to load (e.g., 'MainMenu')"),
+      sceneIndex: z.number().optional().describe("Scene index in build settings"),
+      additive: z.boolean().optional().default(false).describe("Load additively without unloading current scene"),
     }),
     execute: async (params) => {
       try {
-        const result = await editorService.findObjects(params);
+        const result = await sceneService.loadScene(params);
         return JSON.stringify(result, null, 2);
       } catch (error) {
         return JSON.stringify({
@@ -161,10 +130,51 @@ export function registerTools(server: FastMCP) {
     },
   });
 
-  // ===== PLAY MODE TESTING TOOLS =====
   server.addTool({
-    name: "enter_play_mode",
-    description: "Enter Unity play mode for testing. Optionally pause on enter for debugging.",
+    name: "save_scene",
+    description: "Save the current scene or all open scenes. Essential for preserving changes made during automation.",
+    parameters: z.object({
+      saveAll: z.boolean().optional().default(false).describe("Save all open scenes instead of just current"),
+    }),
+    execute: async (params) => {
+      try {
+        const result = await sceneService.saveScene(params);
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  // ===== CONSOLE & LOGGING =====
+  server.addTool({
+    name: "get_console_logs",
+    description: "Retrieve Unity console logs with filtering options. Essential for debugging and monitoring Unity Editor state.",
+    parameters: z.object({
+      types: z.array(z.enum(["Log", "Warning", "Error"])).optional().describe("Filter by log types"),
+      limit: z.number().optional().default(100).describe("Maximum number of logs to return"),
+      contains: z.string().optional().describe("Filter logs containing this text"),
+    }),
+    execute: async (params) => {
+      try {
+        const result = await assetService.getConsoleLogs(params);
+        return JSON.stringify(result, null, 2);
+      } catch (error) {
+        return JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }, null, 2);
+      }
+    },
+  });
+
+  // ===== PLAY MODE TESTING =====
+  server.addTool({
+    name: "enter_playmode",
+    description: "Enter Unity Play Mode for testing gameplay. Can optionally pause on enter.",
     parameters: z.object({
       pauseOnEnter: z.boolean().optional().default(false).describe("Pause immediately after entering play mode"),
     }),
@@ -182,8 +192,8 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "exit_play_mode",
-    description: "Exit Unity play mode.",
+    name: "exit_playmode",
+    description: "Exit Unity Play Mode and return to Edit Mode. Safe way to stop gameplay testing.",
     parameters: z.object({}),
     execute: async () => {
       try {
@@ -199,35 +209,8 @@ export function registerTools(server: FastMCP) {
   });
 
   server.addTool({
-    name: "run_test",
-    description: "Run automated test in Unity play mode. Can move, destroy, or activate objects and wait for duration.",
-    parameters: z.object({
-      testName: z.string().describe("Name of the test for logging"),
-      targetObject: z.string().optional().describe("GameObject name to operate on"),
-      action: z.enum(["move", "destroy", "activate"]).optional().describe("Action to perform on target"),
-      x: z.number().optional().describe("X position for move action"),
-      y: z.number().optional().describe("Y position for move action"),
-      z: z.number().optional().describe("Z position for move action"),
-      value: z.boolean().optional().describe("Boolean value for activate action"),
-      duration: z.number().optional().default(0).describe("Wait duration in seconds"),
-      exitAfter: z.boolean().optional().default(false).describe("Exit play mode after test completes"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await playModeService.runTest(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "playmode_status",
-    description: "Get Unity play mode status including test logs and timing information.",
+    name: "get_playmode_status",
+    description: "Get current Play Mode status (playing, paused, or stopped) and recent logs from play mode.",
     parameters: z.object({}),
     execute: async () => {
       try {
@@ -242,410 +225,6 @@ export function registerTools(server: FastMCP) {
     },
   });
 
-  server.addTool({
-    name: "set_timescale",
-    description: "Set Unity time scale for slow motion or fast forward testing. Default is 1.0.",
-    parameters: z.object({
-      timeScale: z.number().min(0).max(10).describe("Time scale multiplier (0.1 = slow motion, 2.0 = fast forward)"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await playModeService.setTimeScale(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  // ===== SCENE OPERATION TOOLS =====
-  server.addTool({
-    name: "list_scenes",
-    description: "List all scenes in Unity project build settings and currently loaded scenes.",
-    parameters: z.object({}),
-    execute: async () => {
-      try {
-        const result = await sceneService.listScenes();
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "load_scene",
-    description: "Load a Unity scene by name or build index.",
-    parameters: z.object({
-      index: z.number().optional().describe("Scene build index"),
-      sceneName: z.string().optional().describe("Scene name"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await sceneService.loadScene(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "save_scene",
-    description: "Save current Unity scene or all open scenes.",
-    parameters: z.object({
-      saveAll: z.boolean().optional().default(false).describe("Save all open scenes"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await sceneService.saveScene(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "get_hierarchy",
-    description: "Get Unity scene hierarchy with all GameObjects, components, and children.",
-    parameters: z.object({}),
-    execute: async () => {
-      try {
-        const result = await sceneService.getHierarchy();
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "find_in_scene",
-    description: "Find objects in current Unity scene by tag, name pattern, or component type.",
-    parameters: z.object({
-      tag: z.string().optional().describe("Tag to search for"),
-      pattern: z.string().optional().describe("Name pattern to match"),
-      componentType: z.string().optional().describe("Component type (e.g., 'UnityEngine.Camera')"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await sceneService.findInScene(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "cleanup_scene",
-    description: "Clean up Unity scene by removing missing scripts and empty GameObjects.",
-    parameters: z.object({
-      removeMissingScripts: z.boolean().optional().default(true).describe("Remove missing script references"),
-      removeEmpty: z.boolean().optional().default(false).describe("Remove empty GameObjects (with only Transform)"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await sceneService.cleanupScene(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  // ===== CONSOLE & ASSET TOOLS =====
-  server.addTool({
-    name: "get_console_logs",
-    description: "Get console logs from Unity Editor for debugging. Filter by log type and limit results.",
-    parameters: z.object({
-      logType: z.enum(["all", "error", "warning", "log"]).optional().default("all").describe("Type of logs to retrieve"),
-      limit: z.number().optional().default(50).describe("Maximum number of logs to return"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await assetService.getConsoleLogs(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "clear_console",
-    description: "Clear all console logs in Unity Editor.",
-    parameters: z.object({}),
-    execute: async () => {
-      try {
-        const result = await assetService.clearConsole();
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "create_prefab",
-    description: "Create a prefab from currently selected GameObject(s) in Unity Editor.",
-    parameters: z.object({
-      prefabName: z.string().describe("Name for the prefab file"),
-      folderPath: z.string().optional().default("Assets/Prefabs").describe("Folder path to save prefab (e.g., 'Assets/Prefabs')"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await assetService.createPrefab(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "get_assets",
-    description: "Get list of assets in Unity project. Filter by type or folder path.",
-    parameters: z.object({
-      type: z.string().optional().describe("Asset type filter (e.g., 'Prefab', 'Material', 'Script')"),
-      folder: z.string().optional().describe("Folder path to search in (e.g., 'Assets/Scripts')"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await assetService.getAssets(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "refresh_assets",
-    description: "Refresh Unity asset database to detect new or modified files.",
-    parameters: z.object({}),
-    execute: async () => {
-      try {
-        const result = await assetService.refreshAssets();
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  // ===== ADVANCED TOOLS =====
-  server.addTool({
-    name: "execute_menu_item",
-    description: "Execute Unity Editor menu item by path (e.g., 'Assets/Refresh', 'Window/Package Manager').",
-    parameters: z.object({
-      menuPath: z.string().describe("Full menu path to execute"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.executeMenuItem(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "add_package",
-    description: "Install Unity package via Package Manager. Supports package names or git URLs.",
-    parameters: z.object({
-      packageName: z.string().describe("Package name (e.g., 'com.unity.textmeshpro') or git URL"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.addPackage(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "run_tests",
-    description: "Execute Unity Test Runner tests. Supports EditMode and PlayMode tests with filtering.",
-    parameters: z.object({
-      testMode: z.enum(["EditMode", "PlayMode"]).optional().default("EditMode").describe("Test mode to run"),
-      filter: z.string().optional().describe("Optional filter for specific test names"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.runUnityTests(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "add_asset_to_scene",
-    description: "Add an asset (prefab) to the current scene. Optionally parent to an existing GameObject.",
-    parameters: z.object({
-      assetPath: z.string().describe("Path to asset (e.g., 'Assets/Prefabs/Player.prefab')"),
-      parentPath: z.string().optional().describe("Optional parent GameObject path in scene"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.addAssetToScene(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "create_script",
-    description: "Create a new C# script file with optional template content.",
-    parameters: z.object({
-      scriptName: z.string().describe("Name of the script (without .cs extension)"),
-      content: z.string().optional().describe("Optional script content. If not provided, uses default MonoBehaviour template"),
-      folderPath: z.string().optional().default("Assets/Scripts").describe("Folder to create script in"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.createScript(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "read_script",
-    description: "Read the contents of a C# script file.",
-    parameters: z.object({
-      scriptPath: z.string().describe("Path to script file (e.g., 'Assets/Scripts/Player.cs')"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.readScript(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "update_script",
-    description: "Update the contents of an existing C# script file.",
-    parameters: z.object({
-      scriptPath: z.string().describe("Path to script file"),
-      content: z.string().describe("New script content"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.updateScript(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "delete_script",
-    description: "Delete a C# script file from the project.",
-    parameters: z.object({
-      scriptPath: z.string().describe("Path to script file to delete"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.deleteScript(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
-
-  server.addTool({
-    name: "validate_script",
-    description: "Validate C# script syntax. Can validate by file path or content string.",
-    parameters: z.object({
-      scriptPath: z.string().optional().describe("Path to script file to validate"),
-      content: z.string().optional().describe("Script content to validate directly"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await advancedService.validateScript(params);
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
+  console.error("[Unity MCP] ✨ Simplified architecture with 8 essential tools registered");
+  console.error("[Unity MCP] 🎯 Use 'execute_csharp' for maximum flexibility with Unity API");
 }

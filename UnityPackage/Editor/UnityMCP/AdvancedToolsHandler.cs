@@ -21,6 +21,8 @@ namespace UnityMCP
             {
                 switch (path)
                 {
+                    case "/execute_csharp":
+                        return ExecuteCSharp(body);
                     case "/advanced/execute_menu":
                         return ExecuteMenuItem(body);
                     case "/advanced/add_package":
@@ -46,6 +48,51 @@ namespace UnityMCP
             catch (Exception e)
             {
                 return JsonResponse(false, e.Message);
+            }
+        }
+
+        // ===== C# CODE EXECUTION =====
+        /// <summary>
+        /// Execute arbitrary C# code in Unity Editor context
+        /// This is the most powerful tool - enables AI to do ANYTHING Unity API allows
+        /// </summary>
+        public static string ExecuteCSharp(string body)
+        {
+            var data = ParseJson(body);
+            string code = data.ContainsKey("code") ? data["code"] : "";
+
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return JsonResponse(false, "code parameter is required and cannot be empty");
+            }
+
+            try
+            {
+                var result = CSharpExecutor.ExecuteWithResult(code);
+
+                if (result.Success)
+                {
+                    return JsonResponse(true, "Code executed successfully", new
+                    {
+                        result = result.Result?.ToString() ?? "Success",
+                        logs = result.Logs.ToArray(),
+                        warnings = result.Warnings.ToArray(),
+                        executionTime = $"{result.ExecutionTime}ms"
+                    });
+                }
+                else
+                {
+                    return JsonResponse(false, result.Error, new
+                    {
+                        errors = result.Errors.ToArray(),
+                        logs = result.Logs.ToArray(),
+                        warnings = result.Warnings.ToArray()
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                return JsonResponse(false, $"Failed to execute C# code: {e.Message}");
             }
         }
 

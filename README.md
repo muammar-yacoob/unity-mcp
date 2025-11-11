@@ -14,7 +14,7 @@
 
 <div align="center">
 
-**🎮 Control Unity Editor • ⚡ Real-time automation • 🚀 AI-powered workflows**
+**🎮 Control Unity Editor • ⚡ Execute ANY Unity API • 🚀 Simplified & Powerful**
 
 
 [![npm](https://img.shields.io/npm/v/@spark-apps/unity-mcp?style=flat-square&logo=npm&logoColor=white&color=crimson)](https://www.npmjs.com/package/@spark-apps/unity-mcp)
@@ -30,16 +30,37 @@
 
 ## ✨ What It Does
 
-Unity MCP provides **real-time control** of Unity Editor via the Model Context Protocol allowing you to:
+Unity MCP provides **real-time control** of Unity Editor via the Model Context Protocol with a **revolutionary simplified architecture**:
 
 | <div align="left">Feature</div> | <div align="left">Description</div> |
 |:---------|:-------------|
-| ![](https://img.shields.io/badge/🎯%20-1a365d?style=for-the-badge)![Editor Control](https://img.shields.io/badge/Editor%20Control%20-007bff?style=for-the-badge) | Select, move, rotate, and scale objects with natural language |
-| ![](https://img.shields.io/badge/📐%20-1a5e3a?style=for-the-badge)![Batch Operations](https://img.shields.io/badge/Batch%20Operations%20-28a745?style=for-the-badge) | Align, distribute, duplicate objects with undo support |
-| ![](https://img.shields.io/badge/🧪%20-cc6600?style=for-the-badge)![Automated Testing](https://img.shields.io/badge/Automated%20Testing%20-ff9500?style=for-the-badge) | Enter play mode and run test scenarios programmatically |
-| ![](https://img.shields.io/badge/🗺️%20-c41e3a?style=for-the-badge)![Scene Management](https://img.shields.io/badge/Scene%20Management%20-ff073a?style=for-the-badge) | Load, save, inspect scene hierarchy in real-time |
+| ![](https://img.shields.io/badge/⭐%20-ff6b00?style=for-the-badge)![Execute C#](https://img.shields.io/badge/Execute%20C%23%20-ff6b00?style=for-the-badge) | **THE KILLER TOOL** - Execute ANY Unity API code with full UnityEngine/Editor access |
+| ![](https://img.shields.io/badge/🗺️%20-c41e3a?style=for-the-badge)![Scene Operations](https://img.shields.io/badge/Scene%20Operations%20-ff073a?style=for-the-badge) | Load, save, inspect scene hierarchy in real-time |
+| ![](https://img.shields.io/badge/🧪%20-cc6600?style=for-the-badge)![Play Mode Testing](https://img.shields.io/badge/Play%20Mode%20Testing%20-ff9500?style=for-the-badge) | Enter/exit play mode and monitor status programmatically |
+| ![](https://img.shields.io/badge/📋%20-1a365d?style=for-the-badge)![Console Logging](https://img.shields.io/badge/Console%20Logging%20-007bff?style=for-the-badge) | Retrieve and filter Unity console logs for debugging |
 
+---
 
+## 🎯 Simplified Architecture Philosophy
+
+**Why only 8 tools?**
+
+Unity MCP v0.4.0 adopts a revolutionary **minimal architecture** inspired by successful projects that prove *flexibility beats complexity*:
+
+- **⭐ execute_csharp** - The game-changer that replaces dozens of specialized tools
+- **🗺️ 3 scene tools** - Essential scene operations (load, save, hierarchy)
+- **🧪 3 playmode tools** - Test automation (enter, exit, status)
+- **📋 1 logging tool** - Console monitoring and debugging
+
+**The Result:** 64% less code, infinite flexibility, future-proof design.
+
+**Compare:**
+| Approach | Tool Count | Flexibility | Maintenance |
+|:---------|:-----------|:------------|:------------|
+| 🔴 Traditional | 30+ rigid tools | Limited to predefined operations | High complexity |
+| ✅ **Unity MCP v0.4.0** | 8 essential tools | **Unlimited via execute_csharp** | Clean & simple |
+
+**execute_csharp changes everything** - It's not just another tool, it's a **direct portal to the entire Unity API**. Need to align objects? Execute C#. Want to manage packages? Execute C#. Create custom workflows? Execute C#. It's like having a senior Unity developer at your fingertips.
 
 ## 🚀 Quick Setup
 
@@ -128,7 +149,7 @@ Unity will install the package with all editor scripts:
 - ⚡ **WebSocket server** - Fast, real-time communication (port 8090)
 - 🎨 **Control Panel UI** - Status monitoring with 🟢🟠🔴⚪ indicators
 - ⚙️ **ScriptableObject config** - Persistent settings across sessions
-- 🛠️ **30+ Tools** - Complete automation toolkit
+- ⭐ **8 Essential Tools** - Simplified architecture with execute_csharp for unlimited flexibility
 
 ### Step 2: Configure AI Client
 
@@ -273,60 +294,90 @@ WebSocket server auto-starts when Unity loads. You can also:
 
 ---
 
-## 🛠️ Available Tools
+## 🛠️ Simplified Architecture: 8 Essential Tools
 
 <details>
-<summary><strong>🔧 View All 30 Available Tools</strong></summary>
+<summary><strong>🔧 View the 8 Essential Tools</strong></summary>
 
-### **🎯 Editor Control (7 tools)**
+### **⭐ The Killer Tool: Unlimited Flexibility**
+
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/⚙️%20-0EA5E9?style=for-the-badge)![Setup MCP](https://img.shields.io/badge/Setup%20MCP%20-0EA5E9?style=for-the-badge) | Install editor integration into Unity project |
-| ![](https://img.shields.io/badge/🎯%20-0EA5E9?style=for-the-badge)![Select Objects](https://img.shields.io/badge/Select%20Objects%20-0EA5E9?style=for-the-badge) | Select by name, tag, or pattern with framing |
-| ![](https://img.shields.io/badge/🔄%20-0EA5E9?style=for-the-badge)![Transform Objects](https://img.shields.io/badge/Transform%20Objects%20-0EA5E9?style=for-the-badge) | Move, rotate, scale objects |
-| ![](https://img.shields.io/badge/📐%20-0EA5E9?style=for-the-badge)![Align Objects](https://img.shields.io/badge/Align%20Objects%20-0EA5E9?style=for-the-badge) | Align left/right/top/bottom/center |
-| ![](https://img.shields.io/badge/📏%20-0EA5E9?style=for-the-badge)![Distribute Objects](https://img.shields.io/badge/Distribute%20Objects%20-0EA5E9?style=for-the-badge) | Distribute evenly along axis |
-| ![](https://img.shields.io/badge/📦%20-0EA5E9?style=for-the-badge)![Duplicate Objects](https://img.shields.io/badge/Duplicate%20Objects%20-0EA5E9?style=for-the-badge) | Clone objects with undo support |
-| ![](https://img.shields.io/badge/🔍%20-0EA5E9?style=for-the-badge)![Find Objects](https://img.shields.io/badge/Find%20Objects%20-0EA5E9?style=for-the-badge) | Find by component type or pattern |
+| ![](https://img.shields.io/badge/⭐%20-ff6b00?style=for-the-badge)![execute_csharp](https://img.shields.io/badge/execute__csharp%20-ff6b00?style=for-the-badge) | **Execute ANY Unity operation with full API access**<br/>This single tool can: select objects, transform them, create/delete objects, modify components, run menu commands, manage packages, create scripts, and literally ANYTHING the Unity API supports. It's like having 100+ specialized tools in one. |
 
-### **🗺️ Scene Management (6 tools)**
+**Why execute_csharp Changes Everything:**
+- 🚀 **Unlimited possibilities** - Not constrained by predefined tools
+- 🎯 **Direct API access** - Full UnityEngine and UnityEditor namespaces
+- 🔧 **No tool bloat** - One flexible tool instead of dozens of rigid ones
+- 📚 **Future-proof** - Works with any Unity version and new APIs automatically
+
+**Example Usage:**
+```typescript
+// Select all enemies and move them up
+execute_csharp({
+  code: `
+    var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+    foreach (var enemy in enemies) {
+      enemy.transform.position += Vector3.up * 2;
+    }
+    return $"Moved {enemies.Length} enemies";
+  `
+})
+
+// Create a cube with custom material
+execute_csharp({
+  code: `
+    var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+    cube.name = "AICube";
+    var renderer = cube.GetComponent<Renderer>();
+    renderer.material.color = Color.cyan;
+    return "Created glowing cyan cube";
+  `
+})
+```
+
+---
+
+### **🗺️ Scene Operations (3 tools)**
+
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/🎬%20-10B981?style=for-the-badge)![List Scenes](https://img.shields.io/badge/List%20Scenes%20-10B981?style=for-the-badge) | List all scenes in build settings |
-| ![](https://img.shields.io/badge/📂%20-10B981?style=for-the-badge)![Load Scene](https://img.shields.io/badge/Load%20Scene%20-10B981?style=for-the-badge) | Load scene by name or index |
-| ![](https://img.shields.io/badge/💾%20-10B981?style=for-the-badge)![Save Scene](https://img.shields.io/badge/Save%20Scene%20-10B981?style=for-the-badge) | Save current or all scenes |
-| ![](https://img.shields.io/badge/🌳%20-10B981?style=for-the-badge)![Get Hierarchy](https://img.shields.io/badge/Get%20Hierarchy%20-10B981?style=for-the-badge) | Get complete scene hierarchy |
-| ![](https://img.shields.io/badge/🔎%20-10B981?style=for-the-badge)![Find In Scene](https://img.shields.io/badge/Find%20In%20Scene%20-10B981?style=for-the-badge) | Find objects in current scene |
-| ![](https://img.shields.io/badge/🧹%20-10B981?style=for-the-badge)![Cleanup Scene](https://img.shields.io/badge/Cleanup%20Scene%20-10B981?style=for-the-badge) | Remove missing scripts and empty objects |
+| ![](https://img.shields.io/badge/🌳%20-10B981?style=for-the-badge)![get_scene_hierarchy](https://img.shields.io/badge/get__scene__hierarchy%20-10B981?style=for-the-badge) | Get complete scene hierarchy with GameObjects, components, and transforms |
+| ![](https://img.shields.io/badge/📂%20-10B981?style=for-the-badge)![load_scene](https://img.shields.io/badge/load__scene%20-10B981?style=for-the-badge) | Load scene by name or build index |
+| ![](https://img.shields.io/badge/💾%20-10B981?style=for-the-badge)![save_scene](https://img.shields.io/badge/save__scene%20-10B981?style=for-the-badge) | Save current scene or all open scenes |
 
-### **🧪 Testing & Play Mode (5 tools)**
+---
+
+### **📋 Console & Logging (1 tool)**
+
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/▶️%20-8B5CF6?style=for-the-badge)![Enter Play Mode](https://img.shields.io/badge/Enter%20Play%20Mode%20-8B5CF6?style=for-the-badge) | Start play mode programmatically |
-| ![](https://img.shields.io/badge/⏸️%20-8B5CF6?style=for-the-badge)![Exit Play Mode](https://img.shields.io/badge/Exit%20Play%20Mode%20-8B5CF6?style=for-the-badge) | Exit play mode programmatically |
-| ![](https://img.shields.io/badge/🤖%20-8B5CF6?style=for-the-badge)![Run Test](https://img.shields.io/badge/Run%20Test%20-8B5CF6?style=for-the-badge) | Execute automated test scenarios |
-| ![](https://img.shields.io/badge/📊%20-8B5CF6?style=for-the-badge)![Play Mode Status](https://img.shields.io/badge/Play%20Mode%20Status%20-8B5CF6?style=for-the-badge) | Get play mode status and logs |
-| ![](https://img.shields.io/badge/⏱️%20-8B5CF6?style=for-the-badge)![Set Time Scale](https://img.shields.io/badge/Set%20Time%20Scale%20-8B5CF6?style=for-the-badge) | Slow motion or fast forward |
+| ![](https://img.shields.io/badge/📋%20-F59E0B?style=for-the-badge)![get_console_logs](https://img.shields.io/badge/get__console__logs%20-F59E0B?style=for-the-badge) | Retrieve Unity console logs with filtering by type (log/warning/error) |
 
-### **📦 Assets & Console (5 tools)**
+---
+
+### **🧪 Play Mode Testing (3 tools)**
+
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/📋%20-F59E0B?style=for-the-badge)![Get Console Logs](https://img.shields.io/badge/Get%20Console%20Logs%20-F59E0B?style=for-the-badge) | Retrieve Unity console logs for debugging |
-| ![](https://img.shields.io/badge/🧹%20-F59E0B?style=for-the-badge)![Clear Console](https://img.shields.io/badge/Clear%20Console%20-F59E0B?style=for-the-badge) | Clear all console logs |
-| ![](https://img.shields.io/badge/🎁%20-F59E0B?style=for-the-badge)![Create Prefab](https://img.shields.io/badge/Create%20Prefab%20-F59E0B?style=for-the-badge) | Create prefab from selected GameObject |
-| ![](https://img.shields.io/badge/📂%20-F59E0B?style=for-the-badge)![Get Assets](https://img.shields.io/badge/Get%20Assets%20-F59E0B?style=for-the-badge) | List project assets with filtering |
-| ![](https://img.shields.io/badge/🔄%20-F59E0B?style=for-the-badge)![Refresh Assets](https://img.shields.io/badge/Refresh%20Assets%20-F59E0B?style=for-the-badge) | Refresh Unity asset database |
+| ![](https://img.shields.io/badge/▶️%20-8B5CF6?style=for-the-badge)![enter_playmode](https://img.shields.io/badge/enter__playmode%20-8B5CF6?style=for-the-badge) | Enter play mode programmatically with optional pause |
+| ![](https://img.shields.io/badge/⏸️%20-8B5CF6?style=for-the-badge)![exit_playmode](https://img.shields.io/badge/exit__playmode%20-8B5CF6?style=for-the-badge) | Exit play mode and return to edit mode |
+| ![](https://img.shields.io/badge/📊%20-8B5CF6?style=for-the-badge)![get_playmode_status](https://img.shields.io/badge/get__playmode__status%20-8B5CF6?style=for-the-badge) | Check if Unity is in play mode, edit mode, or paused |
 
-### **⚡ Advanced Tools (7 tools)**
-| <div align="left">Tool</div> | <div align="left">Description</div> |
-|:------|:-------------|
-| ![](https://img.shields.io/badge/🎬%20-EC4899?style=for-the-badge)![Execute Menu Item](https://img.shields.io/badge/Execute%20Menu%20Item%20-EC4899?style=for-the-badge) | Execute any Unity Editor menu command |
-| ![](https://img.shields.io/badge/📦%20-EC4899?style=for-the-badge)![Add Package](https://img.shields.io/badge/Add%20Package%20-EC4899?style=for-the-badge) | Install Unity packages via Package Manager |
-| ![](https://img.shields.io/badge/🧪%20-EC4899?style=for-the-badge)![Run Unity Tests](https://img.shields.io/badge/Run%20Unity%20Tests%20-EC4899?style=for-the-badge) | Execute Test Runner tests (EditMode/PlayMode) |
-| ![](https://img.shields.io/badge/📥%20-EC4899?style=for-the-badge)![Add Asset to Scene](https://img.shields.io/badge/Add%20Asset%20to%20Scene%20-EC4899?style=for-the-badge) | Add prefab or asset to current scene |
-| ![](https://img.shields.io/badge/📝%20-EC4899?style=for-the-badge)![Script Operations](https://img.shields.io/badge/Script%20Operations%20-EC4899?style=for-the-badge) | Create, read, update, delete C# scripts |
-| ![](https://img.shields.io/badge/✅%20-EC4899?style=for-the-badge)![Validate Script](https://img.shields.io/badge/Validate%20Script%20-EC4899?style=for-the-badge) | Validate C# script syntax |
-| ![](https://img.shields.io/badge/❌%20-EC4899?style=for-the-badge)![Delete Objects](https://img.shields.io/badge/Delete%20Objects%20-EC4899?style=for-the-badge) | Delete objects with undo support |
+---
+
+### **💡 Philosophy: Less is More**
+
+**Why 8 tools instead of 30?**
+- ✅ **Flexibility** - execute_csharp can do anything the Unity API allows
+- ✅ **Simplicity** - Easier to learn, easier to use
+- ✅ **Maintainability** - Less code to maintain, fewer bugs
+- ✅ **Future-proof** - Works with ANY Unity feature, present or future
+- ✅ **Power** - Direct API access > predefined operations
+
+**What about specialized operations?**
+- ❌ **Before**: select_objects, transform_objects, align_objects, distribute_objects, duplicate_objects, delete_objects, find_objects... (7 rigid tools)
+- ✅ **Now**: execute_csharp can do ALL of these + infinitely more
 
 </details>
 
@@ -335,34 +386,60 @@ WebSocket server auto-starts when Unity loads. You can also:
 ## 💬 Example Commands
 
 <details>
-<summary><strong>🎯 Object Manipulation</strong></summary>
+<summary><strong>⭐ execute_csharp: The Swiss Army Knife</strong></summary>
 
-- *"Select all objects with tag 'Enemy' and align them horizontally"*
-- *"Move the Player object to position (0, 5, 10)"*
-- *"Distribute selected objects evenly along the x axis"*
-- *"Find all objects with Camera component"*
-- *"Duplicate selected object 5 times"*
+**Object Selection & Manipulation:**
+- *"Use execute_csharp to select all enemies and move them 5 units up"*
+- *"Execute C# code to align all UI buttons horizontally"*
+- *"Use execute_csharp to duplicate the Player object 10 times in a circle"*
+- *"Find all cameras and set their field of view to 60"*
 
-</details>
+**Component Management:**
+- *"Add a Rigidbody component to all objects tagged 'Box'"*
+- *"Remove all AudioSource components from inactive objects"*
+- *"Set the color of all materials with 'Enemy' in their name to red"*
+- *"Enable collision on all objects in the 'Props' layer"*
 
-<details>
-<summary><strong>🧪 Automated Testing</strong></summary>
+**Scene Automation:**
+- *"Create 100 cubes in a 10x10 grid at y=0"*
+- *"Delete all objects with missing scripts"*
+- *"Parent all 'Weapon' tagged objects under the Player"*
+- *"Bake all lights and generate lightmap UVs"*
 
-- *"Enter play mode and move Player to (10, 0, 0) for 5 seconds"*
-- *"Set time scale to 0.5 for slow motion"*
-- *"Run a test that destroys the Boss after 2 seconds"*
-- *"Check play mode status and show test logs"*
+**Advanced Operations:**
+- *"Run the Build Player menu command"*
+- *"Install the TextMeshPro package"*
+- *"Create a new C# script called 'EnemyAI' in Assets/Scripts/"*
+- *"Execute a custom editor window that you define"*
 
 </details>
 
 <details>
 <summary><strong>🗺️ Scene Operations</strong></summary>
 
-- *"List all scenes in the project"*
 - *"Load the MainMenu scene"*
 - *"Show me the complete hierarchy of the current scene"*
-- *"Find all objects with Rigidbody component"*
-- *"Clean up scene by removing missing scripts"*
+- *"Save all open scenes"*
+- *"Get the hierarchy and find all disabled objects"*
+
+</details>
+
+<details>
+<summary><strong>🧪 Play Mode Testing</strong></summary>
+
+- *"Enter play mode"*
+- *"Check if we're in play mode and show the console logs"*
+- *"Exit play mode and save the scene"*
+- *"Enter play mode, then use execute_csharp to simulate player input"*
+
+</details>
+
+<details>
+<summary><strong>📋 Console & Debugging</strong></summary>
+
+- *"Get all error logs from the console"*
+- *"Show me the last 10 warnings"*
+- *"Clear console, then use execute_csharp to log custom debug info"*
 
 </details>
 
@@ -402,7 +479,8 @@ Once installed, access the Control Panel via **Tools → Unity MCP → Control P
   - 📖 Documentation
 
 - **🔧 Tools Overview** (Collapsable)
-  - View all 30 available tools categorized by type
+  - View all 8 essential tools categorized by type
+  - Highlights execute_csharp as the killer tool
   - Quick reference without leaving Unity
 
 - **⚡ Advanced Settings** (Collapsable)
@@ -450,6 +528,79 @@ You should see: `MCP Server running on stdio`
 1. Default port is `8080`
 2. Check what's using it: `lsof -i :8080` (Mac/Linux) or `netstat -ano | findstr :8080` (Windows)
 3. Stop conflicting process or change port in Unity scripts
+
+</details>
+
+---
+
+## 🚀 What Changed in v0.4.0?
+
+<details>
+<summary><strong>📊 From v0.3.0 → v0.4.0: The Simplification Update</strong></summary>
+
+### Architecture Transformation
+
+**Before (v0.3.0):**
+- 30+ specialized tools
+- 651 lines of tool definitions
+- Limited to predefined operations
+- Complex maintenance
+
+**After (v0.4.0):**
+- 8 essential tools
+- 231 lines of tool definitions (64% reduction)
+- Unlimited flexibility via execute_csharp
+- Clean, maintainable codebase
+
+### What Stayed the Same
+
+✅ Beautiful Control Panel UI with real-time status monitoring
+✅ Bridge Installer wizard for easy setup
+✅ WebSocket transport (default, port 8090)
+✅ All your favorite features - now accessible via execute_csharp
+✅ Persistent configuration via ScriptableObject
+✅ Full undo/redo support
+
+### What Got Better
+
+🚀 **execute_csharp** - New killer tool with full Unity API access
+⚡ **Faster performance** - Less overhead, more direct execution
+🎯 **More flexibility** - Not limited by predefined tool constraints
+📚 **Future-proof** - Works with ANY Unity version automatically
+🧹 **Cleaner codebase** - Easier to understand, maintain, and extend
+
+### Migration Guide
+
+**Old Way:**
+```typescript
+// Multiple tool calls
+select_objects({ pattern: "Enemy*" })
+transform_objects({ position: { y: 5 } })
+align_objects({ axis: "horizontal" })
+```
+
+**New Way (v0.4.0):**
+```typescript
+// Single execute_csharp call - more powerful!
+execute_csharp({
+  code: `
+    var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+    foreach (var enemy in enemies) {
+      enemy.transform.position = new Vector3(
+        enemy.transform.position.x,
+        5,
+        enemy.transform.position.z
+      );
+    }
+    // Plus you can do ANYTHING else here too!
+    return $"Processed {enemies.Length} enemies";
+  `
+})
+```
+
+### Inspired By
+
+This architectural shift was inspired by [Arodoid's UnityMCP](https://github.com/Arodoid/UnityMCP), which demonstrated that *simplicity and flexibility* trump *complexity and rigidity*. We combined their minimal approach with our professional UI/UX to create the best of both worlds.
 
 </details>
 

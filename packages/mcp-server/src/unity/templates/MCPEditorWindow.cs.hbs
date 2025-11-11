@@ -241,40 +241,31 @@ namespace UnityMCP
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-            showTools = EditorGUILayout.Foldout(showTools, "🔧 Available Tools (30 tools)", true);
+            showTools = EditorGUILayout.Foldout(showTools, "🔧 Simplified Architecture (8 Essential Tools)", true);
 
             if (showTools)
             {
-                EditorGUILayout.LabelField("Editor Control", EditorStyles.boldLabel);
-                EditorGUILayout.LabelField("• Select, Transform, Align, Distribute Objects", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Duplicate, Delete, Find Objects", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Execute Menu Items", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("⭐ The Killer Tool", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("• execute_csharp - Execute ANY Unity operation with full API access", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.Space(3);
+                EditorGUILayout.LabelField("  This single tool can replace dozens of specialized tools!", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("  Examples: select, transform, create, delete, modify components, etc.", EditorStyles.wordWrappedMiniLabel);
 
                 EditorGUILayout.Space(5);
-                EditorGUILayout.LabelField("Scene Management", EditorStyles.boldLabel);
-                EditorGUILayout.LabelField("• Load, Save, Create Scenes", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Get Hierarchy, Find in Scene", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Cleanup Scene", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("Scene Operations", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("• get_scene_hierarchy - Complete scene structure", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("• load_scene - Load scenes by name or index", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("• save_scene - Save current or all scenes", EditorStyles.wordWrappedMiniLabel);
 
                 EditorGUILayout.Space(5);
-                EditorGUILayout.LabelField("Testing & Play Mode", EditorStyles.boldLabel);
-                EditorGUILayout.LabelField("• Enter/Exit Play Mode", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Run Automated Tests", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Time Scale Control", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Unity Test Runner Integration", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("Console & Logging", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("• get_console_logs - Retrieve and filter Unity logs", EditorStyles.wordWrappedMiniLabel);
 
                 EditorGUILayout.Space(5);
-                EditorGUILayout.LabelField("Assets & Console", EditorStyles.boldLabel);
-                EditorGUILayout.LabelField("• Console Logs (Get/Clear)", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Create Prefabs, Get Assets", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Refresh Asset Database", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Add Assets to Scene", EditorStyles.wordWrappedMiniLabel);
-
-                EditorGUILayout.Space(5);
-                EditorGUILayout.LabelField("Packages & Scripts", EditorStyles.boldLabel);
-                EditorGUILayout.LabelField("• Install Unity Packages", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Manage Scripts (CRUD)", EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.LabelField("• Validate C# Scripts", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("Play Mode Testing", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("• enter_playmode - Start gameplay testing", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("• exit_playmode - Return to Edit Mode", EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("• get_playmode_status - Check play mode state", EditorStyles.wordWrappedMiniLabel);
             }
 
             EditorGUILayout.EndVertical();
@@ -330,7 +321,7 @@ namespace UnityMCP
         private void DrawFooter()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            GUILayout.Label("Unity MCP v0.3.0 | Made with ❤️ for Game Devs", EditorStyles.centeredGreyMiniLabel);
+            GUILayout.Label("Unity MCP v0.4.0 - Simplified Architecture | Made with ❤️ for Game Devs", EditorStyles.centeredGreyMiniLabel);
             EditorGUILayout.EndVertical();
         }
 

@@ -151,55 +151,28 @@ namespace UnityMCP
 
         private static void RegisterTools()
         {
+            // SIMPLIFIED ARCHITECTURE: 8 essential tools + execute_csharp for everything else
+            // This reduces complexity while maintaining maximum flexibility
             toolRegistry = new Dictionary<string, Func<JObject, JObject>>
             {
-                // Editor manipulation
-                ["editor_select"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.SelectObjects, data),
-                ["editor_transform"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.TransformObjects, data),
-                ["editor_align"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.AlignObjects, data),
-                ["editor_distribute"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.DistributeObjects, data),
-                ["editor_duplicate"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.DuplicateObjects, data),
-                ["editor_delete"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.DeleteObjects, data),
-                ["editor_parent"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.ParentObjects, data),
-                ["editor_component"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.ComponentOperation, data),
-                ["editor_find"] = (data) => WrapHandler<EditorCommandHandler.CommandData>(EditorCommandHandler.FindObjects, data),
+                // ⭐ THE KILLER TOOL - Execute any C# code in Unity Editor
+                ["execute_csharp"] = (data) => WrapStringHandler(AdvancedToolsHandler.ExecuteCSharp, data),
 
-                // Scene operations
-                ["scene_list"] = (data) => WrapHandlerNoArgs(SceneHandler.ListScenes, data),
+                // Essential scene operations
+                ["scene_hierarchy"] = (data) => WrapHandlerNoArgs(SceneHandler.GetHierarchy, data),
                 ["scene_load"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.LoadScene, data),
                 ["scene_save"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.SaveScene, data),
-                ["scene_new"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.CreateNewScene, data),
-                ["scene_hierarchy"] = (data) => WrapHandlerNoArgs(SceneHandler.GetHierarchy, data),
-                ["scene_find"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.FindInScene, data),
-                ["scene_cleanup"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.CleanupScene, data),
 
-                // Asset operations
+                // Console/logging
                 ["console_get_logs"] = (data) => WrapStringHandler(AssetHandler.GetConsoleLogs, data),
-                ["console_clear"] = (data) => WrapHandlerNoArgs(AssetHandler.ClearConsole, data),
-                ["asset_create_prefab"] = (data) => WrapStringHandler(AssetHandler.CreatePrefab, data),
-                ["project_get_assets"] = (data) => WrapStringHandler(AssetHandler.GetAssets, data),
-                ["asset_refresh"] = (data) => WrapHandlerNoArgs(AssetHandler.RefreshAssets, data),
 
                 // Play mode testing
                 ["playmode_enter"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.EnterPlayMode, data),
                 ["playmode_exit"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.ExitPlayMode, data),
                 ["playmode_status"] = (data) => WrapHandlerNoArgs(PlayModeHandler.GetPlayModeStatus, data),
-                ["playmode_test"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.RunTest, data),
-                ["playmode_pause"] = (data) => WrapHandlerNoArgs(PlayModeHandler.PausePlayMode, data),
-                ["playmode_step"] = (data) => WrapHandlerNoArgs(PlayModeHandler.StepFrame, data),
-                ["playmode_timescale"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.SetTimeScale, data),
-                ["playmode_screenshot"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.CaptureScreenshot, data),
 
-                // Advanced tools
-                ["advanced_execute_menu"] = (data) => WrapStringHandler(AdvancedToolsHandler.ExecuteMenuItem, data),
-                ["advanced_add_package"] = (data) => WrapStringHandler(AdvancedToolsHandler.AddPackage, data),
-                ["advanced_run_tests"] = (data) => WrapStringHandler(AdvancedToolsHandler.RunUnityTests, data),
-                ["advanced_add_asset_to_scene"] = (data) => WrapStringHandler(AdvancedToolsHandler.AddAssetToScene, data),
-                ["advanced_create_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.CreateScript, data),
-                ["advanced_read_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.ReadScript, data),
-                ["advanced_update_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.UpdateScript, data),
-                ["advanced_delete_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.DeleteScript, data),
-                ["advanced_validate_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.ValidateScript, data),
+                // Note: All other operations (select, transform, align, create prefab, etc.)
+                // can now be done via execute_csharp tool with full Unity API access
             };
         }
 
