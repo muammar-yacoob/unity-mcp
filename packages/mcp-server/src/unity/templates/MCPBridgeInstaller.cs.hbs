@@ -216,17 +216,8 @@ namespace UnityMCP
             EditorGUILayout.Space(5);
 
             DrawClientOption(
-                "Claude Code / VSCode",
-                "CLI or VSCode extension",
-                "Configure",
-                () => ConfigureClaudeCode()
-            );
-
-            EditorGUILayout.Space(5);
-
-            DrawClientOption(
                 "Manual Setup",
-                "Other AI clients",
+                "Claude Code, VSCode, or other clients",
                 "View Config",
                 () => ShowManualConfiguration()
             );
@@ -391,40 +382,6 @@ namespace UnityMCP
                 EditorUtility.DisplayDialog(
                     "Configuration Failed",
                     $"Failed to configure Claude Desktop:\n{e.Message}",
-                    "OK"
-                );
-            }
-        }
-
-        private void ConfigureClaudeCode()
-        {
-            string projectPath = Application.dataPath.Replace("/Assets", "");
-            string claudeDir = Path.Combine(projectPath, ".claude");
-            string configPath = Path.Combine(claudeDir, "config.json");
-
-            try
-            {
-                string serverPath = GetMCPServerPath();
-                string configContent = CreateClaudeConfig(serverPath);
-
-                Directory.CreateDirectory(claudeDir);
-                File.WriteAllText(configPath, configContent);
-
-                EditorUtility.DisplayDialog(
-                    "Success",
-                    $"Claude Code configured successfully!\n\n" +
-                    $"Configuration saved to:\n{configPath}\n\n" +
-                    $"Restart Claude Code or reload the project window.",
-                    "OK"
-                );
-
-                currentStep = InstallStep.Complete;
-            }
-            catch (Exception e)
-            {
-                EditorUtility.DisplayDialog(
-                    "Configuration Failed",
-                    $"Failed to configure Claude Code:\n{e.Message}",
                     "OK"
                 );
             }
