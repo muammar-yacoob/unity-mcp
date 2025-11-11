@@ -44,8 +44,8 @@ namespace UnityMCP
         public static void ShowWindow()
         {
             var window = GetWindow<MCPBridgeInstaller>("Unity MCP Bridge");
-            window.minSize = new Vector2(600, 500);
-            window.maxSize = new Vector2(600, 500);
+            window.minSize = new Vector2(500, 400);
+            window.maxSize = new Vector2(500, 600);
             window.Show();
         }
 
@@ -61,7 +61,7 @@ namespace UnityMCP
 
             // Header with logo
             DrawHeader();
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             // Draw current step
             switch (currentStep)
@@ -85,25 +85,19 @@ namespace UnityMCP
 
         private void DrawHeader()
         {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
             var titleStyle = new GUIStyle(EditorStyles.boldLabel)
             {
-                fontSize = 24,
+                fontSize = 18,
                 alignment = TextAnchor.MiddleCenter,
                 normal = { textColor = new Color(0.2f, 0.6f, 1f) }
             };
 
-            var subtitleStyle = new GUIStyle(EditorStyles.label)
-            {
-                fontSize = 12,
-                alignment = TextAnchor.MiddleCenter,
-                fontStyle = FontStyle.Italic
-            };
-
             GUILayout.Label("🚀 Unity MCP Bridge", titleStyle);
-            GUILayout.Label("Connect Unity Editor to AI Agents", subtitleStyle);
-
-            EditorGUILayout.Space(5);
             DrawProgressBar();
+
+            EditorGUILayout.EndVertical();
         }
 
         private void DrawProgressBar()
@@ -115,34 +109,28 @@ namespace UnityMCP
 
         private void DrawWelcome()
         {
-            var headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 16 };
-            var bodyStyle = new GUIStyle(EditorStyles.wordWrappedLabel) { fontSize = 12 };
-
-            GUILayout.Label("Welcome to Unity MCP Bridge Installer!", headerStyle);
-            EditorGUILayout.Space(10);
+            var headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 14 };
 
             EditorGUILayout.HelpBox(
-                "This wizard will help you set up a bridge between Unity Editor and AI agents like Claude Desktop and Claude Code.\n\n" +
-                "What you'll get:\n" +
-                "• WebSocket-based real-time communication\n" +
-                "• Automatic configuration for popular AI clients\n" +
-                "• Beautiful UI with status monitoring\n" +
-                "• 30+ tools for Unity automation",
+                "Connect Unity Editor to AI agents like Claude Desktop and Claude Code.\n\n" +
+                "✓ WebSocket real-time communication\n" +
+                "✓ Auto-configuration for AI clients\n" +
+                "✓ 30+ Unity automation tools",
                 MessageType.Info
             );
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             GUILayout.Label("Requirements:", headerStyle);
-            EditorGUILayout.Space(5);
+            EditorGUILayout.Space(3);
 
-            DrawRequirement("Unity 2022.3 LTS or later", true);
-            DrawRequirement("Node.js 18.0 or later", nodeInstalled);
-            DrawRequirement("Claude Desktop or AI-enabled IDE", true);
+            DrawRequirement("Unity 2022.3+", true);
+            DrawRequirement("Node.js 18.0+", nodeInstalled);
+            DrawRequirement("AI Client", true);
 
-            EditorGUILayout.Space(30);
+            EditorGUILayout.Space(15);
 
-            if (GUILayout.Button("Get Started", GUILayout.Height(40)))
+            if (GUILayout.Button("Get Started", GUILayout.Height(35)))
             {
                 currentStep = InstallStep.CheckNodeJS;
                 CheckNodeJSInstallation();
@@ -166,21 +154,16 @@ namespace UnityMCP
 
         private void DrawNodeJSCheck()
         {
-            var headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 16 };
-
-            GUILayout.Label("Node.js Installation Check", headerStyle);
-            EditorGUILayout.Space(10);
-
             if (nodeInstalled)
             {
                 EditorGUILayout.HelpBox(
-                    $"✅ Node.js is installed!\n\nVersion: {nodeVersion}",
+                    $"✅ Node.js detected: {nodeVersion}",
                     MessageType.Info
                 );
 
-                EditorGUILayout.Space(20);
+                EditorGUILayout.Space(10);
 
-                if (GUILayout.Button("Continue to Configuration", GUILayout.Height(40)))
+                if (GUILayout.Button("Continue →", GUILayout.Height(35)))
                 {
                     currentStep = InstallStep.ConfigureClient;
                 }
@@ -188,27 +171,26 @@ namespace UnityMCP
             else
             {
                 EditorGUILayout.HelpBox(
-                    "❌ Node.js is not installed or not found in PATH.\n\n" +
-                    "Unity MCP requires Node.js 18.0 or later to run the bridge server.",
+                    "❌ Node.js 18.0+ required for Unity MCP bridge server.",
                     MessageType.Error
                 );
 
                 EditorGUILayout.Space(10);
 
-                if (GUILayout.Button("Download Node.js", GUILayout.Height(40)))
+                if (GUILayout.Button("Download Node.js", GUILayout.Height(35)))
                 {
                     Application.OpenURL("https://nodejs.org/en/download/");
                 }
 
-                EditorGUILayout.Space(10);
+                EditorGUILayout.Space(5);
 
-                if (GUILayout.Button("Recheck Installation", GUILayout.Height(30)))
+                if (GUILayout.Button("Recheck"))
                 {
                     CheckNodeJSInstallation();
                 }
             }
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             if (GUILayout.Button("← Back"))
             {
                 currentStep = InstallStep.Welcome;
@@ -217,48 +199,39 @@ namespace UnityMCP
 
         private void DrawClientConfiguration()
         {
-            var headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 16 };
-
-            GUILayout.Label("Configure AI Client", headerStyle);
-            EditorGUILayout.Space(10);
-
             EditorGUILayout.HelpBox(
-                "Choose your AI client to auto-configure the Unity MCP bridge.\n" +
-                "The installer will create the necessary configuration files.",
+                "Choose your AI client for auto-configuration:",
                 MessageType.Info
             );
 
-            EditorGUILayout.Space(15);
+            EditorGUILayout.Space(8);
 
-            // Claude Desktop
             DrawClientOption(
                 "Claude Desktop",
-                "Official Claude desktop application",
-                "Configure Claude Desktop to connect to Unity Editor",
+                "Official desktop app",
+                "Configure",
                 () => ConfigureClaudeDesktop()
             );
 
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(5);
 
-            // Claude Code
             DrawClientOption(
                 "Claude Code / VSCode",
-                "Claude Code CLI or VSCode with MCP extension",
-                "Create .claude/config.json in your project",
+                "CLI or VSCode extension",
+                "Configure",
                 () => ConfigureClaudeCode()
             );
 
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(5);
 
-            // Manual Configuration
             DrawClientOption(
-                "Manual Configuration",
-                "Configure manually or use a different client",
-                "Get configuration details to set up manually",
+                "Manual Setup",
+                "Other AI clients",
+                "View Config",
                 () => ShowManualConfiguration()
             );
 
-            EditorGUILayout.Space(30);
+            EditorGUILayout.Space(15);
             if (GUILayout.Button("← Back"))
             {
                 currentStep = InstallStep.CheckNodeJS;
@@ -267,68 +240,61 @@ namespace UnityMCP
 
         private void DrawClientOption(string title, string subtitle, string buttonText, Action onClick)
         {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
 
-            var titleStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 14 };
+            EditorGUILayout.BeginVertical();
+            var titleStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
             GUILayout.Label(title, titleStyle);
-
             var subtitleStyle = new GUIStyle(EditorStyles.label)
             {
-                fontSize = 11,
-                fontStyle = FontStyle.Italic,
+                fontSize = 10,
                 normal = { textColor = Color.gray }
             };
             GUILayout.Label(subtitle, subtitleStyle);
+            EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space(5);
-
-            if (GUILayout.Button(buttonText, GUILayout.Height(30)))
+            if (GUILayout.Button(buttonText, GUILayout.Width(90), GUILayout.Height(32)))
             {
                 onClick();
             }
 
-            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
         }
 
         private void DrawComplete()
         {
-            var headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 16 };
-            var bodyStyle = new GUIStyle(EditorStyles.wordWrappedLabel) { fontSize = 12 };
-
-            GUILayout.Label("🎉 Installation Complete!", headerStyle);
-            EditorGUILayout.Space(10);
+            var headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 14 };
 
             EditorGUILayout.HelpBox(
-                "Unity MCP Bridge is now configured and ready to use!",
+                "🎉 Unity MCP Bridge configured successfully!",
                 MessageType.Info
             );
 
-            EditorGUILayout.Space(15);
+            EditorGUILayout.Space(10);
 
             GUILayout.Label("Next Steps:", headerStyle);
-            EditorGUILayout.Space(5);
+            EditorGUILayout.Space(3);
 
-            DrawNextStep("1", "Open the MCP Control Panel", "Tools → Unity MCP → Control Panel");
-            DrawNextStep("2", "Start the server if not auto-started", "Click 'Start Server' button");
-            DrawNextStep("3", "Open your AI client", "Claude Desktop, Claude Code, etc.");
-            DrawNextStep("4", "Start using Unity MCP tools!", "Try: 'Select the Main Camera'");
+            DrawNextStep("1", "Open Control Panel", "Tools → Unity MCP → Control Panel");
+            DrawNextStep("2", "Open your AI client", "Claude Desktop, Claude Code, etc.");
+            DrawNextStep("3", "Start using tools!", "Try: 'Select the Main Camera'");
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(12);
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Open Control Panel", GUILayout.Height(40)))
+            if (GUILayout.Button("Open Control Panel", GUILayout.Height(35)))
             {
                 MCPEditorWindow.ShowWindow();
                 Close();
             }
-            if (GUILayout.Button("View Documentation", GUILayout.Height(40)))
+            if (GUILayout.Button("Docs", GUILayout.Height(35)))
             {
                 Application.OpenURL("https://github.com/muammar-yacoob/unity-mcp");
             }
             EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.Space(20);
-            if (GUILayout.Button("Close Installer"))
+            EditorGUILayout.Space(10);
+            if (GUILayout.Button("Close"))
             {
                 Close();
             }
@@ -340,10 +306,10 @@ namespace UnityMCP
 
             var numberStyle = new GUIStyle(EditorStyles.boldLabel)
             {
-                fontSize = 14,
+                fontSize = 13,
                 normal = { textColor = new Color(0.2f, 0.6f, 1f) }
             };
-            GUILayout.Label(number, numberStyle, GUILayout.Width(30));
+            GUILayout.Label(number, numberStyle, GUILayout.Width(20));
 
             EditorGUILayout.BeginVertical();
             GUILayout.Label(title, EditorStyles.boldLabel);
