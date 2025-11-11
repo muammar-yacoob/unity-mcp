@@ -132,6 +132,12 @@ namespace UnityMCP
             return JObject.Parse(result);
         }
 
+        private static JObject WrapStringHandler(Func<string, string> handler, JObject data)
+        {
+            var result = handler(data.ToString());
+            return JObject.Parse(result);
+        }
+
         private static JObject WrapHandlerNoArgs(Func<string> handler, JObject data)
         {
             var result = handler();
@@ -163,10 +169,10 @@ namespace UnityMCP
                 ["scene_cleanup"] = (data) => WrapHandler<SceneHandler.CommandData>(SceneHandler.CleanupScene, data),
 
                 // Asset operations
-                ["console_get_logs"] = (data) => WrapHandler<AssetHandler.CommandData>(AssetHandler.GetConsoleLogs, data),
+                ["console_get_logs"] = (data) => WrapStringHandler(AssetHandler.GetConsoleLogs, data),
                 ["console_clear"] = (data) => WrapHandlerNoArgs(AssetHandler.ClearConsole, data),
-                ["asset_create_prefab"] = (data) => WrapHandler<AssetHandler.CommandData>(AssetHandler.CreatePrefab, data),
-                ["project_get_assets"] = (data) => WrapHandler<AssetHandler.CommandData>(AssetHandler.GetAssets, data),
+                ["asset_create_prefab"] = (data) => WrapStringHandler(AssetHandler.CreatePrefab, data),
+                ["project_get_assets"] = (data) => WrapStringHandler(AssetHandler.GetAssets, data),
                 ["asset_refresh"] = (data) => WrapHandlerNoArgs(AssetHandler.RefreshAssets, data),
 
                 // Play mode testing
@@ -180,15 +186,15 @@ namespace UnityMCP
                 ["playmode_screenshot"] = (data) => WrapHandler<PlayModeHandler.CommandData>(PlayModeHandler.CaptureScreenshot, data),
 
                 // Advanced tools
-                ["advanced_execute_menu"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.ExecuteMenuItem, data),
-                ["advanced_add_package"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.AddPackage, data),
-                ["advanced_run_tests"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.RunUnityTests, data),
-                ["advanced_add_asset_to_scene"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.AddAssetToScene, data),
-                ["advanced_create_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.CreateScript, data),
-                ["advanced_read_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.ReadScript, data),
-                ["advanced_update_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.UpdateScript, data),
-                ["advanced_delete_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.DeleteScript, data),
-                ["advanced_validate_script"] = (data) => WrapHandler<AdvancedToolsHandler.CommandData>(AdvancedToolsHandler.ValidateScript, data),
+                ["advanced_execute_menu"] = (data) => WrapStringHandler(AdvancedToolsHandler.ExecuteMenuItem, data),
+                ["advanced_add_package"] = (data) => WrapStringHandler(AdvancedToolsHandler.AddPackage, data),
+                ["advanced_run_tests"] = (data) => WrapStringHandler(AdvancedToolsHandler.RunUnityTests, data),
+                ["advanced_add_asset_to_scene"] = (data) => WrapStringHandler(AdvancedToolsHandler.AddAssetToScene, data),
+                ["advanced_create_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.CreateScript, data),
+                ["advanced_read_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.ReadScript, data),
+                ["advanced_update_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.UpdateScript, data),
+                ["advanced_delete_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.DeleteScript, data),
+                ["advanced_validate_script"] = (data) => WrapStringHandler(AdvancedToolsHandler.ValidateScript, data),
             };
         }
 
