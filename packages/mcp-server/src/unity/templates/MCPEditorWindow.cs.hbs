@@ -307,7 +307,7 @@ namespace UnityMCP
                         "Are you sure you want to reset all settings to defaults?",
                         "Reset", "Cancel"))
                     {
-                        config.websocketPort = 8080;
+                        config.websocketPort = 8090;
                         config.autoStart = true;
                         config.requestTimeout = 30;
                         config.allowRemoteConnections = false;
