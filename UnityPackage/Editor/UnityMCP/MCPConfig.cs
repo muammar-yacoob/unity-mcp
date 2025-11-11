@@ -10,13 +10,8 @@ namespace UnityMCP
     public class MCPConfig : ScriptableObject
     {
         [Header("Transport Settings")]
-        [Tooltip("Transport type: http or websocket")]
-        public string transportType = "http";
-
-        [Header("HTTP Server Settings")]
-        [Tooltip("Port for HTTP server")]
-        [Range(1024, 65535)]
-        public int port = 8080;
+        [Tooltip("Transport type (WebSocket only)")]
+        public string transportType = "websocket";
 
         [Header("WebSocket Server Settings")]
         [Tooltip("Port for WebSocket server")]
