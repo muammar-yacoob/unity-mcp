@@ -109,25 +109,32 @@ Add this configuration:
 ## 🎮 Unity Editor Integration
 
 <details>
-<summary><strong>⚡ One-time setup per Unity project</strong></summary>
+<summary><strong>⚡ Install via Unity Package Manager</strong></summary>
 
-Tell Claude to set up the integration:
-```
-Setup Unity MCP in my project at /path/to/unity/project
-```
+### Step 1: Add Package via Git URL
 
-This installs 10 editor scripts to `Assets/Editor/UnityMCP/` including:
+In Unity Editor:
+1. Open **Window → Package Manager**
+2. Click the **+** button (top-left)
+3. Select **Add package from git URL...**
+4. Paste this URL:
+   ```
+   https://github.com/muammar-yacoob/unity-mcp.git?path=/UnityPackage
+   ```
+5. Click **Add**
+
+Unity will install the package with all editor scripts:
 - **🚀 Bridge Installer** - Beautiful wizard for AI client setup
-- HTTP server with auto-start (port 8080)
-- WebSocket server for real-time communication (port 8090)
-- Control Panel UI with 🟢🟠🔴⚪ status monitoring
-- ScriptableObject configuration for persistent settings
-- Handlers for all 30+ tools
+- ⚡ **WebSocket server** - Fast, real-time communication (port 8090)
+- 🎨 **Control Panel UI** - Status monitoring with 🟢🟠🔴⚪ indicators
+- ⚙️ **ScriptableObject config** - Persistent settings across sessions
+- 🛠️ **30+ Tools** - Complete automation toolkit
+
+### Step 2: Configure AI Client
 
 **After installation:**
-1. Restart Unity Editor
-2. Open **Tools → Unity MCP → Bridge Installer** 🎯 **Start here!**
-3. Follow the setup wizard to configure your AI client
+1. Open **Tools → Unity MCP → Bridge Installer** 🎯 **Start here!**
+2. Follow the setup wizard to configure your AI client
 
 The Bridge Installer will:
 - ✅ Check Node.js installation
@@ -135,7 +142,7 @@ The Bridge Installer will:
 - 📝 Provide manual config for other MCP clients
 - 🎉 Guide you to completion
 
-Done! Use the Control Panel to manage settings and monitor your connection.
+Done! Use the Control Panel (**Tools → Unity MCP → Control Panel**) to manage settings and monitor your connection.
 
 </details>
 
@@ -150,7 +157,7 @@ The Bridge Installer provides a beautiful wizard to configure your AI client in 
 
 ### Opening the Installer
 
-After installing Unity MCP, open Unity and navigate to:
+After installing the Unity package, open Unity and navigate to:
 ```
 Tools → Unity MCP → Bridge Installer
 ```
@@ -210,27 +217,28 @@ Choose your setup method:
 
 ---
 
-## 🔌 WebSocket Transport (Optional)
+## ⚡ WebSocket Transport (Default)
 
 <details>
-<summary><strong>⚡ Enable WebSocket for real-time communication</strong></summary>
+<summary><strong>⚡ Fast, real-time bidirectional communication</strong></summary>
 
-Unity MCP supports two transport protocols:
-- **HTTP** (default) - Standard REST API communication
-- **WebSocket** - Real-time bidirectional communication using JSON-RPC 2.0
+Unity MCP uses **WebSocket by default** for maximum speed and real-time control.
 
-### Enable WebSocket Transport
+### Default Configuration
 
-**Option 1: Environment Variables**
-```bash
-export UNITY_MCP_TRANSPORT=websocket
-export UNITY_MCP_WS_PORT=8090
-npx -y @spark-apps/unity-mcp
-```
+The WebSocket server in Unity auto-starts on port `8090` when you install the package.
 
-**Option 2: MCP Client Configuration**
+### Advanced Configuration
 
-Edit your MCP client config:
+You can customize ports and timeouts via environment variables:
+
+| Variable | Description | Default |
+|:---------|:------------|:--------|
+| `UNITY_MCP_TRANSPORT` | Transport type: `websocket` or `http` | `websocket` |
+| `UNITY_MCP_WS_PORT` | WebSocket port | `8090` |
+| `UNITY_MCP_TIMEOUT` | Request timeout (ms) | `30000` |
+
+**Example with custom port:**
 ```json
 {
   "mcpServers": {
@@ -238,34 +246,28 @@ Edit your MCP client config:
       "command": "npx",
       "args": ["-y", "@spark-apps/unity-mcp"],
       "env": {
-        "UNITY_MCP_TRANSPORT": "websocket",
-        "UNITY_MCP_WS_PORT": "8090"
+        "UNITY_MCP_WS_PORT": "9090"
       }
     }
   }
 }
 ```
 
-### Configuration Options
-
-| Variable | Description | Default |
-|:---------|:------------|:--------|
-| `UNITY_MCP_TRANSPORT` | Transport type: `http` or `websocket` | `http` |
-| `UNITY_MCP_HTTP_PORT` | Port for HTTP transport | `8080` |
-| `UNITY_MCP_WS_PORT` | Port for WebSocket transport | `8090` |
-| `UNITY_MCP_TIMEOUT` | Request timeout in milliseconds | `30000` |
-
 ### Unity Editor Configuration
 
-The WebSocket server auto-starts based on your transport configuration. You can also:
-1. Open **Tools → Unity MCP → Start WebSocket Server** (manual start)
-2. Configure transport in **MCPConfig** ScriptableObject (`transportType` field)
-3. Set `websocketPort` in the config (default: 8090)
+WebSocket server auto-starts when Unity loads. You can also:
+1. Open **Tools → Unity MCP → Control Panel** to view status
+2. Configure port in **MCPConfig** ScriptableObject
+3. Manually restart via **Tools → Unity MCP → Start WebSocket Server**
 
-**Benefits of WebSocket:**
-- Lower latency for rapid command sequences
-- Persistent connection reduces overhead
-- Better for real-time editor control workflows
+### Why WebSocket?
+
+- ⚡ **Lower latency** - Real-time bidirectional communication
+- 🚀 **Faster execution** - Persistent connection, no handshake overhead
+- 🔄 **Better for automation** - Ideal for rapid command sequences
+- 📡 **Modern protocol** - JSON-RPC 2.0 over WebSocket
+
+> HTTP transport is still available as a fallback by setting `UNITY_MCP_TRANSPORT=http`
 
 </details>
 

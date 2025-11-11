@@ -1,0 +1,31 @@
+{
+  "name": "com.spark-apps.unity-mcp",
+  "displayName": "Unity MCP Bridge",
+  "version": "1.2.1",
+  "unity": "2022.3",
+  "description": "Bridge between Unity Editor and AI agents via Model Context Protocol (MCP). Enables real-time Unity automation with Claude Desktop, Claude Code, and other MCP clients. Includes beautiful installer wizard, 30+ tools, and WebSocket support.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "unity",
+    "automation",
+    "ai",
+    "claude",
+    "editor",
+    "tools",
+    "websocket",
+    "bridge"
+  ],
+  "category": "Editor Extensions",
+  "author": {
+    "name": "Muammar Yacoob",
+    "email": "muammar@spark-games.co.uk",
+    "url": "https://spark-games.co.uk"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/muammar-yacoob/unity-mcp.git"
+  },
+  "dependencies": {}
+}

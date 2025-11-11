@@ -20,7 +20,7 @@ export class TransportFactory {
   static create(config?: Partial<TransportConfig>): ITransport {
     const transportType = (config?.type ||
       process.env.UNITY_MCP_TRANSPORT ||
-      'http') as TransportType;
+      'websocket') as TransportType;
 
     const httpPort = parseInt(process.env.UNITY_MCP_HTTP_PORT || '8080');
     const wsPort = parseInt(process.env.UNITY_MCP_WS_PORT || '8090');
@@ -46,6 +46,6 @@ export class TransportFactory {
    * Get the configured transport type from environment
    */
   static getConfiguredType(): TransportType {
-    return (process.env.UNITY_MCP_TRANSPORT || 'http') as TransportType;
+    return (process.env.UNITY_MCP_TRANSPORT || 'websocket') as TransportType;
   }
 }

@@ -1,7 +1,6 @@
 import { FastMCP } from "fastmcp";
 import { z } from "zod";
 import { TransportFactory } from "../transports/index.js";
-import { SetupService } from "../unity/services/SetupService.js";
 import { EditorManipulationService } from "../unity/services/EditorManipulationService.js";
 import { PlayModeTestingService } from "../unity/services/PlayModeTestingService.js";
 import { SceneOperationsService } from "../unity/services/SceneOperationsService.js";
@@ -13,40 +12,15 @@ import { AdvancedToolsService } from "../unity/services/AdvancedToolsService.js"
  * Focused on real Unity Editor interaction and automation
  */
 export function registerTools(server: FastMCP) {
-  // Create transport instance (HTTP or WebSocket based on environment)
+  // Create transport instance (WebSocket by default, HTTP as fallback)
   const transport = TransportFactory.create();
 
-  // Setup service doesn't need transport (it just copies files)
-  const setupService = new SetupService();
-
-  // All other services use the transport
+  // All services use the transport to communicate with Unity
   const editorService = new EditorManipulationService(transport);
   const playModeService = new PlayModeTestingService(transport);
   const sceneService = new SceneOperationsService(transport);
   const assetService = new AssetService(transport);
   const advancedService = new AdvancedToolsService(transport);
-
-  // ===== SETUP TOOL =====
-  server.addTool({
-    name: "setup_mcp",
-    description: "Install Unity MCP editor integration into a Unity project. Run this first to enable editor control.",
-    parameters: z.object({
-      projectPath: z.string().describe("Path to the Unity project root directory (containing Assets folder)"),
-    }),
-    execute: async (params) => {
-      try {
-        const result = await setupService.setupUnityMCP({
-          projectPath: params.projectPath,
-        });
-        return JSON.stringify(result, null, 2);
-      } catch (error) {
-        return JSON.stringify({
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }, null, 2);
-      }
-    },
-  });
 
   // ===== EDITOR MANIPULATION TOOLS =====
   server.addTool({

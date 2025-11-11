@@ -44,7 +44,8 @@
   "author": "Muammar Yacoob <https://github.com/muammar-yacoob>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && node -e \"require('fs-extra').copySync('src/unity/templates', 'dist/unity/templates')\"",
+    "build": "tsc && node build-unity-package.cjs",
+    "postbuild": "echo 'Build completed. Unity package available at UnityPackage/'",
     "dev": "tsc --watch",
     "start": "bun dist/index.js",
     "clean": "rm -rf dist",
