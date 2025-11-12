@@ -125,64 +125,50 @@ namespace UnityMCP
                 return ExecuteWithResultInternal(code);
             }
 
-            // From background thread - use UniTaskCompletionSource for proper thread coordination
-            var completionSource = new UniTaskCompletionSource<ExecutionResult>();
+            // From background thread - use ManualResetEventSlim for cross-thread synchronization
+            ExecutionResult capturedResult = null;
+            var completionEvent = new System.Threading.ManualResetEventSlim(false);
 
             // Queue work on Unity's main thread
             UnityEditor.EditorApplication.delayCall += () =>
             {
                 try
                 {
-                    var result = ExecuteWithResultInternal(code);
-                    completionSource.TrySetResult(result);
+                    capturedResult = ExecuteWithResultInternal(code);
                 }
                 catch (System.Exception ex)
                 {
-                    completionSource.TrySetException(ex);
+                    capturedResult = new ExecutionResult
+                    {
+                        Success = false,
+                        Error = $"Execution failed: {ex.Message}",
+                        Logs = new System.Collections.Generic.List<string>(),
+                        Warnings = new System.Collections.Generic.List<string>(),
+                        Errors = new System.Collections.Generic.List<string> { ex.Message }
+                    };
+                }
+                finally
+                {
+                    completionEvent.Set();
                 }
             };
 
-            // Wait for completion using UniTask's proper blocking mechanism
-            try
-            {
-                // Create timeout task
-                var resultTask = completionSource.Task;
-                var timeoutCts = new System.Threading.CancellationTokenSource();
-                var timeoutTask = UniTask.Delay(System.TimeSpan.FromSeconds(30), cancellationToken: timeoutCts.Token);
+            // Wait for completion with timeout
+            bool completed = completionEvent.Wait(System.TimeSpan.FromSeconds(30));
 
-                // Wait for either completion or timeout
-                var whenAnyResult = UniTask.WhenAny(resultTask, timeoutTask).GetAwaiter().GetResult();
-
-                if (!whenAnyResult.hasResultLeft) // Timeout occurred (second task won)
-                {
-                    timeoutCts.Cancel();
-                    return new ExecutionResult
-                    {
-                        Success = false,
-                        Error = "Execution timed out after 30 seconds",
-                        Logs = new System.Collections.Generic.List<string>(),
-                        Warnings = new System.Collections.Generic.List<string>(),
-                        Errors = new System.Collections.Generic.List<string> { "Timeout" }
-                    };
-                }
-
-                // Cancel timeout task and return result
-                timeoutCts.Cancel();
-
-                // Get the actual result from the completion source
-                return resultTask.GetAwaiter().GetResult();
-            }
-            catch (System.Exception ex)
+            if (!completed)
             {
                 return new ExecutionResult
                 {
                     Success = false,
-                    Error = $"Failed to execute C# code: {ex.Message}",
+                    Error = "Execution timed out after 30 seconds",
                     Logs = new System.Collections.Generic.List<string>(),
                     Warnings = new System.Collections.Generic.List<string>(),
-                    Errors = new System.Collections.Generic.List<string> { ex.Message }
+                    Errors = new System.Collections.Generic.List<string> { "Timeout" }
                 };
             }
+
+            return capturedResult;
         }
 
         /// <summary>

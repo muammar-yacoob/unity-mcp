@@ -1,0 +1,22 @@
+---
+description: Standardize Unity MCP transport configuration and usage across HTTP and WebSocket implementations.
+globs: packages/mcp-server/src/transports/*.ts
+alwaysApply: true
+---
+
+- **Use `TransportFactory.create` for runtime selection**
+  - Honour `UNITY_MCP_TRANSPORT`, `UNITY_MCP_HTTP_PORT`, `UNITY_MCP_WS_PORT`, and `UNITY_MCP_TIMEOUT` environment variables as illustrated in [factory.ts](mdc:packages/mcp-server/src/transports/factory.ts); avoid hard-coding ports elsewhere.
+- **Surface connection diagnostics via stderr**
+  - Log chosen transport and reconnect attempts with `console.error` following the patterns in [factory.ts](mdc:packages/mcp-server/src/transports/factory.ts) and [websocket.ts](mdc:packages/mcp-server/src/transports/websocket.ts) to keep MCP output channels clean.
+- **Wrap transport failures with actionable errors**
+  - Convert axios and WebSocket failures into descriptive `Error` instances (see `HttpTransport.request` and `WebSocketTransport.handleMessage`) so upstream services can compose user-friendly responses.
+- **Guard WebSocket lifecycle transitions**
+  - Reuse the `connect` promise and reject pending requests on disconnect before retrying, mirroring the state machine in [websocket.ts](mdc:packages/mcp-server/src/transports/websocket.ts) when extending behaviour.
+- **Keep `ITransport` contract intact**
+  - Ensure new transports implement the same `request`, `isConnected`, `connect`, `disconnect`, and `getType` methods defined in [ITransport.ts](mdc:packages/mcp-server/src/transports/ITransport.ts) for drop-in compatibility.
+
+```typescript
+const transport = TransportFactory.create({ type: 'http', timeout: 15000 });
+await transport.connect();
+const result = await transport.request("/asset/refresh", {});
+```

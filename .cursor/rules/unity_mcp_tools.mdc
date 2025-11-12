@@ -1,0 +1,36 @@
+---
+description: Ensure Unity MCP tools follow consistent structure and error handling when registered with FastMCP.
+globs: packages/mcp-server/src/core/tools.ts
+alwaysApply: true
+---
+
+- **Reuse shared transport and services**
+  - Instantiate `TransportFactory.create()` and service singletons once per `registerTools` invocation as in [tools.ts](mdc:packages/mcp-server/src/core/tools.ts) to avoid redundant connections.
+- **Validate parameters with zod**
+  - Define tool schemas using `z.object({...})`, marking optional values with `.optional()` and defaults with `.default()` to match existing patterns like `load_scene` and `enter_playmode`.
+- **Return JSON-formatted strings**
+  - Wrap Unity responses with `JSON.stringify(result, null, 2)` and map error branches to `success: false` payloads for consistency across tools.
+- **Catch and report transport errors**
+  - Enclose transport calls in `try/catch`; on failure, respond with an error message derived from `error instanceof Error ? error.message : String(error)` mirroring `execute_csharp` and `get_console_logs`.
+- **Document tool capabilities inline**
+  - Provide descriptive multi-line `description` fields that enumerate example usages when the tool is high impact (see the `execute_csharp` block) to guide downstream agents.
+
+```typescript
+// Adapt pattern when adding a new tool
+server.addTool({
+  name: "refresh_assets",
+  description: "Trigger Unity AssetDatabase.Refresh to pick up filesystem changes.",
+  parameters: z.object({}),
+  execute: async () => {
+    try {
+      const result = await assetService.refreshAssets();
+      return JSON.stringify(result, null, 2);
+    } catch (error) {
+      return JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      }, null, 2);
+    }
+  },
+});
+```

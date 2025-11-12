@@ -1,0 +1,28 @@
+---
+description: Maintain consistent Unity service implementations that extend BaseService for transport-aware requests.
+globs: packages/mcp-server/src/unity/services/*.ts
+alwaysApply: true
+---
+
+- **Extend `BaseService` for all Unity services**
+  - Derive new services from `BaseService` to inherit the shared `post` helper and transport health checks as shown in [BaseService.ts](mdc:packages/mcp-server/src/unity/services/BaseService.ts).
+- **Keep request wrappers thin**
+  - Map each Unity endpoint to a short method that forwards parameters to `this.post(endpoint, payload)` similar to [SceneOperationsService.ts](mdc:packages/mcp-server/src/unity/services/SceneOperationsService.ts) to centralise transport behaviour.
+- **Prefer typed parameter interfaces**
+  - Declare exported interfaces for every method’s payload (e.g., `LoadSceneParams`, `EnterPlayModeParams`) so consumers and tools share a single source of truth.
+- **Default optional arguments at call sites**
+  - Provide default empty objects when parameters are optional (`async getConsoleLogs(params: GetConsoleLogsParams = {})`) to prevent undefined payloads from reaching Unity.
+- **Document method purpose in JSDoc**
+  - Include concise JSDoc comments describing Unity-side behaviour for each RPC method to guide downstream agents and maintain parity with existing service files.
+
+```typescript
+export interface RefreshAssetsParams {
+  silent?: boolean;
+}
+
+export class AssetMaintenanceService extends BaseService {
+  async refresh(params: RefreshAssetsParams = {}) {
+    return this.post("/asset/refresh", params);
+  }
+}
+```
