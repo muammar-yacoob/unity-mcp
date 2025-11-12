@@ -79,6 +79,7 @@ export class WebSocketTransport implements ITransport {
         });
 
         this.ws.on('message', (data: WebSocket.Data) => {
+          console.error('[Unity MCP] WebSocket.on("message") event fired');
           this.handleMessage(data.toString());
         });
 
@@ -144,8 +145,12 @@ export class WebSocketTransport implements ITransport {
   }
 
   private handleMessage(data: string): void {
+    console.error('[Unity MCP] WebSocket received message, length:', data.length);
+    console.error('[Unity MCP] Message preview:', data.substring(0, Math.min(200, data.length)));
+
     try {
       const response: JsonRpcResponse = JSON.parse(data);
+      console.error('[Unity MCP] Parsed JSON successfully, id:', response.id);
 
       if (!response.id) {
         console.error('[Unity MCP] Received message without ID:', data);
@@ -155,8 +160,11 @@ export class WebSocketTransport implements ITransport {
       const pending = this.pendingRequests.get(response.id);
       if (!pending) {
         console.error('[Unity MCP] Received response for unknown request:', response.id);
+        console.error('[Unity MCP] Pending requests:', Array.from(this.pendingRequests.keys()));
         return;
       }
+
+      console.error('[Unity MCP] Found pending request, resolving...');
 
       // Clear timeout
       clearTimeout(pending.timeout);
@@ -164,14 +172,17 @@ export class WebSocketTransport implements ITransport {
 
       // Handle error or result
       if (response.error) {
+        console.error('[Unity MCP] Response has error:', response.error);
         pending.reject(
           new Error(`Unity error: ${response.error.message} (code: ${response.error.code})`)
         );
       } else {
+        console.error('[Unity MCP] Response has result, resolving promise');
         pending.resolve(response.result);
       }
     } catch (error) {
       console.error('[Unity MCP] Error parsing WebSocket message:', error);
+      console.error('[Unity MCP] Raw data that failed to parse:', data);
     }
   }
 
@@ -198,8 +209,13 @@ export class WebSocketTransport implements ITransport {
       params,
     };
 
+    console.error('[Unity MCP] Sending request:', JSON.stringify(request).substring(0, 200));
+    console.error('[Unity MCP] Request ID:', id, 'Method:', method, 'Timeout:', this.requestTimeout, 'ms');
+
     return new Promise<T>((resolve, reject) => {
       const timeout = setTimeout(() => {
+        console.error('[Unity MCP] REQUEST TIMEOUT!', 'ID:', id, 'Method:', method);
+        console.error('[Unity MCP] Pending requests at timeout:', Array.from(this.pendingRequests.keys()));
         this.pendingRequests.delete(id);
         reject(new Error(`Request timeout: ${method}`));
       }, this.requestTimeout);
@@ -208,7 +224,9 @@ export class WebSocketTransport implements ITransport {
 
       try {
         this.ws!.send(JSON.stringify(request));
+        console.error('[Unity MCP] Message sent to WebSocket successfully');
       } catch (error) {
+        console.error('[Unity MCP] Failed to send message to WebSocket:', error);
         clearTimeout(timeout);
         this.pendingRequests.delete(id);
         reject(error);

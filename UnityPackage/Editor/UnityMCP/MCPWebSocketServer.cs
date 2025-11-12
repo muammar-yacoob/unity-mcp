@@ -428,7 +428,7 @@ namespace UnityMCP
 
         /// <summary>
         /// Coroutine that processes messages on Unity's main thread (non-blocking)
-        /// Pattern inspired by CoderGamester/mcp-unity
+        /// Pattern inspired by CoderGamester/mcp-unity + CoplayDev/unity-mcp
         /// </summary>
         private IEnumerator ProcessMessageCoroutine(string message)
         {
@@ -527,28 +527,23 @@ namespace UnityMCP
                 string method = request["method"]?.ToString();
                 JObject parameters = request["params"] as JObject;
 
-                Debug.Log($"[WebSocket] ProcessMessage: id={id}, method={method}");
-
                 if (toolRegistry.TryGetValue(method, out var handler))
                 {
                     Debug.Log($"[WebSocket] Calling handler for method: {method}");
                     JObject result = handler(parameters);
                     Debug.Log($"[WebSocket] Handler returned, building response");
-
                     JObject response = new JObject
                     {
                         ["jsonrpc"] = "2.0",
                         ["id"] = id,
                         ["result"] = result
                     };
-
                     string responseStr = response.ToString();
                     Debug.Log($"[WebSocket] Response built, length={responseStr.Length}");
                     return responseStr;
                 }
                 else
                 {
-                    Debug.LogWarning($"[WebSocket] Method not found: {method}");
                     JObject error = new JObject
                     {
                         ["jsonrpc"] = "2.0",
