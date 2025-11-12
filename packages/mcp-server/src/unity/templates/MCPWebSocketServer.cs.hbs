@@ -37,9 +37,17 @@ namespace UnityMCP
         {
             EditorApplication.update -= Initialize;
 
-            // Only auto-start if transport is WebSocket
-            if (!isRunning && config.autoStart && config.transportType == "websocket")
+            if (!isRunning && config.autoStart)
             {
+                if (config.transportType != "websocket")
+                {
+                    Debug.LogWarning($"[Unity MCP] transportType set to '{config.transportType}'. Updating to 'websocket' for new transport.");
+#if UNITY_EDITOR
+                    config.transportType = "websocket";
+                    UnityEditor.EditorUtility.SetDirty(config);
+                    UnityEditor.AssetDatabase.SaveAssets();
+#endif
+                }
                 StartServer();
             }
         }

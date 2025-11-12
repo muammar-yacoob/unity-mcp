@@ -20,6 +20,11 @@ async function startServer() {
     // Log server information
     console.error(`Unity MCP Server initialized`);
     console.error("Server is ready to automate Unity game development");
+    console.error("");
+    console.error("⚠️  IMPORTANT: Unity Editor must be running with MCP WebSocket server started");
+    console.error("   Check Unity Console for: '[Unity MCP] WebSocket server started on port 8090'");
+    console.error("   Or open: Unity > Tools > Unity MCP > Control Panel");
+    console.error("");
     
     return server;
   } catch (error) {

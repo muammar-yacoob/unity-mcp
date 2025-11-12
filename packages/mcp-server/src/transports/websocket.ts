@@ -57,6 +57,10 @@ export class WebSocketTransport implements ITransport {
       return Promise.resolve();
     }
 
+    console.error(`[Unity MCP] Attempting to connect to Unity Editor at ${this.url}`);
+    console.error('[Unity MCP] Make sure Unity Editor is running with MCP WebSocket server started');
+    console.error('[Unity MCP] Check Unity Console for: "[Unity MCP] WebSocket server started on port..."');
+
     this.isConnecting = true;
     this.connectionPromise = new Promise((resolve, reject) => {
       try {
@@ -67,7 +71,11 @@ export class WebSocketTransport implements ITransport {
             this.ws.close();
           }
           this.isConnecting = false;
-          reject(new Error('WebSocket connection timeout'));
+          const errorMsg = `WebSocket connection timeout to ${this.url}. ` +
+            `Make sure Unity Editor is running and MCP WebSocket server is started. ` +
+            `Check Unity Console (Window > General > Console) for server status.`;
+          console.error(`[Unity MCP] ${errorMsg}`);
+          reject(new Error(errorMsg));
         }, 10000);
 
         this.ws.on('open', () => {
@@ -80,20 +88,31 @@ export class WebSocketTransport implements ITransport {
 
         this.ws.on('message', (data: WebSocket.Data) => {
           console.error('[Unity MCP] WebSocket.on("message") event fired');
-          this.handleMessage(data.toString());
+          const messageStr = data.toString();
+          console.error('[Unity MCP] Raw message received, type:', typeof data, 'length:', messageStr.length);
+          this.handleMessage(messageStr);
         });
 
         this.ws.on('error', (error) => {
-          console.error('[Unity MCP] WebSocket error:', error.message);
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          console.error(`[Unity MCP] WebSocket connection error: ${errorMsg}`);
+          console.error(`[Unity MCP] Failed to connect to ${this.url}`);
+          console.error('[Unity MCP] Troubleshooting:');
+          console.error('  1. Is Unity Editor running?');
+          console.error('  2. Is MCP WebSocket server started? (Check Unity Console)');
+          console.error('  3. Is the port correct? (Default: 8090)');
+          console.error('  4. Check Unity > Tools > Unity MCP > Control Panel');
           clearTimeout(connectTimeout);
           this.isConnecting = false;
           if (this.ws?.readyState === WebSocket.CONNECTING) {
-            reject(error);
+            reject(new Error(`Failed to connect to Unity Editor: ${errorMsg}. ` +
+              `Make sure Unity is running with MCP WebSocket server started.`));
           }
         });
 
-        this.ws.on('close', () => {
-          console.error('[Unity MCP] WebSocket disconnected');
+        this.ws.on('close', (code, reason) => {
+          console.error('[Unity MCP] WebSocket disconnected', 'code:', code, 'reason:', reason?.toString());
+          console.error('[Unity MCP] Pending requests at disconnect:', Array.from(this.pendingRequests.keys()));
           this.handleDisconnect();
         });
       } catch (error) {
@@ -151,6 +170,7 @@ export class WebSocketTransport implements ITransport {
     try {
       const response: JsonRpcResponse = JSON.parse(data);
       console.error('[Unity MCP] Parsed JSON successfully, id:', response.id);
+      console.error('[Unity MCP] Response has error?', !!response.error, 'has result?', !!response.result);
 
       if (!response.id) {
         console.error('[Unity MCP] Received message without ID:', data);
@@ -161,6 +181,7 @@ export class WebSocketTransport implements ITransport {
       if (!pending) {
         console.error('[Unity MCP] Received response for unknown request:', response.id);
         console.error('[Unity MCP] Pending requests:', Array.from(this.pendingRequests.keys()));
+        console.error('[Unity MCP] Full response:', JSON.stringify(response, null, 2));
         return;
       }
 
@@ -172,17 +193,33 @@ export class WebSocketTransport implements ITransport {
 
       // Handle error or result
       if (response.error) {
-        console.error('[Unity MCP] Response has error:', response.error);
+        console.error('[Unity MCP] Response has error:', JSON.stringify(response.error, null, 2));
         pending.reject(
           new Error(`Unity error: ${response.error.message} (code: ${response.error.code})`)
         );
-      } else {
-        console.error('[Unity MCP] Response has result, resolving promise');
+      } else if (response.result !== undefined) {
+        console.error('[Unity MCP] Response has result, type:', typeof response.result);
+        console.error('[Unity MCP] Result preview:', JSON.stringify(response.result).substring(0, 200));
         pending.resolve(response.result);
+      } else {
+        console.error('[Unity MCP] Response has neither error nor result!', JSON.stringify(response, null, 2));
+        pending.reject(new Error('Invalid JSON-RPC response: missing both error and result'));
       }
     } catch (error) {
       console.error('[Unity MCP] Error parsing WebSocket message:', error);
       console.error('[Unity MCP] Raw data that failed to parse:', data);
+      // Try to find and reject any pending requests that might be waiting
+      // This is a fallback in case the response format is unexpected
+      if (this.pendingRequests.size > 0) {
+        console.error('[Unity MCP] Attempting to reject oldest pending request as fallback');
+        const oldestId = Array.from(this.pendingRequests.keys())[0];
+        const oldest = this.pendingRequests.get(oldestId);
+        if (oldest) {
+          clearTimeout(oldest.timeout);
+          this.pendingRequests.delete(oldestId);
+          oldest.reject(new Error(`Failed to parse Unity response: ${error instanceof Error ? error.message : String(error)}`));
+        }
+      }
     }
   }
 
@@ -193,7 +230,12 @@ export class WebSocketTransport implements ITransport {
     }
 
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      throw new Error('WebSocket not connected');
+      const state = this.ws ? 
+        (this.ws.readyState === WebSocket.CONNECTING ? 'CONNECTING' :
+         this.ws.readyState === WebSocket.CLOSING ? 'CLOSING' :
+         this.ws.readyState === WebSocket.CLOSED ? 'CLOSED' : 'UNKNOWN') : 'NULL';
+      throw new Error(`WebSocket not connected (state: ${state}). ` +
+        `Make sure Unity Editor is running with MCP WebSocket server started on port ${this.url.split(':').pop()}`);
     }
 
     const id = uuidv4();
@@ -214,10 +256,18 @@ export class WebSocketTransport implements ITransport {
 
     return new Promise<T>((resolve, reject) => {
       const timeout = setTimeout(() => {
+        const wsState = this.ws ? this.ws.readyState : 'null';
+        const wsStateName = this.ws ? 
+          (this.ws.readyState === WebSocket.OPEN ? 'OPEN' :
+           this.ws.readyState === WebSocket.CONNECTING ? 'CONNECTING' :
+           this.ws.readyState === WebSocket.CLOSING ? 'CLOSING' :
+           this.ws.readyState === WebSocket.CLOSED ? 'CLOSED' : 'UNKNOWN') : 'NULL';
         console.error('[Unity MCP] REQUEST TIMEOUT!', 'ID:', id, 'Method:', method);
+        console.error('[Unity MCP] WebSocket state:', wsStateName, `(${wsState})`);
         console.error('[Unity MCP] Pending requests at timeout:', Array.from(this.pendingRequests.keys()));
+        console.error('[Unity MCP] Is connected?', this.ws && this.ws.readyState === WebSocket.OPEN);
         this.pendingRequests.delete(id);
-        reject(new Error(`Request timeout: ${method}`));
+        reject(new Error(`Request timeout: ${method} (WebSocket state: ${wsStateName})`));
       }, this.requestTimeout);
 
       this.pendingRequests.set(id, { resolve, reject, timeout });

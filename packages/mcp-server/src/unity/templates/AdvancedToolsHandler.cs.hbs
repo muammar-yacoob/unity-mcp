@@ -396,46 +396,19 @@ public class {scriptName} : MonoBehaviour
             var result = new Dictionary<string, string>();
             if (string.IsNullOrEmpty(json)) return result;
 
-            json = json.Trim();
-            if (!json.StartsWith("{")) return result;
-
-            json = json.Trim('{', '}');
-
-            var parts = new List<string>();
-            int braceLevel = 0;
-            int quoteCount = 0;
-            string current = "";
-
-            foreach (char c in json)
+            try
             {
-                if (c == '"') quoteCount++;
-                if (c == '{') braceLevel++;
-                if (c == '}') braceLevel--;
-
-                if (c == ',' && braceLevel == 0 && quoteCount % 2 == 0)
+                // Use Newtonsoft.Json for proper parsing
+                var jObject = Newtonsoft.Json.Linq.JObject.Parse(json);
+                foreach (var prop in jObject.Properties())
                 {
-                    parts.Add(current);
-                    current = "";
-                }
-                else
-                {
-                    current += c;
+                    result[prop.Name] = prop.Value.ToString();
                 }
             }
-            if (!string.IsNullOrEmpty(current))
+            catch (Exception e)
             {
-                parts.Add(current);
-            }
-
-            foreach (var part in parts)
-            {
-                var colonIndex = part.IndexOf(':');
-                if (colonIndex > 0)
-                {
-                    string key = part.Substring(0, colonIndex).Trim().Trim('"', ' ');
-                    string value = part.Substring(colonIndex + 1).Trim().Trim('"', ' ');
-                    result[key] = value;
-                }
+                UnityEngine.Debug.LogError($"[AdvancedToolsHandler] Failed to parse JSON: {e.Message}");
+                UnityEngine.Debug.LogError($"[AdvancedToolsHandler] JSON was: {json}");
             }
 
             return result;
