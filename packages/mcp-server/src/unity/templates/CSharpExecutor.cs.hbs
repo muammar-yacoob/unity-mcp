@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.CSharp;
 using UnityEditor;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace UnityMCP
 {
@@ -102,78 +102,8 @@ namespace UnityMCP
 
         /// <summary>
         /// Execute code with comprehensive error handling and logging
-        /// Automatically marshals to Unity's main thread using UniTask
-        /// </summary>
-        public static async UniTask<ExecutionResult> ExecuteWithResultAsync(string code)
-        {
-            // Check if Unity is compiling
-            if (UnityEditor.EditorApplication.isCompiling)
-            {
-                return new ExecutionResult
-                {
-                    Success = false,
-                    Error = "Unity is compiling, please wait...",
-                    Logs = new System.Collections.Generic.List<string>(),
-                    Warnings = new System.Collections.Generic.List<string>(),
-                    Errors = new System.Collections.Generic.List<string> { "Compilation in progress" }
-                };
-            }
-
-            // Switch to Unity's main thread
-            await UniTask.SwitchToMainThread();
-
-            // Execute on main thread with logging capture
-            var result = new ExecutionResult
-            {
-                Success = false,
-                Logs = new System.Collections.Generic.List<string>(),
-                Warnings = new System.Collections.Generic.List<string>(),
-                Errors = new System.Collections.Generic.List<string>()
-            };
-
-            Application.logMessageReceived += LogHandler;
-
-            try
-            {
-                var startTime = System.DateTime.Now;
-                result.Result = ExecuteCode(code);
-                result.Success = true;
-                result.ExecutionTime = (System.DateTime.Now - startTime).TotalMilliseconds;
-            }
-            catch (Exception e)
-            {
-                result.Success = false;
-                result.Errors.Add(e.Message);
-                result.Error = e.Message;
-            }
-            finally
-            {
-                Application.logMessageReceived -= LogHandler;
-            }
-
-            return result;
-
-            void LogHandler(string message, string stackTrace, LogType type)
-            {
-                switch (type)
-                {
-                    case LogType.Log:
-                        result.Logs.Add(message);
-                        break;
-                    case LogType.Warning:
-                        result.Warnings.Add(message);
-                        break;
-                    case LogType.Error:
-                    case LogType.Exception:
-                        result.Errors.Add($"{message}\n{stackTrace}");
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Synchronous wrapper - only use from Unity's main thread
-        /// For background threads, use ExecuteWithResultAsync
+        /// Automatically handles threading - safe to call from any thread
+        /// Pattern learned from CoderGamester/mcp-unity using EditorCoroutines
         /// </summary>
         public static ExecutionResult ExecuteWithResult(string code)
         {
@@ -190,45 +120,22 @@ namespace UnityMCP
                 };
             }
 
-            // For main thread, execute directly
+            // If already on Unity's main thread, execute directly
             if (System.Threading.Thread.CurrentThread.ManagedThreadId == 1)
             {
-                return ExecuteWithResultInternal(code);
+                return ExecuteOnMainThread(code);
             }
 
-            // For background threads: Use simple synchronization with AutoResetEvent
-            // UniTask is designed for main-thread async, not cross-thread blocking
-            ExecutionResult result = null;
-            var completionEvent = new System.Threading.AutoResetEvent(false);
+            // From background thread: Use EditorCoroutine + TaskCompletionSource pattern
+            var tcs = new TaskCompletionSource<ExecutionResult>();
+            Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutineOwnerless(ExecuteCoroutine(code, tcs));
 
-            // Queue work on Unity's main thread
-            UnityEditor.EditorApplication.delayCall += () =>
+            // Block background thread waiting for completion
+            if (tcs.Task.Wait(System.TimeSpan.FromSeconds(30)))
             {
-                try
-                {
-                    result = ExecuteWithResultInternal(code);
-                }
-                catch (System.Exception ex)
-                {
-                    result = new ExecutionResult
-                    {
-                        Success = false,
-                        Error = $"Execution failed: {ex.Message}",
-                        Logs = new System.Collections.Generic.List<string>(),
-                        Warnings = new System.Collections.Generic.List<string>(),
-                        Errors = new System.Collections.Generic.List<string> { ex.Message }
-                    };
-                }
-                finally
-                {
-                    completionEvent.Set();
-                }
-            };
-
-            // Wait for completion with timeout
-            bool completed = completionEvent.WaitOne(System.TimeSpan.FromSeconds(30));
-
-            if (!completed)
+                return tcs.Task.Result;
+            }
+            else
             {
                 return new ExecutionResult
                 {
@@ -239,14 +146,9 @@ namespace UnityMCP
                     Errors = new System.Collections.Generic.List<string> { "Timeout" }
                 };
             }
-
-            return result;
         }
 
-        /// <summary>
-        /// Internal synchronous execution - guaranteed to run on main thread
-        /// </summary>
-        private static ExecutionResult ExecuteWithResultInternal(string code)
+        private static ExecutionResult ExecuteOnMainThread(string code)
         {
             var result = new ExecutionResult
             {
@@ -256,7 +158,7 @@ namespace UnityMCP
                 Errors = new System.Collections.Generic.List<string>()
             };
 
-            // Capture logs during execution (safe on main thread)
+            // Capture logs during execution
             Application.logMessageReceived += LogHandler;
 
             try
@@ -295,6 +197,29 @@ namespace UnityMCP
                         break;
                 }
             }
+        }
+
+        private static System.Collections.IEnumerator ExecuteCoroutine(string code, TaskCompletionSource<ExecutionResult> tcs)
+        {
+            try
+            {
+                var result = ExecuteOnMainThread(code);
+                tcs.TrySetResult(result);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = new ExecutionResult
+                {
+                    Success = false,
+                    Error = $"Execution failed: {ex.Message}",
+                    Logs = new System.Collections.Generic.List<string>(),
+                    Warnings = new System.Collections.Generic.List<string>(),
+                    Errors = new System.Collections.Generic.List<string> { ex.Message }
+                };
+                tcs.TrySetResult(errorResult);
+            }
+
+            yield return null;
         }
     }
 
