@@ -3,7 +3,8 @@
   "rootNamespace": "UnityMCP",
   "references": [
     "UniTask",
-    "Unity.Nuget.Newtonsoft-Json"
+    "Unity.Nuget.Newtonsoft-Json",
+    "Unity.EditorCoroutines.Editor"
   ],
   "includePlatforms": [
     "Editor"

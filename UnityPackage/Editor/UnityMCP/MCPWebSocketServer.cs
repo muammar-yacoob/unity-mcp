@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using Unity.EditorCoroutines.Editor;
 
 namespace UnityMCP
 {
@@ -248,7 +250,8 @@ namespace UnityMCP
                         PerformHandshake(request);
                         isWebSocketHandshake = true;
 
-                        // Handle incoming messages
+                        // Handle incoming messages using non-blocking coroutine pattern
+                        // Inspired by CoderGamester/mcp-unity architecture
                         while (tcpClient.Connected)
                         {
                             try
@@ -256,8 +259,11 @@ namespace UnityMCP
                                 string message = ReceiveMessage();
                                 if (message != null)
                                 {
-                                    string response = ProcessMessage(message);
-                                    SendMessage(response);
+                                    Debug.Log($"[WebSocket] Received message: {message.Substring(0, Math.Min(100, message.Length))}...");
+
+                                    // Dispatch to main thread using EditorCoroutineUtility (non-blocking)
+                                    // This prevents blocking the WebSocket thread
+                                    EditorCoroutineUtility.StartCoroutineOwnerless(ProcessMessageCoroutine(message));
                                 }
                             }
                             catch (Exception e)
@@ -398,6 +404,58 @@ namespace UnityMCP
             return Encoding.UTF8.GetString(payload);
         }
 
+        /// <summary>
+        /// Coroutine that processes messages on Unity's main thread (non-blocking)
+        /// Pattern inspired by CoderGamester/mcp-unity
+        /// </summary>
+        private IEnumerator ProcessMessageCoroutine(string message)
+        {
+            Debug.Log("[WebSocket] ProcessMessageCoroutine started on main thread");
+            string response = null;
+            Exception exception = null;
+
+            try
+            {
+                // Process message on main thread
+                response = ProcessMessage(message);
+                Debug.Log($"[WebSocket] ProcessMessage completed, response length: {response?.Length ?? 0}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[WebSocket] ProcessMessage failed: {ex.Message}");
+                exception = ex;
+
+                // Create error response
+                response = new JObject
+                {
+                    ["jsonrpc"] = "2.0",
+                    ["id"] = null,
+                    ["error"] = new JObject
+                    {
+                        ["code"] = -32603,
+                        ["message"] = $"Internal error: {ex.Message}"
+                    }
+                }.ToString();
+            }
+
+            // Send response
+            if (response != null && tcpClient != null && tcpClient.Connected)
+            {
+                try
+                {
+                    Debug.Log($"[WebSocket] Sending response...");
+                    SendMessage(response);
+                    Debug.Log("[WebSocket] Response sent successfully");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[WebSocket] Failed to send response: {ex.Message}");
+                }
+            }
+
+            yield return null;
+        }
+
         private void SendMessage(string message)
         {
             try
@@ -452,19 +510,28 @@ namespace UnityMCP
                 string method = request["method"]?.ToString();
                 JObject parameters = request["params"] as JObject;
 
+                Debug.Log($"[WebSocket] ProcessMessage: id={id}, method={method}");
+
                 if (toolRegistry.TryGetValue(method, out var handler))
                 {
+                    Debug.Log($"[WebSocket] Calling handler for method: {method}");
                     JObject result = handler(parameters);
+                    Debug.Log($"[WebSocket] Handler returned, building response");
+
                     JObject response = new JObject
                     {
                         ["jsonrpc"] = "2.0",
                         ["id"] = id,
                         ["result"] = result
                     };
-                    return response.ToString();
+
+                    string responseStr = response.ToString();
+                    Debug.Log($"[WebSocket] Response built, length={responseStr.Length}");
+                    return responseStr;
                 }
                 else
                 {
+                    Debug.LogWarning($"[WebSocket] Method not found: {method}");
                     JObject error = new JObject
                     {
                         ["jsonrpc"] = "2.0",
