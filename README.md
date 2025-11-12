@@ -30,37 +30,16 @@
 
 ## ✨ What It Does
 
-Unity MCP provides **real-time control** of Unity Editor via the Model Context Protocol with a **revolutionary simplified architecture**:
+Unity MCP provides **real-time control** of Unity Editor via the Model Context Protocol. Use it from **Claude Desktop**, **Cursor**, or any MCP client to create and modify games with natural language prompts.
 
 | <div align="left">Feature</div> | <div align="left">Description</div> |
 |:---------|:-------------|
-| ![](https://img.shields.io/badge/⭐%20-ff6b00?style=for-the-badge)![Execute C#](https://img.shields.io/badge/Execute%20C%23%20-ff6b00?style=for-the-badge) | **THE KILLER TOOL** - Execute ANY Unity API code with full UnityEngine/Editor access |
+| ![](https://img.shields.io/badge/⭐%20-ff6b00?style=for-the-badge)![Execute C#](https://img.shields.io/badge/Execute%20C%23%20-ff6b00?style=for-the-badge) | Execute any Unity API code with full UnityEngine/Editor access |
 | ![](https://img.shields.io/badge/🗺️%20-c41e3a?style=for-the-badge)![Scene Operations](https://img.shields.io/badge/Scene%20Operations%20-ff073a?style=for-the-badge) | Load, save, inspect scene hierarchy in real-time |
 | ![](https://img.shields.io/badge/🧪%20-cc6600?style=for-the-badge)![Play Mode Testing](https://img.shields.io/badge/Play%20Mode%20Testing%20-ff9500?style=for-the-badge) | Enter/exit play mode and monitor status programmatically |
 | ![](https://img.shields.io/badge/📋%20-1a365d?style=for-the-badge)![Console Logging](https://img.shields.io/badge/Console%20Logging%20-007bff?style=for-the-badge) | Retrieve and filter Unity console logs for debugging |
 
 ---
-
-## 🎯 Simplified Architecture Philosophy
-
-**Why only 8 tools?**
-
-Unity MCP v2.3.0 adopts a revolutionary **minimal architecture** inspired by successful projects that prove *flexibility beats complexity*:
-
-- **⭐ execute_csharp** - The game-changer that replaces dozens of specialized tools
-- **🗺️ 3 scene tools** - Essential scene operations (load, save, hierarchy)
-- **🧪 3 playmode tools** - Test automation (enter, exit, status)
-- **📋 1 logging tool** - Console monitoring and debugging
-
-**The Result:** 64% less code, infinite flexibility, future-proof design.
-
-**Compare:**
-| Approach | Tool Count | Flexibility | Maintenance |
-|:---------|:-----------|:------------|:------------|
-| 🔴 Traditional | 30+ rigid tools | Limited to predefined operations | High complexity |
-| ✅ **Unity MCP v2.3.0** | 8 essential tools | **Unlimited via execute_csharp** | Clean & simple |
-
-**execute_csharp changes everything** - It's not just another tool, it's a **direct portal to the entire Unity API**. Need to align objects? Execute C#. Want to manage packages? Execute C#. Create custom workflows? Execute C#. It's like having a senior Unity developer at your fingertips.
 
 ## 🚀 Quick Setup
 
@@ -79,7 +58,7 @@ Unity MCP v2.3.0 adopts a revolutionary **minimal architecture** inspired by suc
 
 ## 📥 Installation
 
-> **⚠️ REQUIRED:** You must install Unity MCP before using any of its tools.
+
 
 <details>
 <summary><strong>📦 Choose your setup method</strong></summary>
@@ -294,22 +273,16 @@ WebSocket server auto-starts when Unity loads. You can also:
 
 ---
 
-## 🛠️ Simplified Architecture: 8 Essential Tools
+## 🛠️ Available Tools
 
 <details>
-<summary><strong>🔧 View the 8 Essential Tools</strong></summary>
+<summary><strong>🔧 View all 8 tools</strong></summary>
 
-### **⭐ The Killer Tool: Unlimited Flexibility**
+### **⭐ execute_csharp**
 
 | <div align="left">Tool</div> | <div align="left">Description</div> |
 |:------|:-------------|
-| ![](https://img.shields.io/badge/⭐%20-ff6b00?style=for-the-badge)![execute_csharp](https://img.shields.io/badge/execute__csharp%20-ff6b00?style=for-the-badge) | **Execute ANY Unity operation with full API access**<br/>This single tool can: select objects, transform them, create/delete objects, modify components, run menu commands, manage packages, create scripts, and literally ANYTHING the Unity API supports. It's like having 100+ specialized tools in one. |
-
-**Why execute_csharp Changes Everything:**
-- 🚀 **Unlimited possibilities** - Not constrained by predefined tools
-- 🎯 **Direct API access** - Full UnityEngine and UnityEditor namespaces
-- 🔧 **No tool bloat** - One flexible tool instead of dozens of rigid ones
-- 📚 **Future-proof** - Works with any Unity version and new APIs automatically
+| ![](https://img.shields.io/badge/⭐%20-ff6b00?style=for-the-badge)![execute_csharp](https://img.shields.io/badge/execute__csharp%20-ff6b00?style=for-the-badge) | Execute ANY Unity operation with full UnityEngine and UnityEditor API access |
 
 **Example Usage:**
 ```typescript
@@ -335,6 +308,15 @@ execute_csharp({
   `
 })
 ```
+
+**Real-World Example - Build a Complete Game:**
+```
+"Build a 3D Flappy Bird using execute_csharp: sky blue ortho camera, 
+yellow sphere bird with Rigidbody physics (zero velocity before jump), 
+8 green cube pipes that move left and reset when off-screen, 
+TextMeshPro score UI, and game over panel on collision."
+```
+This single prompt creates an entire playable game by streaming C# code to Unity via MCP!
 
 ---
 
@@ -363,21 +345,6 @@ execute_csharp({
 | ![](https://img.shields.io/badge/▶️%20-8B5CF6?style=for-the-badge)![enter_playmode](https://img.shields.io/badge/enter__playmode%20-8B5CF6?style=for-the-badge) | Enter play mode programmatically with optional pause |
 | ![](https://img.shields.io/badge/⏸️%20-8B5CF6?style=for-the-badge)![exit_playmode](https://img.shields.io/badge/exit__playmode%20-8B5CF6?style=for-the-badge) | Exit play mode and return to edit mode |
 | ![](https://img.shields.io/badge/📊%20-8B5CF6?style=for-the-badge)![get_playmode_status](https://img.shields.io/badge/get__playmode__status%20-8B5CF6?style=for-the-badge) | Check if Unity is in play mode, edit mode, or paused |
-
----
-
-### **💡 Philosophy: Less is More**
-
-**Why 8 tools instead of 30?**
-- ✅ **Flexibility** - execute_csharp can do anything the Unity API allows
-- ✅ **Simplicity** - Easier to learn, easier to use
-- ✅ **Maintainability** - Less code to maintain, fewer bugs
-- ✅ **Future-proof** - Works with ANY Unity feature, present or future
-- ✅ **Power** - Direct API access > predefined operations
-
-**What about specialized operations?**
-- ❌ **Before**: select_objects, transform_objects, align_objects, distribute_objects, duplicate_objects, delete_objects, find_objects... (7 rigid tools)
-- ✅ **Now**: execute_csharp can do ALL of these + infinitely more
 
 </details>
 
@@ -460,7 +427,7 @@ Once installed, access the Control Panel via **Tools → Unity MCP → Control P
   - ⚪ **Disconnected** - Server stopped
 
 - **⚙️ Server Settings** (Collapsable)
-  - Port configuration (default: 8080)
+  - Port configuration (default: 8090)
   - Auto-start on Unity load
   - Request timeout settings
   - Remote connections (⚠️ use with caution)
@@ -495,114 +462,7 @@ All settings persist across Unity sessions!
 
 </details>
 
----
 
-## 🐛 Troubleshooting
-
-<details>
-<summary><strong>🐞 Common Issues</strong></summary>
-
-**Verifying Installation:**
-
-After setup, verify Unity MCP appears in your MCP client's available servers list. The server communicates via stdio and will start automatically when your MCP client launches.
-
-If you need to test the server directly:
-```bash
-node /path/to/your/node_modules/@spark-apps/unity-mcp/dist/index.js
-```
-You should see: `MCP Server running on stdio`
-
-**MCP Server Not Showing:**
-1. Verify Node.js is installed: `node --version`
-2. Check config file path is correct
-3. Ensure JSON syntax is valid
-4. Restart MCP client completely
-
-**Unity Editor Not Responding:**
-1. Ensure Unity Editor is open
-2. Check `Assets/Editor/UnityMCP/` scripts are installed
-3. Verify Console for `[Unity MCP] Server started on port 8080`
-4. Check no errors in Unity Console
-
-**Port Already in Use:**
-1. Default port is `8080`
-2. Check what's using it: `lsof -i :8080` (Mac/Linux) or `netstat -ano | findstr :8080` (Windows)
-3. Stop conflicting process or change port in Unity scripts
-
-</details>
-
----
-
-## 🚀 What Changed in v2.3.0?
-
-<details>
-<summary><strong>📊 From v2.2.x → v2.3.0: The Simplification Update</strong></summary>
-
-### Architecture Transformation
-
-**Before (v2.2.x):**
-- 30+ specialized tools
-- 651 lines of tool definitions
-- Limited to predefined operations
-- Complex maintenance
-
-**After (v2.3.0):**
-- 8 essential tools
-- 231 lines of tool definitions (64% reduction)
-- Unlimited flexibility via execute_csharp
-- Clean, maintainable codebase
-
-### What Stayed the Same
-
-✅ Beautiful Control Panel UI with real-time status monitoring
-✅ Bridge Installer wizard for easy setup
-✅ WebSocket transport (default, port 8090)
-✅ All your favorite features - now accessible via execute_csharp
-✅ Persistent configuration via ScriptableObject
-✅ Full undo/redo support
-
-### What Got Better
-
-🚀 **execute_csharp** - New killer tool with full Unity API access
-⚡ **Faster performance** - Less overhead, more direct execution
-🎯 **More flexibility** - Not limited by predefined tool constraints
-📚 **Future-proof** - Works with ANY Unity version automatically
-🧹 **Cleaner codebase** - Easier to understand, maintain, and extend
-
-### Migration Guide
-
-**Old Way:**
-```typescript
-// Multiple tool calls
-select_objects({ pattern: "Enemy*" })
-transform_objects({ position: { y: 5 } })
-align_objects({ axis: "horizontal" })
-```
-
-**New Way (v2.3.0):**
-```typescript
-// Single execute_csharp call - more powerful!
-execute_csharp({
-  code: `
-    var enemies = GameObject.FindGameObjectsWithTag("Enemy");
-    foreach (var enemy in enemies) {
-      enemy.transform.position = new Vector3(
-        enemy.transform.position.x,
-        5,
-        enemy.transform.position.z
-      );
-    }
-    // Plus you can do ANYTHING else here too!
-    return $"Processed {enemies.Length} enemies";
-  `
-})
-```
-
-### Inspired By
-
-This architectural shift was inspired by [Arodoid's UnityMCP](https://github.com/Arodoid/UnityMCP), which demonstrated that *simplicity and flexibility* trump *complexity and rigidity*. We combined their minimal approach with our professional UI/UX to create the best of both worlds.
-
-</details>
 
 ---
 
