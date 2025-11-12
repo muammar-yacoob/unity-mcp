@@ -153,7 +153,7 @@ namespace UnityMCP
                 // Wait for either completion or timeout
                 var whenAnyResult = UniTask.WhenAny(resultTask, timeoutTask).GetAwaiter().GetResult();
 
-                if (whenAnyResult.winArgumentIndex == 1) // Timeout occurred
+                if (!whenAnyResult.hasResultLeft) // Timeout occurred (second task won)
                 {
                     timeoutCts.Cancel();
                     return new ExecutionResult
