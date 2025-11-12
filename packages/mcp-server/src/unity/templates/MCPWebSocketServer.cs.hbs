@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using Unity.EditorCoroutines.Editor;
 
 namespace UnityMCP
 {
@@ -219,6 +221,7 @@ namespace UnityMCP
         private TcpClient tcpClient;
         private NetworkStream stream;
         private Dictionary<string, Func<JObject, JObject>> toolRegistry;
+        private System.Collections.Concurrent.ConcurrentQueue<string> responseQueue = new System.Collections.Concurrent.ConcurrentQueue<string>();
 #pragma warning disable 0414
         private bool isWebSocketHandshake = false;
 #pragma warning restore 0414
@@ -248,19 +251,41 @@ namespace UnityMCP
                         PerformHandshake(request);
                         isWebSocketHandshake = true;
 
-                        // Handle incoming messages
+                        // Handle incoming messages using writer queue pattern
+                        // Inspired by CoplayDev/unity-mcp architecture
+                        // Background thread handles both reading and writing
+                        // Coroutines enqueue responses to avoid thread-safety issues
                         while (tcpClient.Connected)
                         {
                             try
                             {
-                                string message = ReceiveMessage();
-                                if (message != null)
+                                // CRITICAL: Send any queued responses first
+                                // Responses are queued by coroutines running on main thread
+                                // This ensures single-threaded access to NetworkStream
+                                while (responseQueue.TryDequeue(out string queuedResponse))
                                 {
-                                    Debug.Log($"[WebSocket] Received message, processing...");
-                                    string response = ProcessMessage(message);
-                                    Debug.Log($"[WebSocket] Got response, sending back (length={response?.Length ?? 0})");
-                                    SendMessage(response);
-                                    Debug.Log($"[WebSocket] Response sent successfully");
+                                    Debug.Log($"[WebSocket] Dequeued response from queue, sending...");
+                                    SendMessage(queuedResponse);
+                                    Debug.Log($"[WebSocket] Queued response sent successfully");
+                                }
+
+                                // Check if data is available before blocking on Read
+                                if (stream.DataAvailable)
+                                {
+                                    string message = ReceiveMessage();
+                                    if (message != null)
+                                    {
+                                        Debug.Log($"[WebSocket] Received message: {message.Substring(0, Math.Min(100, message.Length))}...");
+
+                                        // Dispatch to main thread using EditorCoroutineUtility (non-blocking)
+                                        // Coroutine will enqueue response instead of sending directly
+                                        EditorCoroutineUtility.StartCoroutineOwnerless(ProcessMessageCoroutine(message));
+                                    }
+                                }
+                                else
+                                {
+                                    // Small delay to avoid busy-wait when no data available
+                                    Thread.Sleep(10);
                                 }
                             }
                             catch (Exception e)
@@ -399,6 +424,53 @@ namespace UnityMCP
             }
 
             return Encoding.UTF8.GetString(payload);
+        }
+
+        /// <summary>
+        /// Coroutine that processes messages on Unity's main thread (non-blocking)
+        /// Pattern inspired by CoderGamester/mcp-unity + CoplayDev/unity-mcp
+        /// </summary>
+        private IEnumerator ProcessMessageCoroutine(string message)
+        {
+            Debug.Log("[WebSocket] ProcessMessageCoroutine started on main thread");
+            string response = null;
+            Exception exception = null;
+
+            try
+            {
+                // Process message on main thread
+                response = ProcessMessage(message);
+                Debug.Log($"[WebSocket] ProcessMessage completed, response length: {response?.Length ?? 0}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[WebSocket] ProcessMessage failed: {ex.Message}");
+                exception = ex;
+
+                // Create error response
+                response = new JObject
+                {
+                    ["jsonrpc"] = "2.0",
+                    ["id"] = null,
+                    ["error"] = new JObject
+                    {
+                        ["code"] = -32603,
+                        ["message"] = $"Internal error: {ex.Message}"
+                    }
+                }.ToString();
+            }
+
+            // Enqueue response for background thread to send
+            // CRITICAL: Never call SendMessage() from coroutine (main thread)
+            // NetworkStream is NOT thread-safe for concurrent read/write
+            if (response != null && tcpClient != null && tcpClient.Connected)
+            {
+                Debug.Log($"[WebSocket] Enqueueing response to queue (length={response.Length})");
+                responseQueue.Enqueue(response);
+                Debug.Log("[WebSocket] Response enqueued successfully, background thread will send it");
+            }
+
+            yield return null;
         }
 
         private void SendMessage(string message)
