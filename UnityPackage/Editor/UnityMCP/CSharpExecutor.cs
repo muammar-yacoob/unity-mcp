@@ -20,7 +20,7 @@ namespace UnityMCP
             = new System.Collections.Concurrent.ConcurrentQueue<PendingExecution>();
         private static bool isProcessorRegistered = false;
         private static readonly object registrationLock = new object();
-        private static int mainThreadId;
+        private static int mainThreadId = -1; // Will be set by InitializeOnLoad
 
         private class PendingExecution
         {
@@ -28,11 +28,16 @@ namespace UnityMCP
             public TaskCompletionSource<ExecutionResult> Tcs;
         }
 
-        static CSharpExecutor()
+        /// <summary>
+        /// Initialize on Unity's main thread to capture correct thread ID
+        /// This is called by Unity before any other code runs
+        /// </summary>
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void InitializeOnMainThread()
         {
-            // Capture main thread ID
+            // Capture Unity's ACTUAL main thread ID
             mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            UnityEngine.Debug.Log($"[CSharpExecutor] Static constructor - Main thread ID: {mainThreadId}");
+            UnityEngine.Debug.Log($"[CSharpExecutor] InitializeOnLoad - Main thread ID: {mainThreadId}");
             RegisterUpdateProcessor();
         }
 
