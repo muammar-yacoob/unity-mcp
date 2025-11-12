@@ -102,7 +102,78 @@ namespace UnityMCP
 
         /// <summary>
         /// Execute code with comprehensive error handling and logging
-        /// Automatically marshals to Unity's main thread using UniTask if called from background thread
+        /// Automatically marshals to Unity's main thread using UniTask
+        /// </summary>
+        public static async UniTask<ExecutionResult> ExecuteWithResultAsync(string code)
+        {
+            // Check if Unity is compiling
+            if (UnityEditor.EditorApplication.isCompiling)
+            {
+                return new ExecutionResult
+                {
+                    Success = false,
+                    Error = "Unity is compiling, please wait...",
+                    Logs = new System.Collections.Generic.List<string>(),
+                    Warnings = new System.Collections.Generic.List<string>(),
+                    Errors = new System.Collections.Generic.List<string> { "Compilation in progress" }
+                };
+            }
+
+            // Switch to Unity's main thread
+            await UniTask.SwitchToMainThread();
+
+            // Execute on main thread with logging capture
+            var result = new ExecutionResult
+            {
+                Success = false,
+                Logs = new System.Collections.Generic.List<string>(),
+                Warnings = new System.Collections.Generic.List<string>(),
+                Errors = new System.Collections.Generic.List<string>()
+            };
+
+            Application.logMessageReceived += LogHandler;
+
+            try
+            {
+                var startTime = System.DateTime.Now;
+                result.Result = ExecuteCode(code);
+                result.Success = true;
+                result.ExecutionTime = (System.DateTime.Now - startTime).TotalMilliseconds;
+            }
+            catch (Exception e)
+            {
+                result.Success = false;
+                result.Errors.Add(e.Message);
+                result.Error = e.Message;
+            }
+            finally
+            {
+                Application.logMessageReceived -= LogHandler;
+            }
+
+            return result;
+
+            void LogHandler(string message, string stackTrace, LogType type)
+            {
+                switch (type)
+                {
+                    case LogType.Log:
+                        result.Logs.Add(message);
+                        break;
+                    case LogType.Warning:
+                        result.Warnings.Add(message);
+                        break;
+                    case LogType.Error:
+                    case LogType.Exception:
+                        result.Errors.Add($"{message}\n{stackTrace}");
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Synchronous wrapper - only use from Unity's main thread
+        /// For background threads, use ExecuteWithResultAsync
         /// </summary>
         public static ExecutionResult ExecuteWithResult(string code)
         {
@@ -119,56 +190,19 @@ namespace UnityMCP
                 };
             }
 
-            // If already on main thread, execute directly
+            // For main thread, execute directly
             if (System.Threading.Thread.CurrentThread.ManagedThreadId == 1)
             {
                 return ExecuteWithResultInternal(code);
             }
 
-            // From background thread - use ManualResetEventSlim for cross-thread synchronization
-            ExecutionResult capturedResult = null;
-            var completionEvent = new System.Threading.ManualResetEventSlim(false);
+            // For background threads, use the async version with proper synchronization
+            // UniTask's synchronization context allows this to work
+            var task = ExecuteWithResultAsync(code);
 
-            // Queue work on Unity's main thread
-            UnityEditor.EditorApplication.delayCall += () =>
-            {
-                try
-                {
-                    capturedResult = ExecuteWithResultInternal(code);
-                }
-                catch (System.Exception ex)
-                {
-                    capturedResult = new ExecutionResult
-                    {
-                        Success = false,
-                        Error = $"Execution failed: {ex.Message}",
-                        Logs = new System.Collections.Generic.List<string>(),
-                        Warnings = new System.Collections.Generic.List<string>(),
-                        Errors = new System.Collections.Generic.List<string> { ex.Message }
-                    };
-                }
-                finally
-                {
-                    completionEvent.Set();
-                }
-            };
-
-            // Wait for completion with timeout
-            bool completed = completionEvent.Wait(System.TimeSpan.FromSeconds(30));
-
-            if (!completed)
-            {
-                return new ExecutionResult
-                {
-                    Success = false,
-                    Error = "Execution timed out after 30 seconds",
-                    Logs = new System.Collections.Generic.List<string>(),
-                    Warnings = new System.Collections.Generic.List<string>(),
-                    Errors = new System.Collections.Generic.List<string> { "Timeout" }
-                };
-            }
-
-            return capturedResult;
+            // Use UniTask's GetAwaiter() with a proper async context
+            // This works because SwitchToMainThread() uses Unity's synchronization context
+            return task.GetAwaiter().GetResult();
         }
 
         /// <summary>
