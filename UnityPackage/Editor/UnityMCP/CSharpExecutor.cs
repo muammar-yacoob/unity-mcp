@@ -12,10 +12,65 @@ namespace UnityMCP
     /// <summary>
     /// Executes arbitrary C# code in Unity Editor context
     /// This enables AI assistants to perform ANY Unity operation without predefined tools
-    /// Based on Arodoid's UnityMCP implementation
+    /// Threading pattern from CoplayDev/unity-mcp - uses EditorApplication.update for main thread dispatch
     /// </summary>
     public static class CSharpExecutor
     {
+        private static readonly System.Collections.Concurrent.ConcurrentQueue<PendingExecution> executionQueue
+            = new System.Collections.Concurrent.ConcurrentQueue<PendingExecution>();
+        private static bool isProcessorRegistered = false;
+        private static readonly object registrationLock = new object();
+        private static int mainThreadId;
+
+        private class PendingExecution
+        {
+            public string Code;
+            public TaskCompletionSource<ExecutionResult> Tcs;
+        }
+
+        static CSharpExecutor()
+        {
+            // Capture main thread ID
+            mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            RegisterUpdateProcessor();
+        }
+
+        private static void RegisterUpdateProcessor()
+        {
+            lock (registrationLock)
+            {
+                if (!isProcessorRegistered)
+                {
+                    UnityEditor.EditorApplication.update += ProcessExecutionQueue;
+                    isProcessorRegistered = true;
+                }
+            }
+        }
+
+        private static void ProcessExecutionQueue()
+        {
+            // Process all pending executions on Unity's main thread
+            while (executionQueue.TryDequeue(out var pending))
+            {
+                try
+                {
+                    var result = ExecuteOnMainThread(pending.Code);
+                    pending.Tcs.TrySetResult(result);
+                }
+                catch (Exception ex)
+                {
+                    var errorResult = new ExecutionResult
+                    {
+                        Success = false,
+                        Error = $"Execution failed: {ex.Message}",
+                        Logs = new System.Collections.Generic.List<string>(),
+                        Warnings = new System.Collections.Generic.List<string>(),
+                        Errors = new System.Collections.Generic.List<string> { ex.Message }
+                    };
+                    pending.Tcs.TrySetResult(errorResult);
+                }
+            }
+        }
         /// <summary>
         /// Execute C# code with full access to UnityEngine and UnityEditor APIs
         /// </summary>
@@ -104,7 +159,7 @@ namespace UnityMCP
         /// <summary>
         /// Execute code with comprehensive error handling and logging
         /// Automatically handles threading - safe to call from any thread
-        /// Uses UniTask for editor-safe async operations + EditorApplication.delayCall pattern from CoplayDev/unity-mcp
+        /// Uses EditorApplication.update queue pattern from CoplayDev/unity-mcp
         /// </summary>
         public static ExecutionResult ExecuteWithResult(string code)
         {
@@ -121,36 +176,22 @@ namespace UnityMCP
                 };
             }
 
-            // If already on Unity's main thread, execute directly
-            if (System.Threading.Thread.CurrentThread.ManagedThreadId == 1)
+            // If already on Unity's main thread, execute directly (avoid deadlock)
+            if (System.Threading.Thread.CurrentThread.ManagedThreadId == mainThreadId)
             {
                 return ExecuteOnMainThread(code);
             }
 
-            // From background thread: Use EditorApplication.delayCall + TaskCompletionSource
-            // Pattern from CoplayDev/unity-mcp - proven, no extra dependencies
-            var tcs = new TaskCompletionSource<ExecutionResult>();
+            // From background thread: Queue execution and wait for completion
+            // Pattern from CoplayDev/unity-mcp - EditorApplication.update processes queue every frame
+            var tcs = new TaskCompletionSource<ExecutionResult>(
+                TaskCreationOptions.RunContinuationsAsynchronously); // Prevent deadlocks
 
-            UnityEditor.EditorApplication.delayCall += () =>
+            executionQueue.Enqueue(new PendingExecution
             {
-                try
-                {
-                    var result = ExecuteOnMainThread(code);
-                    tcs.TrySetResult(result);
-                }
-                catch (Exception ex)
-                {
-                    var errorResult = new ExecutionResult
-                    {
-                        Success = false,
-                        Error = $"Execution failed: {ex.Message}",
-                        Logs = new System.Collections.Generic.List<string>(),
-                        Warnings = new System.Collections.Generic.List<string>(),
-                        Errors = new System.Collections.Generic.List<string> { ex.Message }
-                    };
-                    tcs.TrySetResult(errorResult);
-                }
-            };
+                Code = code,
+                Tcs = tcs
+            });
 
             // Block background thread waiting for completion with timeout
             if (tcs.Task.Wait(System.TimeSpan.FromSeconds(30)))
