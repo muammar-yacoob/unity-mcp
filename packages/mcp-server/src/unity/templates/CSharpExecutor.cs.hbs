@@ -102,38 +102,87 @@ namespace UnityMCP
 
         /// <summary>
         /// Execute code with comprehensive error handling and logging
-        /// Automatically switches to Unity's main thread using UniTask if needed
+        /// Automatically marshals to Unity's main thread using UniTask if called from background thread
         /// </summary>
         public static ExecutionResult ExecuteWithResult(string code)
         {
-            // Use UniTask to safely execute on main thread
-            // This is synchronous but ensures main thread execution
-            try
-            {
-                return ExecuteWithResultAsync(code).GetAwaiter().GetResult();
-            }
-            catch (Exception e)
+            // Check if Unity is compiling
+            if (UnityEditor.EditorApplication.isCompiling)
             {
                 return new ExecutionResult
                 {
                     Success = false,
-                    Error = $"Failed to execute C# code: {e.Message}",
+                    Error = "Unity is compiling, please wait...",
                     Logs = new System.Collections.Generic.List<string>(),
                     Warnings = new System.Collections.Generic.List<string>(),
-                    Errors = new System.Collections.Generic.List<string> { e.Message }
+                    Errors = new System.Collections.Generic.List<string> { "Compilation in progress" }
                 };
             }
-        }
 
-        /// <summary>
-        /// Async execution with automatic main thread switching via UniTask
-        /// </summary>
-        private static async UniTask<ExecutionResult> ExecuteWithResultAsync(string code)
-        {
-            // Switch to Unity's main thread (PlayerLoop timing)
-            await UniTask.SwitchToMainThread();
+            // If already on main thread, execute directly
+            if (System.Threading.Thread.CurrentThread.ManagedThreadId == 1)
+            {
+                return ExecuteWithResultInternal(code);
+            }
 
-            return ExecuteWithResultInternal(code);
+            // From background thread - use UniTaskCompletionSource for proper thread coordination
+            var completionSource = new UniTaskCompletionSource<ExecutionResult>();
+
+            // Queue work on Unity's main thread
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                try
+                {
+                    var result = ExecuteWithResultInternal(code);
+                    completionSource.TrySetResult(result);
+                }
+                catch (System.Exception ex)
+                {
+                    completionSource.TrySetException(ex);
+                }
+            };
+
+            // Wait for completion using UniTask's proper blocking mechanism
+            try
+            {
+                // Create timeout task
+                var resultTask = completionSource.Task;
+                var timeoutCts = new System.Threading.CancellationTokenSource();
+                var timeoutTask = UniTask.Delay(System.TimeSpan.FromSeconds(30), cancellationToken: timeoutCts.Token);
+
+                // Wait for either completion or timeout
+                var whenAnyResult = UniTask.WhenAny(resultTask, timeoutTask).GetAwaiter().GetResult();
+
+                if (whenAnyResult.winArgumentIndex == 1) // Timeout occurred
+                {
+                    timeoutCts.Cancel();
+                    return new ExecutionResult
+                    {
+                        Success = false,
+                        Error = "Execution timed out after 30 seconds",
+                        Logs = new System.Collections.Generic.List<string>(),
+                        Warnings = new System.Collections.Generic.List<string>(),
+                        Errors = new System.Collections.Generic.List<string> { "Timeout" }
+                    };
+                }
+
+                // Cancel timeout task and return result
+                timeoutCts.Cancel();
+
+                // Get the actual result from the completion source
+                return resultTask.GetAwaiter().GetResult();
+            }
+            catch (System.Exception ex)
+            {
+                return new ExecutionResult
+                {
+                    Success = false,
+                    Error = $"Failed to execute C# code: {ex.Message}",
+                    Logs = new System.Collections.Generic.List<string>(),
+                    Warnings = new System.Collections.Generic.List<string>(),
+                    Errors = new System.Collections.Generic.List<string> { ex.Message }
+                };
+            }
         }
 
         /// <summary>
