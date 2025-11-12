@@ -267,14 +267,10 @@ namespace UnityMCP
                         {
                             try
                             {
-                                // CRITICAL: Send any queued responses first
-                                // Responses are queued by coroutines running on main thread
-                                // This ensures single-threaded access to NetworkStream
+                                // Send any queued responses
                                 while (responseQueue.TryDequeue(out string queuedResponse))
                                 {
-                                    Debug.Log($"[WebSocket] Dequeued response from queue, sending...");
                                     SendMessage(queuedResponse);
-                                    Debug.Log($"[WebSocket] Queued response sent successfully");
                                 }
 
                                 // Check if data is available before blocking on Read
@@ -283,10 +279,7 @@ namespace UnityMCP
                                     string message = ReceiveMessage();
                                     if (message != null)
                                     {
-                                        Debug.Log($"[WebSocket] Received message: {message.Substring(0, Math.Min(100, message.Length))}...");
-
                                         // Dispatch to main thread using EditorCoroutineUtility (non-blocking)
-                                        // Coroutine will enqueue response instead of sending directly
                                         EditorCoroutineUtility.StartCoroutineOwnerless(ProcessMessageCoroutine(message));
                                     }
                                 }
@@ -440,42 +433,35 @@ namespace UnityMCP
         /// </summary>
         private IEnumerator ProcessMessageCoroutine(string message)
         {
-            Debug.Log("[WebSocket] ProcessMessageCoroutine started on main thread");
             string response = null;
-            Exception exception = null;
 
             try
             {
                 // Process message on main thread
                 response = ProcessMessage(message);
-                Debug.Log($"[WebSocket] ProcessMessage completed, response length: {response?.Length ?? 0}");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[WebSocket] ProcessMessage failed: {ex.Message}");
-                exception = ex;
-
+                Debug.LogError($"[Unity MCP] Error processing message: {ex.Message}");
+                
                 // Create error response
-                response = new JObject
+                var errorObj = new JObject
                 {
                     ["jsonrpc"] = "2.0",
                     ["id"] = null,
                     ["error"] = new JObject
                     {
                         ["code"] = -32603,
-                        ["message"] = $"Internal error: {ex.Message}"
+                        ["message"] = "Internal error: " + (ex.Message ?? "Unknown error")
                     }
-                }.ToString();
+                };
+                response = errorObj.ToString(Newtonsoft.Json.Formatting.None);
             }
 
             // Enqueue response for background thread to send
-            // CRITICAL: Never call SendMessage() from coroutine (main thread)
-            // NetworkStream is NOT thread-safe for concurrent read/write
             if (response != null && tcpClient != null && tcpClient.Connected)
             {
-                Debug.Log($"[WebSocket] Enqueueing response to queue (length={response.Length})");
                 responseQueue.Enqueue(response);
-                Debug.Log("[WebSocket] Response enqueued successfully, background thread will send it");
             }
 
             yield return null;
@@ -537,18 +523,14 @@ namespace UnityMCP
 
                 if (toolRegistry.TryGetValue(method, out var handler))
                 {
-                    Debug.Log($"[WebSocket] Calling handler for method: {method}");
                     JObject result = handler(parameters);
-                    Debug.Log($"[WebSocket] Handler returned, building response");
                     JObject response = new JObject
                     {
                         ["jsonrpc"] = "2.0",
                         ["id"] = id,
                         ["result"] = result
                     };
-                    string responseStr = response.ToString();
-                    Debug.Log($"[WebSocket] Response built, length={responseStr.Length}");
-                    return responseStr;
+                    return response.ToString();
                 }
                 else
                 {

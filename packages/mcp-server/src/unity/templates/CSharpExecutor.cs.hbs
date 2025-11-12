@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.CSharp;
 using UnityEditor;
 using UnityEngine;
@@ -35,9 +36,8 @@ namespace UnityMCP
         [UnityEditor.InitializeOnLoadMethod]
         private static void InitializeOnMainThread()
         {
-            // Capture Unity's ACTUAL main thread ID
+            // Capture Unity's main thread ID
             mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            UnityEngine.Debug.Log($"[CSharpExecutor] InitializeOnLoad - Main thread ID: {mainThreadId}");
             RegisterUpdateProcessor();
         }
 
@@ -49,7 +49,6 @@ namespace UnityMCP
                 {
                     UnityEditor.EditorApplication.update += ProcessExecutionQueue;
                     isProcessorRegistered = true;
-                    UnityEngine.Debug.Log("[CSharpExecutor] Registered EditorApplication.update callback");
                 }
             }
         }
@@ -57,20 +56,16 @@ namespace UnityMCP
         private static void ProcessExecutionQueue()
         {
             // Process all pending executions on Unity's main thread
-            int processedCount = 0;
             while (executionQueue.TryDequeue(out var pending))
             {
-                processedCount++;
-                UnityEngine.Debug.Log($"[CSharpExecutor] Processing execution #{processedCount}");
                 try
                 {
                     var result = ExecuteOnMainThread(pending.Code);
                     pending.Tcs.TrySetResult(result);
-                    UnityEngine.Debug.Log($"[CSharpExecutor] Execution #{processedCount} completed successfully");
                 }
                 catch (Exception ex)
                 {
-                    UnityEngine.Debug.LogError($"[CSharpExecutor] Execution #{processedCount} failed: {ex.Message}");
+                    UnityEngine.Debug.LogError($"[Unity MCP] Code execution failed: {ex.Message}");
                     var errorResult = new ExecutionResult
                     {
                         Success = false,
@@ -123,19 +118,14 @@ namespace UnityMCP
                 IncludeDebugInformation = false
             };
 
-            // Add necessary assembly references
-            options.ReferencedAssemblies.Add(typeof(UnityEngine.Object).Assembly.Location); // UnityEngine
-            options.ReferencedAssemblies.Add(typeof(UnityEditor.Editor).Assembly.Location); // UnityEditor
-            options.ReferencedAssemblies.Add(typeof(System.Linq.Enumerable).Assembly.Location); // System.Core
-            options.ReferencedAssemblies.Add(typeof(object).Assembly.Location); // mscorlib
-
-            // Add netstandard reference (required for Unity 2022+)
-            var netstandardAssembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "netstandard");
-            if (netstandardAssembly != null)
-            {
-                options.ReferencedAssemblies.Add(netstandardAssembly.Location);
-            }
+            // Add assemblies - only Unity assemblies, CSharpCodeProvider includes mscorlib automatically
+            options.ReferencedAssemblies.Add(typeof(UnityEngine.Object).Assembly.Location);
+            options.ReferencedAssemblies.Add(typeof(UnityEditor.Editor).Assembly.Location);
+            
+            // Add System.Core for LINQ support
+            var linqAssembly = typeof(System.Linq.Enumerable).Assembly.Location;
+            if (!string.IsNullOrEmpty(linqAssembly))
+                options.ReferencedAssemblies.Add(linqAssembly);
 
             // Compile and execute
             using (var provider = new CSharpCodeProvider())
@@ -190,17 +180,14 @@ namespace UnityMCP
 
             // If already on Unity's main thread, execute directly (avoid deadlock)
             var currentThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            UnityEngine.Debug.Log($"[CSharpExecutor] ExecuteWithResult called from thread {currentThreadId} (main={mainThreadId})");
 
             if (currentThreadId == mainThreadId)
             {
-                UnityEngine.Debug.Log("[CSharpExecutor] Executing directly on main thread");
                 return ExecuteOnMainThread(code);
             }
 
             // From background thread: Queue execution and wait for completion
             // Pattern from CoplayDev/unity-mcp - EditorApplication.update processes queue every frame
-            UnityEngine.Debug.Log($"[CSharpExecutor] Background thread detected, queueing execution. Queue size before: {executionQueue.Count}");
 
             var tcs = new TaskCompletionSource<ExecutionResult>(
                 TaskCreationOptions.RunContinuationsAsynchronously); // Prevent deadlocks
@@ -211,18 +198,13 @@ namespace UnityMCP
                 Tcs = tcs
             });
 
-            UnityEngine.Debug.Log($"[CSharpExecutor] Enqueued execution. Queue size after: {executionQueue.Count}");
-            UnityEngine.Debug.Log("[CSharpExecutor] Waiting for completion (30s timeout)...");
-
             // Block background thread waiting for completion with timeout
             if (tcs.Task.Wait(System.TimeSpan.FromSeconds(30)))
             {
-                UnityEngine.Debug.Log("[CSharpExecutor] Execution completed within timeout");
                 return tcs.Task.Result;
             }
             else
             {
-                UnityEngine.Debug.LogError($"[CSharpExecutor] Execution timed out! Queue still has {executionQueue.Count} items");
                 return new ExecutionResult
                 {
                     Success = false,
