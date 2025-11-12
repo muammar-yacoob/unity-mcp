@@ -196,12 +196,66 @@ namespace UnityMCP
                 return ExecuteWithResultInternal(code);
             }
 
-            // For background threads, use the async version with proper synchronization
-            // UniTask's synchronization context allows this to work
-            var task = ExecuteWithResultAsync(code);
+            // For background threads: Queue work and actively pump Unity's PlayerLoop
+            ExecutionResult capturedResult = null;
+            var completionSource = new UniTaskCompletionSource<ExecutionResult>();
 
-            // Use UniTask's GetAwaiter() with a proper async context
-            // This works because SwitchToMainThread() uses Unity's synchronization context
+            // Queue work on Unity's main thread
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                try
+                {
+                    capturedResult = ExecuteWithResultInternal(code);
+                    completionSource.TrySetResult(capturedResult);
+                }
+                catch (System.Exception ex)
+                {
+                    var errorResult = new ExecutionResult
+                    {
+                        Success = false,
+                        Error = $"Execution failed: {ex.Message}",
+                        Logs = new System.Collections.Generic.List<string>(),
+                        Warnings = new System.Collections.Generic.List<string>(),
+                        Errors = new System.Collections.Generic.List<string> { ex.Message }
+                    };
+                    completionSource.TrySetResult(errorResult);
+                }
+            };
+
+            // Actively pump Unity's PlayerLoop to process the delayCall queue
+            var timeout = System.DateTime.Now.AddSeconds(30);
+            var task = completionSource.Task;
+
+            while (!task.Status.IsCompleted())
+            {
+                if (System.DateTime.Now > timeout)
+                {
+                    return new ExecutionResult
+                    {
+                        Success = false,
+                        Error = "Execution timed out after 30 seconds",
+                        Logs = new System.Collections.Generic.List<string>(),
+                        Warnings = new System.Collections.Generic.List<string>(),
+                        Errors = new System.Collections.Generic.List<string> { "Timeout" }
+                    };
+                }
+
+                // Force Unity's editor PlayerLoop to update, processing the delayCall queue
+                try
+                {
+                    Cysharp.Threading.Tasks.PlayerLoopHelper.ForceEditorPlayerLoopUpdate();
+                }
+                catch
+                {
+                    // If ForceEditorPlayerLoopUpdate is unavailable, just yield
+                    System.Threading.Thread.Sleep(10);
+                }
+
+                // Small yield to prevent CPU spinning
+                System.Threading.Thread.Sleep(1);
+            }
+
+            // Task completed, return the result
             return task.GetAwaiter().GetResult();
         }
 
