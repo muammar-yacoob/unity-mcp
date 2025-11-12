@@ -68,30 +68,37 @@ namespace UnityMCP
 
             try
             {
+                UnityEngine.Debug.Log("[AdvancedToolsHandler] Calling CSharpExecutor.ExecuteWithResult");
                 var result = CSharpExecutor.ExecuteWithResult(code);
+                UnityEngine.Debug.Log($"[AdvancedToolsHandler] Got result. Success={result.Success}");
 
                 if (result.Success)
                 {
-                    return JsonResponse(true, "Code executed successfully", new
+                    var response = JsonResponse(true, "Code executed successfully", new
                     {
                         result = result.Result?.ToString() ?? "Success",
                         logs = result.Logs.ToArray(),
                         warnings = result.Warnings.ToArray(),
                         executionTime = $"{result.ExecutionTime}ms"
                     });
+                    UnityEngine.Debug.Log($"[AdvancedToolsHandler] Returning success response: {response.Substring(0, System.Math.Min(200, response.Length))}");
+                    return response;
                 }
                 else
                 {
-                    return JsonResponse(false, result.Error, new
+                    var response = JsonResponse(false, result.Error, new
                     {
                         errors = result.Errors.ToArray(),
                         logs = result.Logs.ToArray(),
                         warnings = result.Warnings.ToArray()
                     });
+                    UnityEngine.Debug.Log($"[AdvancedToolsHandler] Returning error response: {response.Substring(0, System.Math.Min(200, response.Length))}");
+                    return response;
                 }
             }
             catch (Exception e)
             {
+                UnityEngine.Debug.LogError($"[AdvancedToolsHandler] Exception: {e.Message}");
                 return JsonResponse(false, $"Failed to execute C# code: {e.Message}");
             }
         }

@@ -400,36 +400,47 @@ namespace UnityMCP
 
         private void SendMessage(string message)
         {
-            byte[] payload = Encoding.UTF8.GetBytes(message);
-            byte[] frame;
+            try
+            {
+                byte[] payload = Encoding.UTF8.GetBytes(message);
+                byte[] frame;
 
-            if (payload.Length < 126)
-            {
-                frame = new byte[2 + payload.Length];
-                frame[0] = 0x81; // FIN + Text frame
-                frame[1] = (byte)payload.Length;
-                Array.Copy(payload, 0, frame, 2, payload.Length);
-            }
-            else if (payload.Length < 65536)
-            {
-                frame = new byte[4 + payload.Length];
-                frame[0] = 0x81;
-                frame[1] = 126;
-                frame[2] = (byte)(payload.Length >> 8);
-                frame[3] = (byte)(payload.Length & 0xFF);
-                Array.Copy(payload, 0, frame, 4, payload.Length);
-            }
-            else
-            {
-                frame = new byte[10 + payload.Length];
-                frame[0] = 0x81;
-                frame[1] = 127;
-                byte[] lengthBytes = BitConverter.GetBytes((long)payload.Length);
-                Array.Copy(lengthBytes, 0, frame, 2, 8);
-                Array.Copy(payload, 0, frame, 10, payload.Length);
-            }
+                if (payload.Length < 126)
+                {
+                    frame = new byte[2 + payload.Length];
+                    frame[0] = 0x81; // FIN + Text frame
+                    frame[1] = (byte)payload.Length;
+                    Array.Copy(payload, 0, frame, 2, payload.Length);
+                }
+                else if (payload.Length < 65536)
+                {
+                    frame = new byte[4 + payload.Length];
+                    frame[0] = 0x81;
+                    frame[1] = 126;
+                    frame[2] = (byte)(payload.Length >> 8);
+                    frame[3] = (byte)(payload.Length & 0xFF);
+                    Array.Copy(payload, 0, frame, 4, payload.Length);
+                }
+                else
+                {
+                    frame = new byte[10 + payload.Length];
+                    frame[0] = 0x81;
+                    frame[1] = 127;
+                    byte[] lengthBytes = BitConverter.GetBytes((long)payload.Length);
+                    Array.Copy(lengthBytes, 0, frame, 2, 8);
+                    Array.Copy(payload, 0, frame, 10, payload.Length);
+                }
 
-            stream.Write(frame, 0, frame.Length);
+                Debug.Log($"[WebSocket] Writing frame of {frame.Length} bytes to stream");
+                stream.Write(frame, 0, frame.Length);
+                stream.Flush(); // CRITICAL: Ensure data is transmitted immediately
+                Debug.Log($"[WebSocket] Stream flushed successfully");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[WebSocket] SendMessage failed: {e.Message}");
+                throw;
+            }
         }
 
         private string ProcessMessage(string message)
