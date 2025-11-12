@@ -1,6 +1,6 @@
 {
   "name": "@spark-apps/unity-mcp",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "Simplified Unity Editor control via MCP - Execute ANY Unity API code with execute_csharp, manage scenes, automate testing, and monitor console. 8 essential tools with unlimited flexibility.",
   "type": "module",
   "bin": {
