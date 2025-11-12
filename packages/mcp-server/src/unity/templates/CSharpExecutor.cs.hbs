@@ -5,6 +5,7 @@ using Microsoft.CSharp;
 using UnityEditor;
 using UnityEngine;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 namespace UnityMCP
 {
@@ -103,7 +104,7 @@ namespace UnityMCP
         /// <summary>
         /// Execute code with comprehensive error handling and logging
         /// Automatically handles threading - safe to call from any thread
-        /// Pattern learned from CoderGamester/mcp-unity using EditorCoroutines
+        /// Uses UniTask for editor-safe async operations + EditorApplication.delayCall pattern from CoplayDev/unity-mcp
         /// </summary>
         public static ExecutionResult ExecuteWithResult(string code)
         {
@@ -126,11 +127,32 @@ namespace UnityMCP
                 return ExecuteOnMainThread(code);
             }
 
-            // From background thread: Use EditorCoroutine + TaskCompletionSource pattern
+            // From background thread: Use EditorApplication.delayCall + TaskCompletionSource
+            // Pattern from CoplayDev/unity-mcp - proven, no extra dependencies
             var tcs = new TaskCompletionSource<ExecutionResult>();
-            Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutineOwnerless(ExecuteCoroutine(code, tcs));
 
-            // Block background thread waiting for completion
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                try
+                {
+                    var result = ExecuteOnMainThread(code);
+                    tcs.TrySetResult(result);
+                }
+                catch (Exception ex)
+                {
+                    var errorResult = new ExecutionResult
+                    {
+                        Success = false,
+                        Error = $"Execution failed: {ex.Message}",
+                        Logs = new System.Collections.Generic.List<string>(),
+                        Warnings = new System.Collections.Generic.List<string>(),
+                        Errors = new System.Collections.Generic.List<string> { ex.Message }
+                    };
+                    tcs.TrySetResult(errorResult);
+                }
+            };
+
+            // Block background thread waiting for completion with timeout
             if (tcs.Task.Wait(System.TimeSpan.FromSeconds(30)))
             {
                 return tcs.Task.Result;
@@ -146,6 +168,32 @@ namespace UnityMCP
                     Errors = new System.Collections.Generic.List<string> { "Timeout" }
                 };
             }
+        }
+
+        /// <summary>
+        /// Async version using UniTask for Unity editor operations
+        /// Use this when you're already in an async context and want to leverage UniTask
+        /// </summary>
+        public static async UniTask<ExecutionResult> ExecuteAsync(string code)
+        {
+            // Check if Unity is compiling
+            if (UnityEditor.EditorApplication.isCompiling)
+            {
+                return new ExecutionResult
+                {
+                    Success = false,
+                    Error = "Unity is compiling, please wait...",
+                    Logs = new System.Collections.Generic.List<string>(),
+                    Warnings = new System.Collections.Generic.List<string>(),
+                    Errors = new System.Collections.Generic.List<string> { "Compilation in progress" }
+                };
+            }
+
+            // Switch to Unity's main thread using UniTask
+            await UniTask.SwitchToMainThread();
+
+            // Execute on main thread
+            return ExecuteOnMainThread(code);
         }
 
         private static ExecutionResult ExecuteOnMainThread(string code)
@@ -197,29 +245,6 @@ namespace UnityMCP
                         break;
                 }
             }
-        }
-
-        private static System.Collections.IEnumerator ExecuteCoroutine(string code, TaskCompletionSource<ExecutionResult> tcs)
-        {
-            try
-            {
-                var result = ExecuteOnMainThread(code);
-                tcs.TrySetResult(result);
-            }
-            catch (Exception ex)
-            {
-                var errorResult = new ExecutionResult
-                {
-                    Success = false,
-                    Error = $"Execution failed: {ex.Message}",
-                    Logs = new System.Collections.Generic.List<string>(),
-                    Warnings = new System.Collections.Generic.List<string>(),
-                    Errors = new System.Collections.Generic.List<string> { ex.Message }
-                };
-                tcs.TrySetResult(errorResult);
-            }
-
-            yield return null;
         }
     }
 
